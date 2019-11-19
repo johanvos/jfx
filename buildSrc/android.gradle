@@ -194,7 +194,6 @@ android.javax.xml.stream.XMLInputFactory=com.sun.xml.stream.ZephyrParserFactory
 android.javax.xml.stream.XMLOutputFactory=com.sun.xml.stream.ZephyrWriterFactory
 android.javax.xml.stream.XMLEventFactory=com.sun.xml.stream.events.ZephyrEventFactory
 android.glass.platform=Monocle
-android.glass.lens=eglfb
 android.log.lens=FINEST
 android.prism.verbose=true
 ANDROID.prism.verbose=true
@@ -274,7 +273,6 @@ ANDROID.dvkwebview.ccFlags = [ccFlags, ccWarnFlags, ccArchFlags, ccOptFlags,
 ANDROID.dvkwebview.linkFlags = IS_STATIC_BUILD ? [linkFlags].flatten() : [linkFlags, "-ldl", "-llog"].flatten()
 
 ANDROID.glass = [:]
-// ANDROID.glass.variants = ["eglfb", "lensport"]
 ANDROID.glass.variants = []
 ANDROID.glass.variants = ["monocle"]
 ANDROID.glass.javahSource = files("${project("graphics").buildDir}/classes/dalvik",
@@ -323,12 +321,11 @@ ANDROID.glass.monocle.linkFlags =  IS_STATIC_BUILD ? [linkFlags].flatten() : [li
 
 ANDROID.glass.monocle.lib = "glass_monocle"
 
-ANDROID.javafxPlatformDefault="eglfb"
+ANDROID.javafxPlatformDefault="glass"
 
 def monoclePlatformAdditions = """
 monocle.glass.platform=Monocle
 monocle.prism.order=es2,sw
-monocle.prism.eglfb=true
 monocle.prism.lcdtext=false
 monocle.prism.maxvram=128m
 monocle.prism.targetvram=112m
@@ -342,22 +339,6 @@ monocle.prism.glDepthSize=0
 monocle.com.sun.javafx.gestures.zoom=true
 monocle.com.sun.javafx.gestures.rotate=true
 monocle.com.sun.javafx.gestures.scroll=true"""
-
-
-
-ANDROID.glass.eglfb = [:]
-ANDROID.glass.eglfb.nativeSource = [
-    file("${project("graphics").projectDir}/src/main/native-glass/lens"),
-    file("${project("graphics").projectDir}/src/main/native-glass/lens/wm"),
-    file("${project("graphics").projectDir}/src/main/native-glass/lens/cursor/nullCursor"),
-    file("${project("graphics").projectDir}/src/main/native-glass/lens/dalvik")
-]
-ANDROID.glass.eglfb.compiler = compiler
-ANDROID.glass.eglfb.linker = linker
-ANDROID.glass.eglfb.lib = "glass_lens_eglfb"
-ANDROID.glass.eglfb.ccFlags = [ccFlags, ccWarnFlags, ccArchFlags, ccOptFlags,
-    ccDebugFlags, ccDefaultIncludeFlags].flatten()
-ANDROID.glass.eglfb.linkFlags = [linkFlags, "-ldl", "-landroid", "-llog"].flatten()
 
 ANDROID.prism = [:]
 ANDROID.prism.javahInclude = ["com/sun/prism/impl/**/*", "com/sun/prism/PresentableState*"]
@@ -416,19 +397,6 @@ ANDROID.prismES2.monocle.ccFlags = [ccFlags, ccWarnFlags, ccArchFlags, ccOptFlag
 ANDROID.prismES2.monocle.linker = linker
 ANDROID.prismES2.monocle.linkFlags = IS_STATIC_BUILD ? [linkFlags].flatten() : [linkFlags, "-ldl", "-llog", "-lGLESv2", "-lEGL"].flatten()
 ANDROID.prismES2.monocle.lib = "prism_es2_monocle"
-
-ANDROID.prismES2.eglfb = [:]
-ANDROID.prismES2.eglfb.nativeSource = [
-    file("${project("graphics").projectDir}/src/main/native-prism-es2"),
-    file("${project("graphics").projectDir}/src/main/native-prism-es2/GL"),
-    file("${project("graphics").projectDir}/src/main/native-prism-es2/wrapped"),
-    file("${project("graphics").projectDir}/src/main/native-prism-es2/eglfb")]
-ANDROID.prismES2.eglfb.compiler = compiler
-ANDROID.prismES2.eglfb.ccFlags = [ccFlags, ccWarnFlags, ccArchFlags, ccOptFlags,
-    ccDebugFlags, ccDefaultIncludeFlags, "-DIS_EGLFB"].flatten()
-ANDROID.prismES2.eglfb.linker = linker
-ANDROID.prismES2.eglfb.linkFlags = [linkFlags, "-ldl", "-llog", "-lGLESv2", "-lEGL"].flatten()
-ANDROID.prismES2.eglfb.lib = "prism_es2_eglfb"
 
 ANDROID.font = [:]
 ANDROID.font.javahInclude = [

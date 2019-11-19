@@ -37,7 +37,6 @@
 #define OS_NATIVE(func) Java_com_sun_javafx_font_freetype_OSFreetype_##func
 
 extern jboolean checkAndClearException(JNIEnv *env);
-#ifdef STATIC_BUILD
 JNIEXPORT jint JNICALL
 JNI_OnLoad_javafx_font_freetype(JavaVM * vm, void * reserved) {
 #ifdef JNI_VERSION_1_8
@@ -50,7 +49,6 @@ JNI_OnLoad_javafx_font_freetype(JavaVM * vm, void * reserved) {
     return JNI_VERSION_1_4;
 #endif
 }
-#endif
 
 
 jboolean checkAndClearException(JNIEnv *env)

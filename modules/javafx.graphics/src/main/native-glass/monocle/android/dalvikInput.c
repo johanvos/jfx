@@ -66,7 +66,7 @@
 static int bind = 0;
 
 static ANativeWindow *(*_ANDROID_getNativeWindow)();
-static jfloat        *(*_ANDROID_getDensity)();
+static jfloat        (*_ANDROID_getDensity)();
 static char          *(*_ANDROID_getDataDir)();
 static void          *(*_ANDROID_notifyGlassStarted)();
 static void          *(*_ANDROID_notifyGlassShutdown)();
@@ -79,11 +79,19 @@ static jmethodID monocle_gotTouchEventFromNative;
 static jmethodID monocle_gotKeyEventFromNative;
 static jmethodID monocle_repaintAll;
 
-extern ANativeWindow* (*_GLUON_getNativeWindow)();
-extern jfloat* (*_GLUON_getDensity)();
+extern ANativeWindow* _GLUON_getNativeWindow();
+extern jfloat _GLUON_getDensity();
 void bind_activity(JNIEnv *env) {
-    GLASS_LOG_FINEST("NOT Binding to %s", ANDROID_LIB);
+    GLASS_LOG_FINEST("bind_activity: NOT Binding to %s", ANDROID_LIB);
+fprintf(stderr, "invoke _GLUON_getNativeWindow:\n");
+void* p = _GLUON_getNativeWindow();
+fprintf(stderr, "result = %p\n", p);
+fprintf(stderr, "Gluon_gnw = %p\n", _GLUON_getNativeWindow);
     _ANDROID_getNativeWindow = _GLUON_getNativeWindow;
+fprintf(stderr, "Gluon_gd = %p\n", _GLUON_getDensity);
+fprintf(stderr, "invoke _GLUON_getDensity:\n");
+float mydens = _GLUON_getDensity();
+fprintf(stderr, "result = %f\n", mydens);
     _ANDROID_getDensity = _GLUON_getDensity;
 /*
     void *libandroid = dlopen(ANDROID_LIB, RTLD_LAZY | RTLD_GLOBAL);
@@ -102,7 +110,10 @@ void bind_activity(JNIEnv *env) {
 */
 GLASS_LOG_FINEST("GetNativeWindow = %p, getDensitiy = %p",_ANDROID_getNativeWindow, _ANDROID_getDensity );
     bind = JNI_TRUE;
+/*
+fprintf(stderr, "in dalvikInput, notifyGlassStarted\n");
     (*_ANDROID_notifyGlassStarted)();
+fprintf(stderr, "in dalvikInput, DID notifyGlassStarted\n");
     jAndroidInputDeviceRegistryClass = (*env)->NewGlobalRef(env,
                                                  (*env)->FindClass(env, "com/sun/glass/ui/monocle/AndroidInputDeviceRegistry"));
     monocle_gotTouchEventFromNative = (*env)->GetStaticMethodID(
@@ -116,6 +127,8 @@ GLASS_LOG_FINEST("GetNativeWindow = %p, getDensitiy = %p",_ANDROID_getNativeWind
     monocle_repaintAll = (*env)->GetStaticMethodID(
                                             env, jMonocleWindowManagerClass, "repaintFromNative",
                                             "()V");
+*/
+fprintf(stderr, "in dalvikInput, bindactivity done\n");
 
 }
 
@@ -126,8 +139,8 @@ ANativeWindow *android_getNativeWindow(JNIEnv *env) {
 
 jfloat android_getDensity(JNIEnv *env) {
     if(!bind) bind_activity(env);
-    jfloat* answer = (*_ANDROID_getDensity)();
-    return *answer;
+    jfloat answer = (*_ANDROID_getDensity)();
+    return answer;
 }
 
 const char *android_getDataDir(JNIEnv *env) {
