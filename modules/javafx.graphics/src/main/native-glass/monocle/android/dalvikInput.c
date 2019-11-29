@@ -65,6 +65,10 @@
 
 static int bind = 0;
 
+void requestGlassToRedraw();
+
+JNIEnv* graalEnv = NULL;
+
 static ANativeWindow *(*_ANDROID_getNativeWindow)();
 static jfloat        (*_ANDROID_getDensity)();
 static char          *(*_ANDROID_getDataDir)();
@@ -81,7 +85,10 @@ static jmethodID monocle_repaintAll;
 
 extern ANativeWindow* _GLUON_getNativeWindow();
 extern jfloat _GLUON_getDensity();
+
 void bind_activity(JNIEnv *env) {
+    graalEnv = env;
+    fprintf(stderr, "GOT native call from Graal, store env to %p\n",env);
     GLASS_LOG_FINEST("bind_activity: NOT Binding to %s", ANDROID_LIB);
 fprintf(stderr, "invoke _GLUON_getNativeWindow:\n");
 void* p = _GLUON_getNativeWindow();
@@ -110,6 +117,11 @@ fprintf(stderr, "result = %f\n", mydens);
 */
 GLASS_LOG_FINEST("GetNativeWindow = %p, getDensitiy = %p",_ANDROID_getNativeWindow, _ANDROID_getDensity );
     bind = JNI_TRUE;
+    jMonocleWindowManagerClass = (*env)->NewGlobalRef(env,
+                                                 (*env)->FindClass(env, "com/sun/glass/ui/monocle/MonocleWindowManager"));
+    monocle_repaintAll = (*env)->GetStaticMethodID(
+                                            env, jMonocleWindowManagerClass, "repaintFromNative",
+                                            "()V");
 /*
 fprintf(stderr, "in dalvikInput, notifyGlassStarted\n");
     (*_ANDROID_notifyGlassStarted)();
@@ -122,11 +134,6 @@ fprintf(stderr, "in dalvikInput, DID notifyGlassStarted\n");
     monocle_gotKeyEventFromNative = (*env)->GetStaticMethodID(
                                             env, jAndroidInputDeviceRegistryClass, "gotKeyEventFromNative",
                                             "(II)V");
-    jMonocleWindowManagerClass = (*env)->NewGlobalRef(env,
-                                                 (*env)->FindClass(env, "com/sun/glass/ui/monocle/MonocleWindowManager"));
-    monocle_repaintAll = (*env)->GetStaticMethodID(
-                                            env, jMonocleWindowManagerClass, "repaintFromNative",
-                                            "()V");
 */
 fprintf(stderr, "in dalvikInput, bindactivity done\n");
 
@@ -247,6 +254,25 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_android_DalvikInput_onSurfaceRedraw
     GLASS_LOG_WARNING("Call surfaceRedrawNeeded");
     GLASS_LOG_FINEST("Native code is notified that surface needs to be redrawn (repaintall)!");
     (*env)->CallStaticVoidMethod(env, jMonocleWindowManagerClass, monocle_repaintAll);
+}
+
+void requestGlassToRedraw() {
+    fprintf(stderr, "nativeSurfaceRedrawNeeded\n");
+    GLASS_LOG_WARNING("Call surfaceRedrawNeeded");
+    GLASS_LOG_FINEST("Native code is notified that surface needs to be redrawn (repaintall)!");
+    if (graalEnv == NULL) {
+        GLASS_LOG_WARNING("we can't do this yet, no graalEnv\n");
+        return;
+    }
+    if (jMonocleWindowManagerClass == NULL) {
+        GLASS_LOG_WARNING("we can't do this yet, no jMonocleWindowManagerClass\n");
+        return;
+    }
+    if (monocle_repaintAll == NULL) {
+        GLASS_LOG_WARNING("we can't do this yet, no monocle_repaintAll\n");
+        return;
+    }
+    (*graalEnv)->CallStaticVoidMethod(graalEnv, jMonocleWindowManagerClass, monocle_repaintAll);
 }
 
 /*

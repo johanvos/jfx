@@ -214,7 +214,7 @@ com.sun.javafx.gestures.scroll=true
 """
 def sysroot = "$ndk/platforms/$ndk_target/arch-arm"
 
-def ccFlags = ["-target",platform, "-c", "-DANDROID_NDK", "-DANDROID_VM"]
+def ccFlags = ["-target",platform, "-c", "-I$JDK_HOME/include", "-I$JDK_HOME/include/linux", "-DANDROID_NDK", "-DANDROID_VM"]
 
 def ccOptFlags = ["-fPIC", "-ffunction-sections", "-funwind-tables","-fstack-protector",
                   "-Os", "-O2", "-fno-strict-aliasing", "-fomit-frame-pointer"]
