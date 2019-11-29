@@ -25,9 +25,9 @@
 
 
 def closedDir = file("$projectDir/../rt-closed")
-def sdk="/opt/android-sdk"
+def sdk = project.hasProperty("ANDROID_SDK") ? "${ANDROID_SDK}" : "/opt/android-sdk;
+def ndk = project.hasProperty("ANDROID_NDK") ? "${ANDROID_NDK}" : "/opt/android-ndk;
 def sdk_target = "android-25"
-def ndk="/opt/android-ndk"
 def ndk_target="android-21"
 def platform="aarch64-linux-android21"
 
