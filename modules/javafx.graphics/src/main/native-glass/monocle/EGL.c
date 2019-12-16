@@ -32,7 +32,7 @@
 
 //Builtin library entrypoint
 JNIEXPORT jint JNICALL
-NOJNI_OnLoad_glass_monocle(JavaVM *vm, void * reserved) {
+JNI_OnLoad_glass_monocle(JavaVM *vm, void * reserved) {
 fprintf(stderr, "In JNI_OnLoad_glass)monocle\n");
 #ifdef JNI_VERSION_1_8
     //min. returned JNI_VERSION required by JDK8 for builtin libraries
