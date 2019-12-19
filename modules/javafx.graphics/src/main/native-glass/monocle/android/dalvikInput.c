@@ -68,6 +68,7 @@ static int bind = 0;
 void requestGlassToRedraw();
 
 JNIEnv* graalEnv = NULL;
+JavaVM *jVM = NULL;
 
 static ANativeWindow *(*_ANDROID_getNativeWindow)();
 static jfloat        (*_ANDROID_getDensity)();
@@ -87,7 +88,8 @@ extern ANativeWindow* _GLUON_getNativeWindow();
 extern jfloat _GLUON_getDensity();
 
 void bind_activity(JNIEnv *env) {
-    graalEnv = env;
+    (*env)->GetJavaVM(env, &jVM);
+    // graalEnv = env;
     fprintf(stderr, "GOT native call from Graal, store env to %p\n",env);
     GLASS_LOG_FINEST("bind_activity: NOT Binding to %s", ANDROID_LIB);
 fprintf(stderr, "invoke _GLUON_getNativeWindow:\n");
@@ -260,9 +262,13 @@ void requestGlassToRedraw() {
     fprintf(stderr, "nativeSurfaceRedrawNeeded\n");
     GLASS_LOG_WARNING("Call surfaceRedrawNeeded");
     GLASS_LOG_FINEST("Native code is notified that surface needs to be redrawn (repaintall)!");
-    if (graalEnv == NULL) {
-        GLASS_LOG_WARNING("we can't do this yet, no graalEnv\n");
+    if (jVM == NULL) {
+        GLASS_LOG_WARNING("we can't do this yet, no jVM\n");
         return;
+    }
+    if (graalEnv == NULL) {
+        jint error = (*jVM)->AttachCurrentThread(jVM, (void **)&graalEnv, NULL);
+        GLASS_LOG_WARNING("result of attach: %d\n",error);
     }
     if (jMonocleWindowManagerClass == NULL) {
         GLASS_LOG_WARNING("we can't do this yet, no jMonocleWindowManagerClass\n");
