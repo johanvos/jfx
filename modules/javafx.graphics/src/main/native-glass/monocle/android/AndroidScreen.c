@@ -69,7 +69,7 @@ JNIEXPORT jint JNICALL Java_com_sun_glass_ui_monocle_AndroidScreen__1getHeight
 JNIEXPORT jlong JNICALL Java_com_sun_glass_ui_monocle_AndroidScreen__1getNativeHandle
   (JNIEnv *env, jobject obj) {
     ANativeWindow* androidWindow = android_getNativeWindow(env);
-    return androidWindow;
+    return (long)androidWindow;
 }
 
 /*
