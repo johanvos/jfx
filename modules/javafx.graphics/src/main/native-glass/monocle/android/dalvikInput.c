@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -30,7 +30,6 @@
 #include "com_sun_glass_events_TouchEvent.h"
 #include "com_sun_glass_ui_android_SoftwareKeyboard.h"
 #include "com_sun_glass_ui_android_Activity.h"
-// #include "javafxports_android_FXDalvikEntity_InternalSurfaceView.h"
 #include "com_sun_glass_ui_android_DalvikInput.h"
 
 #define asPtr(x) ((void *) (unsigned long) (x))
@@ -87,6 +86,9 @@ static jmethodID monocle_repaintAll;
 extern ANativeWindow* _GLUON_getNativeWindow();
 extern jfloat _GLUON_getDensity();
 
+ANativeWindow* androidWindow = NULL;
+jfloat androidDensity = 0.f;
+
 void bind_activity(JNIEnv *env) {
     (*env)->GetJavaVM(env, &jVM);
     // graalEnv = env;
@@ -141,15 +143,25 @@ fprintf(stderr, "in dalvikInput, bindactivity done\n");
 
 }
 
+void android_setNativeWindow(ANativeWindow* nativeWindow) {
+    androidWindow = nativeWindow;
+}
+
+void android_setDensity(float nativeDensity) {
+    androidDensity = nativeDensity;
+}
+
 ANativeWindow *android_getNativeWindow(JNIEnv *env) {
     if(!bind) bind_activity(env);
-    return (*_ANDROID_getNativeWindow)();
+    return androidWindow;
+    // return (*_ANDROID_getNativeWindow)();
 }
 
 jfloat android_getDensity(JNIEnv *env) {
     if(!bind) bind_activity(env);
-    jfloat answer = (*_ANDROID_getDensity)();
-    return answer;
+    return androidDensity;
+    // jfloat answer = (*_ANDROID_getDensity)();
+    // return answer;
 }
 
 const char *android_getDataDir(JNIEnv *env) {
