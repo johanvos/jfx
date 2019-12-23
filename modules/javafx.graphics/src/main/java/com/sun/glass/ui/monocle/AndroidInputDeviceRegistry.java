@@ -45,6 +45,7 @@ public class AndroidInputDeviceRegistry extends InputDeviceRegistry {
     }
 
     public static void gotTouchEventFromNative(int count, int[] actions, int[] ids, int[] x, int[] y, int primary) {
+System.err.println("Androit gotTouchEventFrom native, count = "+count);
         TouchState touchState = new TouchState();
 
         if (primary == -1) {

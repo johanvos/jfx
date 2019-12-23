@@ -39,7 +39,7 @@
 #define THROW_RUNTIME_EXCEPTION(ENV, MESSAGE, ...)                          \
     char error_msg[256];                                                    \
     sprintf(error_msg, MESSAGE, __VA_ARGS__);                               \
-    if (env) {                                                              \
+    if (graalEnv) {                                                              \
       (*ENV)->ThrowNew(ENV,                                                 \
           (*ENV)->FindClass(ENV, "java/lang/RuntimeException"), error_msg); \
     }
@@ -126,10 +126,9 @@ GLASS_LOG_FINEST("GetNativeWindow = %p, getDensitiy = %p",_ANDROID_getNativeWind
     monocle_repaintAll = (*env)->GetStaticMethodID(
                                             env, jMonocleWindowManagerClass, "repaintFromNative",
                                             "()V");
-/*
-fprintf(stderr, "in dalvikInput, notifyGlassStarted\n");
-    (*_ANDROID_notifyGlassStarted)();
-fprintf(stderr, "in dalvikInput, DID notifyGlassStarted\n");
+// fprintf(stderr, "in dalvikInput, notifyGlassStarted\n");
+    // (*_ANDROID_notifyGlassStarted)();
+// fprintf(stderr, "in dalvikInput, DID notifyGlassStarted\n");
     jAndroidInputDeviceRegistryClass = (*env)->NewGlobalRef(env,
                                                  (*env)->FindClass(env, "com/sun/glass/ui/monocle/AndroidInputDeviceRegistry"));
     monocle_gotTouchEventFromNative = (*env)->GetStaticMethodID(
@@ -138,7 +137,6 @@ fprintf(stderr, "in dalvikInput, DID notifyGlassStarted\n");
     monocle_gotKeyEventFromNative = (*env)->GetStaticMethodID(
                                             env, jAndroidInputDeviceRegistryClass, "gotKeyEventFromNative",
                                             "(II)V");
-*/
 fprintf(stderr, "in dalvikInput, bindactivity done\n");
 
 }
@@ -189,10 +187,15 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_android_SoftwareKeyboard__1hide
  */
 JNIEXPORT void JNICALL Java_com_sun_glass_ui_android_DalvikInput_onMultiTouchEventNative
   (JNIEnv *env, jobject that, jint jcount, jintArray jactions, jintArray jids, jintArray jxs, jintArray jys) {
-    GLASS_LOG_FINE("Call InternalSurfaceView_onMultiTouchEventNative");
-fprintf(stderr, "IGNORE FOR NOW\n");
+}
 
-/*
+void android_onMultiTouchEventNative (int count, int[] actions, int[] ids, int[] xs, int[] ys) {
+    GLASS_LOG_FINE("Call InternalSurfaceView_onMultiTouchEventNative");
+    if (graalEnv == NULL) {
+        GLASS_LOG_FINE("graalEnv still null, not ready to process touch events");
+        return;
+    }
+    jint jcount = (jint)count;
     jlong jlongids[jcount];
     int count = jcount;
 
@@ -218,7 +221,6 @@ fprintf(stderr, "IGNORE FOR NOW\n");
     (*env)->ReleaseIntArrayElements(env, jids, ids, 0);
     (*env)->ReleaseIntArrayElements(env, jxs, xs, 0);
     (*env)->ReleaseIntArrayElements(env, jys, ys, 0);
-*/
 }
 
 
