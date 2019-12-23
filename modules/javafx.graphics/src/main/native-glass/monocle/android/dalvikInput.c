@@ -82,6 +82,7 @@ static jclass jMonocleWindowManagerClass;
 static jmethodID monocle_gotTouchEventFromNative;
 static jmethodID monocle_gotKeyEventFromNative;
 static jmethodID monocle_repaintAll;
+static jmethodID monocle_registerDevice;
 
 extern ANativeWindow* _GLUON_getNativeWindow();
 extern jfloat _GLUON_getDensity();
@@ -137,7 +138,9 @@ GLASS_LOG_FINEST("GetNativeWindow = %p, getDensitiy = %p",_ANDROID_getNativeWind
     monocle_gotKeyEventFromNative = (*env)->GetStaticMethodID(
                                             env, jAndroidInputDeviceRegistryClass, "gotKeyEventFromNative",
                                             "(II)V");
-fprintf(stderr, "in dalvikInput, bindactivity done\n");
+fprintf(stderr, "in dalvikInput, getdevregistermethod, class = %p and other class = %p\n", jAndroidInputDeviceRegistryClass, jMonocleWindowManagerClass);
+    monocle_registerDevice = (*env)->GetStaticMethodID(env, jAndroidInputDeviceRegistryClass, "registerDevice","()V");
+fprintf(stderr, "in dalvikInput, bindactivity done, regdev method = %p\n", monocle_registerDevice);
 
 }
 
@@ -189,38 +192,33 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_android_DalvikInput_onMultiTouchEve
   (JNIEnv *env, jobject that, jint jcount, jintArray jactions, jintArray jids, jintArray jxs, jintArray jys) {
 }
 
-void android_onMultiTouchEventNative (int count, int[] actions, int[] ids, int[] xs, int[] ys) {
+int deviceRegistered = 0;
+void android_gotTouchEvent (int count, int* actions, int* ids, int* xs, int* ys, int primary) {
     GLASS_LOG_FINE("Call InternalSurfaceView_onMultiTouchEventNative");
     if (graalEnv == NULL) {
         GLASS_LOG_FINE("graalEnv still null, not ready to process touch events");
         return;
     }
+    if (deviceRegistered == 0) {
+        deviceRegistered = 1;
+        GLASS_LOG_FINE("This is the first time we have a touch even, register device now");
+        (*graalEnv)->CallStaticVoidMethod(graalEnv, jAndroidInputDeviceRegistryClass, monocle_registerDevice);
+    }
     jint jcount = (jint)count;
     jlong jlongids[jcount];
-    int count = jcount;
 
-    int *actions = (*env)->GetIntArrayElements(env, jactions, 0);
-    int *ids = (*env)->GetIntArrayElements(env, jids, 0);
-    int *xs = (*env)->GetIntArrayElements(env, jxs, 0);
-    int *ys = (*env)->GetIntArrayElements(env, jys, 0);
-    int primary = 0;
-    for(int i=0;i<jcount;i++) {
-        actions[i] = to_jfx_touch_action(actions[i]);
-        jlongids[i] = (jlong)ids[i];
-        if (actions[i] != com_sun_glass_events_TouchEvent_TOUCH_STILL) {
-            primary = actions[i] == com_sun_glass_events_TouchEvent_TOUCH_RELEASED && jcount == 1 ? -1 : i;
-        }
-    }
+    jintArray jactions = (*graalEnv)->NewIntArray(graalEnv, count);
+    (*graalEnv)->SetIntArrayRegion(graalEnv, jactions, 0, count, actions);
+    jintArray jids = (*graalEnv)->NewIntArray(graalEnv, count);
+    (*graalEnv)->SetIntArrayRegion(graalEnv, jids, 0, count, ids);
+    jintArray jxs = (*graalEnv)->NewIntArray(graalEnv, count);
+    (*graalEnv)->SetIntArrayRegion(graalEnv, jxs, 0, count, xs);
+    jintArray jys = (*graalEnv)->NewIntArray(graalEnv, count);
+    (*graalEnv)->SetIntArrayRegion(graalEnv, jys, 0, count, ys);
 
-    GLASS_LOG_FINE("Glass will pass multitouchevent to monocle with count = %i",jcount);
-
-    (*env)->CallStaticVoidMethod(env, jAndroidInputDeviceRegistryClass, monocle_gotTouchEventFromNative,
+    (*graalEnv)->CallStaticVoidMethod(graalEnv, jAndroidInputDeviceRegistryClass, monocle_gotTouchEventFromNative,
             jcount, jactions, jids, jxs, jys, primary);
 
-    (*env)->ReleaseIntArrayElements(env, jactions, actions, 0);
-    (*env)->ReleaseIntArrayElements(env, jids, ids, 0);
-    (*env)->ReleaseIntArrayElements(env, jxs, xs, 0);
-    (*env)->ReleaseIntArrayElements(env, jys, ys, 0);
 }
 
 
