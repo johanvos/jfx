@@ -52,6 +52,20 @@ void *get_dlsym(void *handle, const char *symbol, int warn) {
     return ret;
 }
 
+EGLNativeWindowType getNativeWindowType() {
+fprintf(stderr, "NOT IMPLEMENTED: getNativeWindowType\n");
+return NULL;
+}
+EGLNativeDisplayType getNativeDisplayType() {
+fprintf(stderr, "NOT IMPLEMENTED: getNativeDisplayType\n");
+return NULL;
+}
+void * getLibGLEShandle() {
+fprintf(stderr, "NOT IMPLEMENTED: getLibGLEShandle\n");
+return NULL;
+}
+
+
 #define GET_DLSYM(handle,symbol) get_dlsym(handle,symbol, WARN_MISSING_SYMBOLS);
 
 EGLSurface sharedWindowSurface = NULL;
@@ -124,6 +138,7 @@ EGLSurface getSharedWindowSurface(EGLDisplay dpy,
     return sharedWindowSurface;
 }
 
+/*
 void setEGLAttrs(jint *attrs, int *eglAttrs) {
     int index = 0;
 
@@ -161,6 +176,7 @@ void setEGLAttrs(jint *attrs, int *eglAttrs) {
     eglAttrs[index++] = EGL_OPENGL_ES2_BIT;
     eglAttrs[index] = EGL_NONE;
 }
+*/
 
 ContextInfo *eglContextFromConfig(EGLDisplay *dpy, EGLConfig config) {
 
@@ -584,5 +600,19 @@ int printConfig(EGLDisplay display, EGLConfig config) {
 
     return 1;
 }
+/*
+
+void getLibGLEShandle() {
+fprintf(stderr, "GETgetLibGLEShandle ASKED, NOT IMPLEMENTED\n");
+}
+
+void getNativeDisplayType() {
+fprintf(stderr, "GETNATIVEDISPLAYTYPE ASKED, NOT IMPLEMENTED\n");
+}
+
+void getNativeWindowType() {
+fprintf(stderr, "GETNATIVEWINDOWTYPE ASKED, NOT IMPLEMENTED\n");
+}
+*/
 
 //#endif // DEBUG

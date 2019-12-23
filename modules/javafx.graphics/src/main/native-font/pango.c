@@ -32,6 +32,7 @@
 #include <pango/pangoft2.h>
 #include <dlfcn.h>
 
+
 #ifdef STATIC_BUILD
 JNIEXPORT jint JNICALL
 JNI_OnLoad_javafx_font_pango(JavaVM * vm, void * reserved) {
