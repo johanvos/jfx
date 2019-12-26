@@ -24,8 +24,7 @@
  */
 
 #include <android/native_window_jni.h>
-// #include "activity.h"
-#include "dalvikInput.h"
+#include "nativeBridge.h"
 #include "com_sun_glass_ui_monocle_AndroidScreen.h"
 #include "Monocle.h"
 #include "logging.h"
@@ -79,7 +78,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_glass_ui_monocle_AndroidScreen__1getNativeH
  */
 JNIEXPORT jfloat JNICALL Java_com_sun_glass_ui_monocle_AndroidScreen__1getDensity
   (JNIEnv *env, jobject obj) {
-    jfloat answer = android_getDensity();
+    jfloat answer = android_getDensity(env);
 LOGI("DENSITY", "GETDENSITY, answer = %f\n",answer);
     return answer;
 }
