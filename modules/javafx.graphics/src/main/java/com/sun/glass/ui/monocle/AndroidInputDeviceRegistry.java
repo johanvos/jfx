@@ -60,7 +60,7 @@ System.err.println("Androit gotTouchEventFrom native, count = "+count);
                 touchState.addPoint(p);
             }
         }
-        instance.gotTouchEvent(touchState);
+        Platform.runLater( () -> instance.gotTouchEvent(touchState));
     }
 
     private void gotTouchEvent(TouchState touchState) {
