@@ -33,6 +33,7 @@ import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
 
 final class MonocleWindowManager {
@@ -171,16 +172,25 @@ final class MonocleWindowManager {
     }
 
     static void repaintFromNative () {
+        CountDownLatch cdl = new CountDownLatch(1);
         Platform.runLater(new Runnable () {
-
             @Override
             public void run() {
                 Screen.notifySettingsChanged();
                 instance.getFocusedWindow().setFullScreen(true);
                 instance.repaintAll();
                 Toolkit.getToolkit().requestNextPulse();
+                cdl.countDown();
             }
         });
+        System.err.println("waiting for FX AppThread to do the repaint");
+        try {
+            cdl.await();
+            System.err.println("waited for FX AppThread to do the repaint");
+        } catch (InterruptedException ex) {
+            System.err.println("interrupted while waiting for FX AppThread to do the repaint");
+            ex.printStackTrace();
+        }
     }
 
 }

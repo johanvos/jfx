@@ -23,7 +23,8 @@
  * questions.
  */
 
-#if (defined(ANDROID_NDK) && defined(DALVIK_VM))
+// #if (defined(ANDROID_NDK) && defined(DALVIK_VM))
+#if defined(ANDROID_NDK) 
 
 #include <android/keycodes.h>
 #include "dalvikConst.h"

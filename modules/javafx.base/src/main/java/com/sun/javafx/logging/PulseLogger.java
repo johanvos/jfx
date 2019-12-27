@@ -35,7 +35,7 @@ import java.util.List;
 public class PulseLogger {
     public static final boolean PULSE_LOGGING_ENABLED;
 
-    private static final String [] DEFAULT_LOGGERS = {"com.sun.javafx.logging.PrintLogger", "com.sun.javafx.logging.jfr.JFRPulseLogger"};
+    private static final String [] DEFAULT_LOGGERS = {"com.sun.javafx.logging.PrintLogger"}; // , "com.sun.javafx.logging.jfr.JFRPulseLogger"};
     private static final Logger[] loggers;
 
     static {
