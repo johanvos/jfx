@@ -27,7 +27,6 @@
 #include <dlfcn.h>
 #include "nativeBridge.h"
 #include "Monocle.h"
-#include "logging.h"
 
 JNIEnv* javaEnv = NULL;
 JavaVM *jVM = NULL;
@@ -43,10 +42,6 @@ static jmethodID monocle_registerDevice;
 ANativeWindow* androidWindow = NULL;
 jfloat androidDensity = 0.f;
 static int deviceRegistered = 0;
-
-#define GLASS_LOG_FINE(...)  ((void)__android_log_print(ANDROID_LOG_INFO,"GLASS", __VA_ARGS__))
-#define GLASS_LOG_FINEST(...)  ((void)__android_log_print(ANDROID_LOG_INFO,"GLASS", __VA_ARGS__))
-#define GLASS_LOG_WARNING(...)  ((void)__android_log_print(ANDROID_LOG_INFO,"GLASS", __VA_ARGS__))
 
 void initializeFromJava (JNIEnv *env) {
     if (jVM != NULL) return; // already have a jVM
@@ -67,11 +62,16 @@ void initializeFromJava (JNIEnv *env) {
                                             env, jAndroidInputDeviceRegistryClass, "gotKeyEventFromNative",
                                             "(II)V");
     monocle_registerDevice = (*env)->GetStaticMethodID(env, jAndroidInputDeviceRegistryClass, "registerDevice","()V");
+    GLASS_LOG_FINEST("Initializing native Android Bridge done");
 }
 
 void initializeFromNative () {
     if (javaEnv != NULL) return; // already have a JNIEnv
-    if (jVM == NULL) return; // can't initialize from native before we have a jVM
+    if (jVM == NULL) {
+        GLASS_LOG_FINE("initialize from native can't be done without JVM");
+        return; // can't initialize from native before we have a jVM
+    }
+    GLASS_LOG_FINE("initializeFromNative");
     jint error = (*jVM)->AttachCurrentThread(jVM, (void **)&javaEnv, NULL);
     if (error != 0) {
         GLASS_LOG_FINE("initializeFromNative failed with error %d\n", error);
@@ -80,17 +80,18 @@ void initializeFromNative () {
 
 /* ===== called from native ===== */
 
-void android_setNativeWindow(ANativeWindow* nativeWindow) {
+void androidJfx_setNativeWindow(ANativeWindow* nativeWindow) {
     initializeFromNative();
     androidWindow = nativeWindow;
+    GLASS_LOG_FINE("after androidSetNativeWindow asked, window is %p\n", nativeWindow);
 }
 
-void android_setDensity(float nativeDensity) {
+void androidJfx_setDensity(float nativeDensity) {
     initializeFromNative();
     androidDensity = nativeDensity;
 }
 
-void android_gotTouchEvent (int count, int* actions, int* ids, int* xs, int* ys, int primary) {
+void androidJfx_gotTouchEvent (int count, int* actions, int* ids, int* xs, int* ys, int primary) {
     initializeFromNative();
     GLASS_LOG_FINE("Call InternalSurfaceView_onMultiTouchEventNative");
     if (javaEnv == NULL) {

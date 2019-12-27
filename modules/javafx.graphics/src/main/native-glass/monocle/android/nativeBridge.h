@@ -23,13 +23,19 @@
  * questions.
  */
 #include <android/native_window_jni.h>
+#include <android/log.h>
 
-void android_setNativeWindow(ANativeWindow* nativeWindow);
-void android_setDensity(float nativeDensity);
-void android_gotTouchEvent (int count, int* actions, int* ids, int* xs, int* ys, int primary);
+void androidJfx_setNativeWindow(ANativeWindow* nativeWindow);
+void androidJfx_setDensity(float nativeDensity);
+void androidJfx_gotTouchEvent (int count, int* actions, int* ids, int* xs, int* ys, int primary);
 void requestGlassToRedraw();
 
+#define GLASS_LOG_INFO(...)  ((void)__android_log_print(ANDROID_LOG_INFO,"GLASS", __VA_ARGS__))
+#define GLASS_LOG_FINE(...)  ((void)__android_log_print(ANDROID_LOG_INFO,"GLASS", __VA_ARGS__))
+#define GLASS_LOG_FINEST(...)  ((void)__android_log_print(ANDROID_LOG_INFO,"GLASS", __VA_ARGS__))
+#define GLASS_LOG_WARNING(...)  ((void)__android_log_print(ANDROID_LOG_INFO,"GLASS", __VA_ARGS__))
 
 ANativeWindow* android_getNativeWindow(JNIEnv *env);
 jfloat android_getDensity(JNIEnv *env);
+
 
