@@ -399,10 +399,6 @@ ext.IS_COMPILE_PARFAIT = Boolean.parseBoolean(COMPILE_PARFAIT)
 defineProperty("STATIC_BUILD", "false")
 ext.IS_STATIC_BUILD = Boolean.parseBoolean(STATIC_BUILD)
 
-if (IS_STATIC_BUILD && IS_COMPILE_MEDIA) {
-    throw new GradleException("Can not have COMPILE_MEDIA when STATIC_BUILD is enabled");
-}
-
 // BUILD_TOOLS_DOWNLOAD_SCRIPT specifies a path of a gradle script which downloads
 // required build tools.
 defineProperty("BUILD_TOOLS_DOWNLOAD_SCRIPT", "")
@@ -2814,7 +2810,8 @@ project(":media") {
                          "OUTPUT_DIR=${nativeOutputDir}", "BUILD_TYPE=${buildType}", "BASE_NAME=jfxmedia",
                          "COMPILE_PARFAIT=${compileParfait}",
                          IS_64 ? "ARCH=x64" : "ARCH=x32",
-                        "CC=${mediaProperties.compiler}", "LINKER=${mediaProperties.linker}")
+                        "CC=${mediaProperties.compiler}", "LINKER=${mediaProperties.linker}", 
+                        "STATIC=$IS_STATIC_BUILD")
 
                     if (t.name == "win") {
                         environment(WINDOWS_NATIVE_COMPILE_ENVIRONMENT)
@@ -2841,7 +2838,7 @@ project(":media") {
                         commandLine ("make", "${makeJobsFlag}", "-C", "${nativeSrcDir}/gstreamer/projects/${projectDir}/gstreamer-lite")
                         args("OUTPUT_DIR=${nativeOutputDir}", "BUILD_TYPE=${buildType}", "BASE_NAME=gstreamer-lite",
                              IS_64 ? "ARCH=x64" : "ARCH=x32", "CC=${mediaProperties.compiler}",
-                             "AR=${mediaProperties.ar}", "LINKER=${mediaProperties.linker}")
+                             "AR=${mediaProperties.ar}", "LINKER=${mediaProperties.linker}", "STATIC=$IS_STATIC_BUILD")
 
                         if (t.name == "win") {
                             environment(WINDOWS_NATIVE_COMPILE_ENVIRONMENT)
@@ -2859,7 +2856,8 @@ project(":media") {
                         commandLine ("make", "${makeJobsFlag}", "-C", "${nativeSrcDir}/gstreamer/projects/${projectDir}/fxplugins")
                         args("OUTPUT_DIR=${nativeOutputDir}", "BUILD_TYPE=${buildType}", "BASE_NAME=fxplugins",
                              IS_64 ? "ARCH=x64" : "ARCH=x32",
-                             "CC=${mediaProperties.compiler}", "AR=${mediaProperties.ar}", "LINKER=${mediaProperties.linker}")
+                             "CC=${mediaProperties.compiler}", "AR=${mediaProperties.ar}", "LINKER=${mediaProperties.linker}",
+                             "STATIC=$IS_STATIC_BUILD")
 
                         if (t.name == "win") {
                             Map winEnv = new HashMap(WINDOWS_NATIVE_COMPILE_ENVIRONMENT)
@@ -3176,7 +3174,7 @@ project(":media") {
                                         args("CC=${mediaProperties.compiler}", "LINKER=${mediaProperties.linker}",
                                              "OUTPUT_DIR=${nativeOutputDir}", "BUILD_TYPE=${buildType}",
                                              "BASE_NAME=avplugin", "VERSION=${version}", "LIBAV_DIR=${libavDir}",
-                                             "SUFFIX=", IS_64 ? "ARCH=x64" : "ARCH=x32")
+                                             "SUFFIX=", IS_64 ? "ARCH=x64" : "ARCH=x32", "STATIC=$IS_STATIC_BUILD")
                                     }
                                 }
                             }
@@ -3214,7 +3212,8 @@ project(":media") {
                                 commandLine ("make", "${makeJobsFlag}", "-C", "${nativeSrcDir}/gstreamer/projects/linux/avplugin")
                                 args("CC=${mediaProperties.compiler}", "LINKER=${mediaProperties.linker}",
                                      "OUTPUT_DIR=${nativeOutputDir}", "BUILD_TYPE=${buildType}",
-                                     "BASE_NAME=avplugin", IS_64 ? "ARCH=x64" : "ARCH=x32")
+                                     "BASE_NAME=avplugin", IS_64 ? "ARCH=x64" : "ARCH=x32", 
+                                     "STATIC=$IS_STATIC_BUILD")
                             }
                         }
                     }

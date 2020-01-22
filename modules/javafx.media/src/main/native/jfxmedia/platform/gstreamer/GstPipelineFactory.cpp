@@ -82,6 +82,7 @@ const ContentTypesList& CGstPipelineFactory::GetSupportedContentTypes()
 
 uint32_t CGstPipelineFactory::CreatePlayerPipeline(CLocator* locator, CPipelineOptions *pOptions, CPipeline** ppPipeline)
 {
+fprintf(stderr, "CPP 1\n");
     LOWLEVELPERF_EXECTIMESTART("CGstPipelineFactory::CreatePlayerPipeline()");
 
     if (NULL == locator)
@@ -89,11 +90,13 @@ uint32_t CGstPipelineFactory::CreatePlayerPipeline(CLocator* locator, CPipelineO
 
     GstElement* pSource;
     uint32_t    uRetCode = CreateSourceElement(locator, &pSource, pOptions);
+fprintf(stderr, "CPP 2, retCode = %d\n", uRetCode);
     if (ERROR_NONE != uRetCode)
         return uRetCode;
 
     if (locator->GetContentType().empty())
         return ERROR_LOCATOR_CONTENT_TYPE_NULL;
+fprintf(stderr, "CPP 3\n");
 
     //***** Initialize the return pipeline
     *ppPipeline = NULL;
@@ -103,8 +106,11 @@ uint32_t CGstPipelineFactory::CreatePlayerPipeline(CLocator* locator, CPipelineO
         CONTENT_TYPE_M4V == locator->GetContentType())
     {
         GstElement* pVideoSink = NULL;
+fprintf(stderr, "CPP 4\n");
 #if ENABLE_APP_SINK && !ENABLE_NATIVE_SINK
+fprintf(stderr, "CPP 5\n");
         pVideoSink = CreateElement("appsink");
+fprintf(stderr, "CPP 6\n");
         if (NULL == pVideoSink)
             return ERROR_GSTREAMER_VIDEO_SINK_CREATE;
 #endif // !(ENABLE_APP_SINK && !ENABLE_NATIVE_SINK)
@@ -114,6 +120,7 @@ uint32_t CGstPipelineFactory::CreatePlayerPipeline(CLocator* locator, CPipelineO
                    CONTENT_TYPE_M4V == locator->GetContentType())
         {
             uRetCode = CreateMP4Pipeline(pSource, pVideoSink, (CPipelineOptions*) pOptions, ppPipeline);
+fprintf(stderr, "CPP 2, retCode = %d\n", uRetCode);
             if (ERROR_NONE != uRetCode)
                 return uRetCode;
         }
@@ -121,19 +128,23 @@ uint32_t CGstPipelineFactory::CreatePlayerPipeline(CLocator* locator, CPipelineO
     else if (CONTENT_TYPE_MPA == locator->GetContentType() ||
              CONTENT_TYPE_MP3 == locator->GetContentType())
     {
+fprintf(stderr, "CPP 7\n");
         uRetCode = CreateMp3AudioPipeline(pSource, pOptions, ppPipeline);
+fprintf(stderr, "CPP 8, uRetCode = %p\n", uRetCode);
         if (ERROR_NONE != uRetCode)
             return uRetCode;
     }
     else if (CONTENT_TYPE_WAV == locator->GetContentType())
     {
         uRetCode = CreateWavPcmAudioPipeline(pSource, pOptions, ppPipeline);
+fprintf(stderr, "CPP 9, uRetCode = %p\n", uRetCode);
         if (ERROR_NONE != uRetCode)
             return uRetCode;
     }
     else if (CONTENT_TYPE_AIFF == locator->GetContentType())
     {
         uRetCode = CreateAiffPcmAudioPipeline(pSource, pOptions, ppPipeline);
+fprintf(stderr, "CPP 10, uRetCode = %p\n", uRetCode);
         if (ERROR_NONE != uRetCode)
             return uRetCode;
     }
@@ -148,6 +159,7 @@ uint32_t CGstPipelineFactory::CreatePlayerPipeline(CLocator* locator, CPipelineO
 #endif // !(ENABLE_APP_SINK && !ENABLE_NATIVE_SINK)
 
         uRetCode = CreateHLSPipeline(pSource, pVideoSink, pOptions, ppPipeline);
+fprintf(stderr, "CPP 11, uRetCode = %p\n", uRetCode);
         if (ERROR_NONE != uRetCode)
             return uRetCode;
     }
@@ -157,6 +169,7 @@ uint32_t CGstPipelineFactory::CreatePlayerPipeline(CLocator* locator, CPipelineO
     }
 
     if (NULL == *ppPipeline)
+fprintf(stderr, "CPP 12, uRetCode = %p\n", uRetCode);
         uRetCode = ERROR_PIPELINE_CREATION;
 
     LOWLEVELPERF_EXECTIMESTOP("CGstPipelineFactory::CreatePlayerPipeline()");
@@ -175,11 +188,14 @@ uint32_t CGstPipelineFactory::CreateSourceElement(CLocator* locator, GstElement*
 {
     GstElement *source = NULL;
 
+fprintf(stderr, "CreateSE1\n");
 #if ! ENABLE_NATIVE_SOURCE
+fprintf(stderr, "CreateSEA\n");
     switch (locator->GetType())
     {
         case CLocator::kStreamLocatorType:
         {
+fprintf(stderr, "CreateSEA1\n");
             CLocatorStream* streamLocator = (CLocatorStream*)locator;
             CStreamCallbacks *callbacks = streamLocator->GetCallbacks();
 
@@ -192,8 +208,10 @@ uint32_t CGstPipelineFactory::CreateSourceElement(CLocator* locator, GstElement*
                 return ERROR_PLATFORM_UNSUPPORTED;
             }
 #endif // TARGET_OS_MAC
+fprintf(stderr, "CreateSEA2\n");
 
             GstElement *javaSource = CreateElement ("javasource");
+fprintf(stderr, "CreateSEA3, js = %p\n", javaSource);
             if (NULL == javaSource)
                 return ERROR_GSTREAMER_ELEMENT_CREATE;
 
@@ -263,6 +281,7 @@ uint32_t CGstPipelineFactory::CreateSourceElement(CLocator* locator, GstElement*
     }
 #else // ENABLE_NATIVE_SOURCE
     const gchar* location = locator->GetLocation().c_str();
+fprintf(stderr, "LOC = %s\n", location);
     if(g_str_has_prefix(location, "file"))
     {
         source = CreateElement("filesrc");
@@ -879,6 +898,7 @@ uint32_t CGstPipelineFactory::CreateVideoBin(const char* strDecoderName, GstElem
 
 GstElement* CGstPipelineFactory::CreateElement(const char* strFactoryName)
 {
+fprintf(stderr, "create element named %s\n", strFactoryName);
     return gst_element_factory_make (strFactoryName, NULL);
 }
 

@@ -531,6 +531,8 @@ gst_registry_add_plugin (GstRegistry * registry, GstPlugin * plugin)
     }
   }
 
+  fprintf (stderr, "adding plugin %p for filename \"%s\"\n",
+      plugin, GST_STR_NULL (plugin->filename));
   GST_DEBUG_OBJECT (registry, "adding plugin %p for filename \"%s\"",
       plugin, GST_STR_NULL (plugin->filename));
 
@@ -634,6 +636,7 @@ gst_registry_add_feature (GstRegistry * registry, GstPluginFeature * feature)
   g_return_val_if_fail (GST_OBJECT_NAME (feature) != NULL, FALSE);
   g_return_val_if_fail (feature->plugin_name != NULL, FALSE);
 
+fprintf(stderr, "gst_registry_add_feature called, name = %s, pluginname = %s\n", GST_OBJECT_NAME (feature), feature->plugin_name);
   GST_OBJECT_LOCK (registry);
   existing_feature = gst_registry_lookup_feature_locked (registry,
       GST_OBJECT_NAME (feature));
@@ -988,11 +991,14 @@ gst_registry_find_feature (GstRegistry * registry, const gchar * name,
 {
   GstPluginFeature *feature = NULL;
 
+fprintf(stderr, "grff1\n");
   g_return_val_if_fail (GST_IS_REGISTRY (registry), NULL);
   g_return_val_if_fail (name != NULL, NULL);
   g_return_val_if_fail (g_type_is_a (type, GST_TYPE_PLUGIN_FEATURE), NULL);
+fprintf(stderr, "grff4, find feature named %s\n", name);
 
   feature = gst_registry_lookup_feature (registry, name);
+fprintf(stderr, "grff5, f = %p\n", feature);
   if (feature && !g_type_is_a (G_TYPE_FROM_INSTANCE (feature), type)) {
     gst_object_unref (feature);
     feature = NULL;
@@ -1072,6 +1078,7 @@ gst_registry_get_plugin_list (GstRegistry * registry)
 static GstPluginFeature *
 gst_registry_lookup_feature_locked (GstRegistry * registry, const char *name)
 {
+fprintf(stderr, "gst_registry_lookup_feature_locked for %s\n", name);
   return g_hash_table_lookup (registry->priv->feature_hash, name);
 }
 
@@ -1329,6 +1336,7 @@ static gboolean
 gst_registry_scan_path_level (GstRegistryScanContext * context,
     const gchar * path, int level)
 {
+fprintf(stderr, "gst_registry_scan_path_level, path = %s\n", path);
 #ifndef GSTREAMER_LITE
   GDir *dir;
   const gchar *dirent;
@@ -1617,6 +1625,7 @@ gst_registry_scan_path_internal (GstRegistryScanContext * context,
 gboolean
 gst_registry_scan_path (GstRegistry * registry, const gchar * path)
 {
+fprintf(stderr, "gst_registry_scan_path, path = %s\n", path);
   GstRegistryScanContext context;
   gboolean result;
 

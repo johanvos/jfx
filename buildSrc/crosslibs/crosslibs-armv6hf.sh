@@ -48,7 +48,7 @@ getPackages() {
     PACKAGEDIR=`echo $REPO | tr /: -`-$DISTRO-$CATEGORY-$ARCH
 
     cd $RT/..
-    OUT="$PWD/crosslibs/$TOOLCHAIN"
+    OUT="$PWD/newcrosslibs/$TOOLCHAIN"
     OUTDAT=$OUT.data
 
     PACKAGELIST=$OUTDAT/$PACKAGEDIR/Packages
@@ -422,7 +422,7 @@ if [[ $CONFIRMED -eq 0 ]]; then
     read RT
 fi
 
-CROSSLIBS=$RT/../crosslibs
+CROSSLIBS=$RT/../newcrosslibs
 echo Using crosslibs directory $CROSSLIBS
 
 mkdir -p $CROSSLIBS || exit 1

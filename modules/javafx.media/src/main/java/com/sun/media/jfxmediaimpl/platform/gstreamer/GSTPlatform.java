@@ -59,6 +59,7 @@ public final class GSTPlatform extends Platform {
      * All supported protocols.
      */
     private static final String[] PROTOCOLS = {
+        "resource",
         "file",
         "http",
         "https",

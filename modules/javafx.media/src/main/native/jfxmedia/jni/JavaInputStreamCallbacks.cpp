@@ -59,16 +59,25 @@ bool CJavaInputStreamCallbacks::Init(JNIEnv *env, jobject jLocator)
     }
 
     CJavaEnvironment javaEnv(m_jvm);
+fprintf(stderr, "CJAISC, c0\n");
 
+        if (javaEnv.reportException()) {
+fprintf(stderr, "AAAAAAAAAAAAAAICJAISC, c0\n");
+}
     static jmethodID createConnectionHolder = 0;
     if (0 == createConnectionHolder)
     {
+fprintf(stderr, "CJAISC, c1\n");
         jclass klass = env->GetObjectClass(jLocator);
         createConnectionHolder = env->GetMethodID(klass, "createConnectionHolder", "()Lcom/sun/media/jfxmedia/locator/ConnectionHolder;");
         env->DeleteLocalRef(klass);
-        if (javaEnv.reportException())
+fprintf(stderr, "CJAISC, c2, klass = %p and holder = %p\n", klass, createConnectionHolder);
+        if (javaEnv.reportException()) {
+fprintf(stderr, "CJAISC, c3\n");
             return false;
+        }
     }
+fprintf(stderr, "CJAISC, c4\n");
 
     m_ConnectionHolder = env->NewGlobalRef(env->CallObjectMethod(jLocator, createConnectionHolder));
     if (NULL == m_ConnectionHolder)
@@ -76,6 +85,7 @@ bool CJavaInputStreamCallbacks::Init(JNIEnv *env, jobject jLocator)
         javaEnv.reportException();
         return false;
     }
+fprintf(stderr, "CJAISC, c5\n");
 
     static bool methodIDsInitialized = false;
     bool hasException = false;

@@ -152,10 +152,13 @@ uint32_t CMediaManager::CreatePlayer(CLocator* pLocator, CPipelineOptions* pOpti
     CPipelineFactory*   pPipelineFactory = NULL;
     uint32_t            uRetCode;
 
+fprintf(stderr, "CP 1\n");
+
     if (NULL == pLocator)
         return ERROR_LOCATOR_NULL;
 
     uRetCode = CPipelineFactory::GetInstance(&pPipelineFactory);
+fprintf(stderr, "CP 2, ret = %d\n", uRetCode);
     if (ERROR_NONE != uRetCode)
         return uRetCode;
     else if (NULL == pPipelineFactory)
@@ -171,9 +174,11 @@ uint32_t CMediaManager::CreatePlayer(CLocator* pLocator, CPipelineOptions* pOpti
         if (NULL == pOptions)
             return ERROR_MEMORY_ALLOCATION;
     }
+fprintf(stderr, "CP 3\n");
 
     //***** Try to create a pipeline
     uRetCode = pPipelineFactory->CreatePlayerPipeline(pLocator, pOptions, &pPipeline);
+fprintf(stderr, "CP 4, ret = %d\n", uRetCode);
 
     //***** Create the new CMedia object
     if (ERROR_NONE == uRetCode)
@@ -181,6 +186,7 @@ uint32_t CMediaManager::CreatePlayer(CLocator* pLocator, CPipelineOptions* pOpti
         //***** Try to create a CMedia to associate with the pipeline
         *ppMedia = new(nothrow) CMedia(pPipeline);
 
+fprintf(stderr, "CP 5, ppM = \n", ppMedia);
         if (NULL == *ppMedia)
         {
             //Cleanup if media creation failed.

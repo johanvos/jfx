@@ -814,10 +814,12 @@ init_post (GOptionContext * context, GOptionGroup * group, gpointer data,
       GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN);
 
 #if defined(GSTREAMER_LITE)
+fprintf(stderr, "GST INIT, REG STATIC\n");
   gst_plugin_register_static (GST_VERSION_MAJOR, GST_VERSION_MINOR,
       "gstplugins-lite", "gstplugins-lite",
       lite_plugins_init, VERSION, GST_LICENSE, PACKAGE,
       GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN);
+fprintf(stderr, "GST INIT, REG STATIC done\n");
 #endif // GSTREAMER_LITE
 
   /*
@@ -834,6 +836,7 @@ init_post (GOptionContext * context, GOptionGroup * group, gpointer data,
   if (!gst_update_registry ())
     return FALSE;
 
+fprintf(stderr, "GST INIT, REG UPDATE done\n");
   GST_INFO ("GLib runtime version: %d.%d.%d", glib_major_version,
       glib_minor_version, glib_micro_version);
   GST_INFO ("GLib headers version: %d.%d.%d", GLIB_MAJOR_VERSION,
