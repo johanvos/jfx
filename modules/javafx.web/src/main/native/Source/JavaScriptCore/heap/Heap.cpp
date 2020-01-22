@@ -122,6 +122,7 @@ size_t minHeapSize(HeapType heapType, size_t ramSize)
 
 size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
 {
+fprintf(stderr, "JS propheapsize, hs = %d and ramsize = %d\n", heapSize, ramSize);
     if (VM::isInMiniMode())
         return Options::miniVMHeapGrowthFactor() * heapSize;
 
@@ -438,6 +439,7 @@ void Heap::lastChanceToFinalize()
 
 void Heap::releaseDelayedReleasedObjects()
 {
+fprintf(stderr, "JS relaieaseDelaed\n");
 #if USE(FOUNDATION) || USE(GLIB)
     // We need to guard against the case that releasing an object can create more objects due to the
     // release calling into JS. When those JS call(s) exit and all locks are being dropped we end up
@@ -489,6 +491,7 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
 bool Heap::overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType)
 {
 #if PLATFORM(IOS_FAMILY)
+fprintf(stderr, "JS heap, overcritical\n");
     if (memoryThresholdCallType == MemoryThresholdCallType::Direct || ++m_precentAvailableMemoryCachedCallCount >= 100) {
         m_overCriticalMemoryThreshold = bmalloc::api::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold();
         m_precentAvailableMemoryCachedCallCount = 0;
@@ -796,6 +799,7 @@ size_t Heap::extraMemorySize()
 
 size_t Heap::size()
 {
+fprintf(stderr, "JS heap, size asked\n");
     return m_objectSpace.size() + extraMemorySize();
 }
 
