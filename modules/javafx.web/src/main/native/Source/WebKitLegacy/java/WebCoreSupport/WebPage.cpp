@@ -848,9 +848,13 @@ JNIEXPORT jlong JNICALL Java_com_sun_webkit_WebPage_twkCreatePage
 {
     // FIXME-java(JDK-8169950): Refactor the following WebCore module
     // initialization flow.
+fprintf(stderr, "twkCreatePage0\n");
     JSC::initializeThreading();
+fprintf(stderr, "twkCreatePage1\n");
     WTF::initializeMainThread();
+fprintf(stderr, "twkCreatePage2\n");
     RunLoop::initializeMainRunLoop();
+fprintf(stderr, "twkCreatePage3\n");
     // RT-17330: Allow local loads for substitute data, that is,
     // for content loaded with twkLoad
     WebCore::SecurityPolicy::setLocalLoadPolicy(
@@ -864,20 +868,24 @@ JNIEXPORT jlong JNICALL Java_com_sun_webkit_WebPage_twkCreatePage
     WebKitInitializeLogChannelsIfNecessary();
 #endif
     WebCore::PlatformStrategiesJava::initialize();
+fprintf(stderr, "twkCreatePage4\n");
 
     static std::once_flag initializeJSCOptions;
+fprintf(stderr, "twkCreatePage5\n");
     std::call_once(initializeJSCOptions, [] {
         JSC::Options::useJIT() = s_useJIT;
         // Enable DFG only if JIT is enabled.
         JSC::Options::useDFGJIT() = s_useJIT && s_useDFGJIT;
     });
 
+fprintf(stderr, "twkCreatePage6\n");
     JLObject jlself(self, true);
 
     //utaTODO: history agent implementation
 
     auto pc = pageConfigurationWithEmptyClients();
     auto pageStorageSessionProvider = PageStorageSessionProvider::create();
+fprintf(stderr, "twkCreatePage7\n");
     pc.cookieJar = CookieJar::create(pageStorageSessionProvider.copyRef());
     pc.chromeClient = new ChromeClientJava(jlself);
     pc.contextMenuClient = new ContextMenuClientJava(jlself);
@@ -891,6 +899,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_webkit_WebPage_twkCreatePage
     pc.loaderClientForMainFrame = new FrameLoaderClientJava(jlself);
     pc.progressTrackerClient = new ProgressTrackerClientJava(jlself);
 
+fprintf(stderr, "twkCreatePage8\n");
     pc.backForwardClient = BackForwardList::create();
     auto page = std::make_unique<Page>(WTFMove(pc));
     // Associate PageSupplementJava instance which has WebPage java object.
@@ -899,6 +908,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_webkit_WebPage_twkCreatePage
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(page.get(), *new GeolocationClientMock());
 #endif
+fprintf(stderr, "twkCreatePage9\n");
     return ptr_to_jlong(new WebPage(WTFMove(page)));
 }
 

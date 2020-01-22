@@ -64,6 +64,7 @@ JNI_OnLoad_glass(JavaVM *jvm, void *reserved)
 JNI_OnLoad(JavaVM *jvm, void *reserved)
 #endif
 {
+fprintf(stderr, "ONLOAD in launcher!\n");
     (void) reserved;
 
     javaVM = jvm;

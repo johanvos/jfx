@@ -95,6 +95,19 @@
 #if USE(GLIB)
 #include "JSCGLibWrapperObject.h"
 #endif
+#include <execinfo.h>
+
+#define MAX_STACK_LEVELS 50
+
+// helper-function to print the current stack trace
+void print_stacktrace()
+{
+  void *buffer[MAX_STACK_LEVELS];
+  int levels = backtrace(buffer, MAX_STACK_LEVELS);
+
+  // print to stderr (fd = 2), and remove this function from the trace
+  backtrace_symbols_fd(buffer + 1, levels - 1, 2);
+}
 
 namespace JSC {
 
@@ -122,7 +135,7 @@ size_t minHeapSize(HeapType heapType, size_t ramSize)
 
 size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
 {
-fprintf(stderr, "JS propheapsize, hs = %d and ramsize = %d\n", heapSize, ramSize);
+fprintf(stderr, "JS propheapsize, hs = %ld and ramsize = %ld\n", heapSize, ramSize);
     if (VM::isInMiniMode())
         return Options::miniVMHeapGrowthFactor() * heapSize;
 
@@ -301,7 +314,8 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_threadCondition(AutomaticThreadCondition::create())
 {
     m_worldState.store(0);
-
+fprintf(stderr, "[JS] HEAP created?\n");
+print_stacktrace();
     if (Options::useConcurrentGC()) {
         if (Options::useStochasticMutatorScheduler())
             m_scheduler = std::make_unique<StochasticSpaceTimeMutatorScheduler>(*this);
@@ -328,6 +342,7 @@ Heap::Heap(VM* vm, HeapType heapType)
 
 Heap::~Heap()
 {
+fprintf(stderr, "[JS] HEAP destroyed?\n");
     forEachSlotVisitor(
         [&] (SlotVisitor& visitor) {
             visitor.clearMarkStacks();
@@ -348,6 +363,7 @@ bool Heap::isPagedOut(MonotonicTime deadline)
 // Run all pending finalizers now because we won't get another chance.
 void Heap::lastChanceToFinalize()
 {
+fprintf(stderr, "[JS] lastChanceToFinalize\n");
     MonotonicTime before;
     if (Options::logGC()) {
         before = MonotonicTime::now();
@@ -480,6 +496,7 @@ void Heap::reportExtraMemoryAllocatedSlowCase(size_t size)
 
 void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
 {
+fprintf(stderr, "[JS] deprecated!\n");
     // FIXME: Change this to use SaturatedArithmetic when available.
     // https://bugs.webkit.org/show_bug.cgi?id=170411
     Checked<size_t, RecordOverflow> checkedNewSize = m_deprecatedExtraMemorySize;
@@ -490,8 +507,8 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
 
 bool Heap::overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType)
 {
-#if PLATFORM(IOS_FAMILY)
 fprintf(stderr, "JS heap, overcritical\n");
+#if PLATFORM(IOS_FAMILY)
     if (memoryThresholdCallType == MemoryThresholdCallType::Direct || ++m_precentAvailableMemoryCachedCallCount >= 100) {
         m_overCriticalMemoryThreshold = bmalloc::api::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold();
         m_precentAvailableMemoryCachedCallCount = 0;
@@ -545,6 +562,7 @@ bool Heap::unprotect(JSValue k)
 
 void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
 {
+fprintf(stderr, "[JS] heap addRef\n");
     if (m_arrayBuffers.addReference(cell, buffer)) {
         collectIfNecessaryOrDefer();
         didAllocate(buffer->gcSizeEstimateInBytes());
@@ -584,6 +602,7 @@ void Heap::finalizeUnconditionalFinalizers()
 
 void Heap::willStartIterating()
 {
+fprintf(stderr, "[JS] heap willstartit\n");
     m_objectSpace.willStartIterating();
 }
 
@@ -650,6 +669,7 @@ void Heap::assertMarkStacksEmpty()
 
 void Heap::gatherStackRoots(ConservativeRoots& roots)
 {
+fprintf(stderr, "[JS] heap gatherStackRoots\n");
     m_machineThreads->gatherConservativeRoots(roots, *m_jitStubRoutines, *m_codeBlocks, m_currentThreadState, m_currentThread);
 }
 
@@ -786,6 +806,7 @@ size_t Heap::objectCount()
 
 size_t Heap::extraMemorySize()
 {
+fprintf(stderr, "[JS] heap extraMemorySize\n");
     // FIXME: Change this to use SaturatedArithmetic when available.
     // https://bugs.webkit.org/show_bug.cgi?id=170411
     Checked<size_t, RecordOverflow> checkedTotal = m_extraMemorySize;
@@ -872,6 +893,7 @@ std::unique_ptr<TypeCountSet> Heap::objectTypeCounts()
 
 void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
 {
+fprintf(stderr, "[JS] heap deleteAllCodeBlocks\n");
     if (m_collectionScope && effort == DeleteAllCodeIfNotCollecting)
         return;
 
@@ -917,6 +939,7 @@ void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
 
 void Heap::deleteAllUnlinkedCodeBlocks(DeleteAllCodeEffort effort)
 {
+fprintf(stderr, "[JS] heap deleteAllUnlinked\n");
     if (m_collectionScope && effort == DeleteAllCodeIfNotCollecting)
         return;
 
@@ -1012,6 +1035,7 @@ void Heap::sweepSynchronously()
 
 void Heap::collect(Synchronousness synchronousness, GCRequest request)
 {
+fprintf(stderr, "[JS] heap: collect\n");
     switch (synchronousness) {
     case Async:
         collectAsync(request);
@@ -2047,6 +2071,7 @@ void Heap::notifyThreadStopping(const AbstractLocker&)
 
 void Heap::finalize()
 {
+fprintf(stderr, "[JS] heap: finalize\n");
     MonotonicTime before;
     if (Options::logGC()) {
         before = MonotonicTime::now();
@@ -2217,7 +2242,8 @@ void Heap::notifyIncrementalSweeper()
 
 void Heap::updateAllocationLimits()
 {
-    static const bool verbose = false;
+    static const bool verbose = true;
+fprintf(stderr, "[JS] heap: updateAllocationLimits\n");
 
     if (verbose) {
         dataLog("\n");
@@ -2373,6 +2399,7 @@ void Heap::setGarbageCollectionTimerEnabled(bool enable)
 
 void Heap::didAllocate(size_t bytes)
 {
+fprintf(stderr, "[JS] didAllocate\n");
     if (m_edenActivityCallback)
         m_edenActivityCallback->didAllocate(*this, m_bytesAllocatedThisCycle + m_bytesAbandonedSinceLastFullCollect);
     m_bytesAllocatedThisCycle += bytes;

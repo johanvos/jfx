@@ -78,7 +78,7 @@ void fastSetMaxSingleAllocationSize(size_t size)
 
 void* fastZeroedMalloc(size_t n)
 {
-fprintf(stderr, "fastZeroedMalloc for %d\n",n);
+fprintf(stderr, "fastZeroedMalloc for %ld\n",n);
     void* result = fastMalloc(n);
     memset(result, 0, n);
     return result;
@@ -118,14 +118,14 @@ bool isFastMallocEnabled()
 
 void* fastMalloc(size_t size)
 {
-fprintf(stderr, "fM, size = %d\n", size);
+fprintf(stderr, "fM, size = %ld\n", size);
     ASSERT_IS_WITHIN_LIMIT(size);
     return bmalloc::api::malloc(size);
 }
 
 void* fastCalloc(size_t numElements, size_t elementSize)
 {
-fprintf(stderr, "fC, size = %d\ of size = %dn", numElements, elementSize);
+fprintf(stderr, "fC, size = %ld of size = %ld\n", numElements, elementSize);
     ASSERT_IS_WITHIN_LIMIT(numElements * elementSize);
     Checked<size_t> checkedSize = elementSize;
     checkedSize *= numElements;
@@ -137,14 +137,14 @@ fprintf(stderr, "fC, size = %d\ of size = %dn", numElements, elementSize);
 
 void* fastRealloc(void* object, size_t size)
 {
-fprintf(stderr, "fR, size = %d\n", size);
+fprintf(stderr, "fR, size = %ld\n", size);
     ASSERT_IS_WITHIN_LIMIT(size);
     return bmalloc::api::realloc(object, size);
 }
 
 void fastFree(void* object)
 {
-fprintf(stderr, "ff\n");
+// fprintf(stderr, "ff\n");
     bmalloc::api::free(object);
 }
 
@@ -164,14 +164,14 @@ size_t fastMallocGoodSize(size_t size)
 
 void* fastAlignedMalloc(size_t alignment, size_t size)
 {
-fprintf(stderr, "fmA  size = %d\n", size)
+fprintf(stderr, "fmA  size = %ld\n", size);
     ASSERT_IS_WITHIN_LIMIT(size);
     return bmalloc::api::memalign(alignment, size);
 }
 
 void* tryFastAlignedMalloc(size_t alignment, size_t size)
 {
-fprintf(stderr, "tryfmA  size = %d\n", size)
+fprintf(stderr, "tryfmA  size = %ld\n", size);
     FAIL_IF_EXCEEDS_LIMIT(size);
     return bmalloc::api::tryMemalign(alignment, size);
 }
@@ -183,14 +183,14 @@ void fastAlignedFree(void* p)
 
 TryMallocReturnValue tryFastMalloc(size_t size)
 {
-fprintf(stderr, "tryfmAc2  size = %d\n", size)
+fprintf(stderr, "tryfmAc2  size = %ld\n", size);
     FAIL_IF_EXCEEDS_LIMIT(size);
     return bmalloc::api::tryMalloc(size);
 }
 
 TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
 {
-fprintf(stderr, "tryfCAc2  nyumel = %d and size = %d\n", numElements, elementSize);
+fprintf(stderr, "tryfCAc2  nyumel = %ld and size = %ld\n", numElements, elementSize);
     FAIL_IF_EXCEEDS_LIMIT(numElements * elementSize);
     Checked<size_t, RecordOverflow> checkedSize = elementSize;
     checkedSize *= numElements;

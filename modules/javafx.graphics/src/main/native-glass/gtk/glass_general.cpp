@@ -130,6 +130,7 @@ JNI_OnLoad_glassgtk3(JavaVM *jvm, void *reserved)
 JNI_OnLoad(JavaVM *jvm, void *reserved)
 #endif
 {
+fprintf(stderr, "ONLOAD FOR GLASS\n");
     (void)reserved;
 
     JNIEnv *env;

@@ -185,6 +185,7 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_gtk_GtkApplication__1runLoop
 {
     (void)obj;
     (void)noErrorTrap;
+fprintf(stderr, "JVDBG: env = %p, obj = %p, la = %p and jr = %p\n", env, obj, launchable, jRunnableRun);
 
     env->CallVoidMethod(launchable, jRunnableRun);
     CHECK_JNI_EXCEPTION(env);
