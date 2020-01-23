@@ -124,6 +124,7 @@ abstract class ViewPainter implements Runnable {
     private RTTexture sceneBuffer;
 
     protected ViewPainter(GlassScene gs) {
+Thread.dumpStack();
         sceneState = gs.getSceneState();
         if (sceneState == null) {
             throw new NullPointerException("Scene state is null");
@@ -163,6 +164,7 @@ abstract class ViewPainter implements Runnable {
     }
 
     protected void paintImpl(final Graphics backBufferGraphics) {
+Thread.dumpStack();
         // We should not be painting anything with a width / height
         // that is <= 0, so we might as well bail right off.
         if (width <= 0 || height <= 0 || backBufferGraphics == null) {

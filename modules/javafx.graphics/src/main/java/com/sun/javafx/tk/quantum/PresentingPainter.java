@@ -42,6 +42,7 @@ final class PresentingPainter extends ViewPainter {
     }
 
     @Override public void run() {
+System.err.println("PRESENTINGPAINTER.RUN");
         renderLock.lock();
 
         boolean locked = false;
@@ -83,6 +84,7 @@ final class PresentingPainter extends ViewPainter {
                 freshBackBuffer = true;
             }
 
+Thread.dumpStack();
             if (presentable != null) {
                 Graphics g = presentable.createGraphics();
 
@@ -103,6 +105,7 @@ final class PresentingPainter extends ViewPainter {
 
                 /* present for vsync buffer swap */
                 if (vs.getDoPresent()) {
+System.err.println("VS!, presentable = "+presentable);
                     if (!presentable.present()) {
                         disposePresentable();
                         sceneState.getScene().entireSceneNeedsRepaint();

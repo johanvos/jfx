@@ -75,6 +75,7 @@ final class UploadingPainter extends ViewPainter implements Runnable {
 
     @Override public void run() {
         renderLock.lock();
+System.err.println("SCENESTATE = "+sceneState);
 
         boolean errored = false;
         try {

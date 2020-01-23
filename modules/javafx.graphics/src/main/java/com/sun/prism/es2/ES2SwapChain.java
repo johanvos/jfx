@@ -183,6 +183,7 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
 
     @Override
     public boolean present() {
+Thread.dumpStack();
         boolean presented = drawable.swapBuffers(context.getGLContext());
         context.makeCurrent(null);
         return presented;
