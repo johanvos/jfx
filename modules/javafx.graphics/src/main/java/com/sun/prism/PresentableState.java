@@ -305,7 +305,12 @@ public abstract class PresentableState {
         Pixels pixels = source.getLatestPixels();
         if (pixels != null) {
             try {
+System.err.println("UPLOAD PIXELS TO "+view);
+Thread.sleep(3000);
                 view.uploadPixels(pixels);
+System.err.println("UPLOADED PIXELS TO "+view);
+} catch (Exception e) {
+e.printStackTrace();
             } finally {
                 source.doneWithPixels(pixels);
             }

@@ -154,6 +154,7 @@ JNIEXPORT void JNICALL Java_com_sun_pisces_PiscesRenderer_clearRectImpl(JNIEnv* 
                                    fieldIds[RENDERER_NATIVE_PTR]));
 
     SURFACE_FROM_RENDERER(surface, env, surfaceHandle, objectHandle);
+fprintf(stderr, "PI ACQ0\n");
     ACQUIRE_SURFACE(surface, env, surfaceHandle);
     INVALIDATE_RENDERER_SURFACE(rdr);
 
@@ -472,6 +473,7 @@ fillRect(JNIEnv *env, jobject this, Renderer* rdr,
         rows_to_render_by_loop = y_to - y_from + 1;
 
         SURFACE_FROM_RENDERER(surface, env, surfaceHandle, this);
+fprintf(stderr, "PI ACQ1\n");
         ACQUIRE_SURFACE(surface, env, surfaceHandle);
         INVALIDATE_RENDERER_SURFACE(rdr);
         VALIDATE_BLITTING(rdr);
@@ -592,6 +594,7 @@ JNIEXPORT void JNICALL Java_com_sun_pisces_PiscesRenderer_emitAndClearAlphaRowIm
     rdr = (Renderer*)JLongToPointer((*env)->GetLongField(env, this, fieldIds[RENDERER_NATIVE_PTR]));
 
     SURFACE_FROM_RENDERER(surface, env, surfaceHandle, this);
+// fprintf(stderr, "PI ACQ3\n");
     ACQUIRE_SURFACE(surface, env, surfaceHandle);
     INVALIDATE_RENDERER_SURFACE(rdr);
     VALIDATE_BLITTING(rdr);
@@ -768,6 +771,7 @@ static void fillAlphaMask(Renderer* rdr, jint minX, jint minY, jint maxX, jint m
         jbyte* mask;
 
         SURFACE_FROM_RENDERER(surface, env, surfaceHandle, this);
+fprintf(stderr, "PI ACQ4\n");
         ACQUIRE_SURFACE(surface, env, surfaceHandle);
 
         mask = (jbyte*)(*env)->GetPrimitiveArrayCritical(env, jmask, NULL);

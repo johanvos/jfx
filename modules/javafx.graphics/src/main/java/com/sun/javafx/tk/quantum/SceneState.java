@@ -53,6 +53,7 @@ class SceneState extends PresentableState {
     public SceneState(GlassScene vs) {
         super();
         scene = vs;
+Thread.dumpStack();
     }
 
     @Override
@@ -97,6 +98,8 @@ class SceneState extends PresentableState {
         // created (it is null).  Update the view each time the we ask
         // for the updated state.
         view = scene.getPlatformView();
+System.err.println("SceneState sets view to "+view+", scene = "+scene+" of class " + scene.getClass());
+Thread.dumpStack();
         clearColor = scene.getClearColor();
         currentPaint = scene.getCurrentPaint();
 

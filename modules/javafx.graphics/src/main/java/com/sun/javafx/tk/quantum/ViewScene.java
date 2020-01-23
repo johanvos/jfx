@@ -51,7 +51,9 @@ class ViewScene extends GlassScene {
     public ViewScene(boolean depthBuffer, boolean msaa) {
         super(depthBuffer, msaa);
 
+System.err.println("THIS IS WHERE WE CREATE THE VIEW");
         this.platformView = Application.GetApplication().createView();
+System.err.println("THIS IS WHERE WE got THE VIEW: "+this.platformView);
         this.platformView.setEventHandler(new GlassViewEventHandler(this));
     }
 

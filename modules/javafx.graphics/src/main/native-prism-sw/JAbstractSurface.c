@@ -88,6 +88,7 @@ Java_com_sun_pisces_AbstractSurface_getRGBImpl(JNIEnv* env, jobject objectHandle
             jint srcScanRest = surface->width - width;
             jint dstScanRest = scanLength - width;
 
+// fprintf(stderr, "ACQUIRE surface 1 \n");
             ACQUIRE_SURFACE(surface, env, objectHandle);
             src = (jint*)surface->data + y * surface->width + x;
             dst = dstData + dstStart;
@@ -141,6 +142,7 @@ Java_com_sun_pisces_AbstractSurface_setRGBImpl(JNIEnv* env, jobject objectHandle
         if (srcData != NULL) {
             jint* src;
 
+// fprintf(stderr, "ACQUIRE surface 2\n");
             ACQUIRE_SURFACE(surface, env, objectHandle);
             src = srcData + srcStart;
             surface_setRGB(surface, x, y, width, height, src, scanLength);

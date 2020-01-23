@@ -56,6 +56,7 @@ class EGLFBGLDrawable extends GLDrawable {
 
     @Override
     boolean swapBuffers(GLContext glCtx) {
+System.err.println("EGLFBGLDrawable, swapBuffers");
         boolean retval = nSwapBuffers(getNativeDrawableInfo());
         // TODO: This looks hacky. Need to find a better approach.
         // For eglfb, we are painting in Z-order from the back,

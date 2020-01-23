@@ -45,6 +45,7 @@ class LinuxPlatform extends NativePlatform {
 
     @Override
     protected NativeScreen createScreen() {
+System.err.println("Monocle LinuxPlatform calls createScreen!");
         try {
             return new FBDevScreen();
         } catch (RuntimeException e) {

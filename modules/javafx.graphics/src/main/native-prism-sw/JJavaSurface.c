@@ -58,7 +58,7 @@ JNIEXPORT void JNICALL
 Java_com_sun_pisces_JavaSurface_initialize
   (JNIEnv *env, jobject objectHandle, jint dataType, jint width, jint height)
 {
-fpritnf(stderr, "SURFACE INITIALIZE\n");
+fprintf(stderr, "SURFACE INITIALIZE\n");
     if (surface_initialize(env, objectHandle)
             && initializeSurfaceFieldIds(env, objectHandle))
     {
@@ -129,7 +129,7 @@ surface_acquire(AbstractSurface* surface, JNIEnv* env, jobject surfaceHandle) {
     jint width = 0;
     jint height = 0;
     jint dataArrayLength = 0;
-fpritnf(stderr, "surface_acquired\n");
+// fprintf(stderr, "surface_acquired\n");
 
     ((JavaSurface *) surface)->dataHandle = (*env)->GetObjectField(env, surfaceHandle,
                                 ((JavaSurface *) surface)->javaArrayFieldID);

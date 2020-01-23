@@ -88,6 +88,7 @@ final class MonocleView extends View {
 
 
     @Override protected void _uploadPixels(long nativeViewPtr, Pixels pixels) {
+System.err.println("Monocle is now doing _uploadPixels to nativeViewPtr "+nativeViewPtr);
         if (getWindow() != null) {
             NativeScreen screen =
                     NativePlatformFactory.getNativePlatform().getScreen();

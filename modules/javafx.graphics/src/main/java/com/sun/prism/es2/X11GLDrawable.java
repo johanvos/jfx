@@ -47,6 +47,8 @@ class X11GLDrawable extends GLDrawable {
 
     @Override
     boolean swapBuffers(GLContext glCtx) {
+System.err.println("X11GLDrawable, swapBuffers, ctx = "+glCtx);
+Thread.dumpStack();
         return nSwapBuffers(getNativeDrawableInfo());
     }
 }

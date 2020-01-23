@@ -48,6 +48,7 @@ class EGLX11GLDrawable extends GLDrawable {
 
     @Override
     boolean swapBuffers(GLContext glCtx) {
+System.err.println("EGLX11GLDrawable, swapBuffers, ctx = "+glCtx);
         return nSwapBuffers(getNativeDrawableInfo());
     }
 }
