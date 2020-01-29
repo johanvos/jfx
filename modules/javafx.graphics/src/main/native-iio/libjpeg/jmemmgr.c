@@ -939,6 +939,7 @@ METHODDEF(void)
 free_pool (j_common_ptr cinfo, int pool_id)
 {
   my_mem_ptr mem = (my_mem_ptr) cinfo->mem;
+fprintf(stderr, "freepool asked for %p, id = %d and mem at %p\n", cinfo, pool_id, mem);
   small_pool_ptr shdr_ptr;
   large_pool_ptr lhdr_ptr;
   size_t space_freed;
@@ -953,6 +954,7 @@ free_pool (j_common_ptr cinfo, int pool_id)
 
   /* If freeing IMAGE pool, close any virtual arrays first */
   if (pool_id == JPOOL_IMAGE) {
+fprintf(stderr, "POOLIMAGE\n");
     jvirt_sarray_ptr sptr;
     jvirt_barray_ptr bptr;
 
@@ -975,17 +977,25 @@ free_pool (j_common_ptr cinfo, int pool_id)
   /* Release large objects */
   lhdr_ptr = mem->large_list[pool_id];
   mem->large_list[pool_id] = NULL;
+fprintf(stderr, "free_pool 2, lhdr_ptr = %p\n", lhdr_ptr);
 
   while (lhdr_ptr != NULL) {
+fprintf(stderr, "free_pool 2a, lhdr_ptr = %p\n", lhdr_ptr);
     large_pool_ptr next_lhdr_ptr = lhdr_ptr->hdr.next;
+fprintf(stderr, "free_pool 2a, totalloc = %ld\n", mem->total_space_allocated);
+fprintf(stderr, "free_pool 2a, nextlhdr_ptr = %p\n", next_lhdr_ptr);
     space_freed = lhdr_ptr->hdr.bytes_used +
           lhdr_ptr->hdr.bytes_left +
           SIZEOF(large_pool_hdr);
+fprintf(stderr, "free_pool 2a, space_freed = %ld\n",space_freed);
+fprintf(stderr, "free_pool 2a, bu = %ld, bl = %ld, size = %ld\n",lhdr_ptr->hdr.bytes_used, lhdr_ptr->hdr.bytes_left, SIZEOF(large_pool_hdr));
     jpeg_free_large(cinfo, (void FAR *) lhdr_ptr, space_freed);
+fprintf(stderr, "jpeg_free_large invoked\n");
     mem->total_space_allocated -= space_freed;
     lhdr_ptr = next_lhdr_ptr;
   }
 
+fprintf(stderr, "free_pool 3\n");
   /* Release small objects */
   shdr_ptr = mem->small_list[pool_id];
   mem->small_list[pool_id] = NULL;
@@ -999,6 +1009,7 @@ free_pool (j_common_ptr cinfo, int pool_id)
     mem->total_space_allocated -= space_freed;
     shdr_ptr = next_shdr_ptr;
   }
+fprintf(stderr, "free_pool 4\n");
 }
 
 

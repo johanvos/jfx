@@ -103,11 +103,13 @@ public class JPEGImageLoader extends ImageLoaderImpl {
     private native boolean decompressIndirect(long structPointer, boolean reportProgress, byte[] array) throws IOException;
 
     static {
+System.err.println("[JVDBG] JpegLoader, static 1");
         AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
             NativeLibLoader.loadLibrary("javafx_iio");
             return null;
         });
         initJPEGMethodIDs(InputStream.class);
+System.err.println("[JVDBG] JpegLoader, static 2");
     }
 
     /*
@@ -177,6 +179,8 @@ public class JPEGImageLoader extends ImageLoaderImpl {
 
     JPEGImageLoader(InputStream input) throws IOException {
         super(JPEGDescriptor.getInstance());
+Thread.dumpStack();
+System.err.println("[JVDBG] JpegLoader, constructor 1");
         if (input == null) {
             throw new IllegalArgumentException("input == null!");
         }
@@ -191,6 +195,7 @@ public class JPEGImageLoader extends ImageLoaderImpl {
         if (this.structPointer == 0L) {
             throw new IOException("Unable to initialize JPEG decompressor");
         }
+System.err.println("[JVDBG] JpegLoader, constructor 2");
     }
 
     public synchronized void dispose() {
@@ -239,12 +244,20 @@ public class JPEGImageLoader extends ImageLoaderImpl {
 
             byte[] array = new byte[scanlineStride*outHeight];
             buffer = ByteBuffer.wrap(array);
+Thread.dumpStack();
+System.err.println("[JVDBG] java will invoke decompressIndirect");
             decompressIndirect(structPointer, listeners != null && !listeners.isEmpty(), buffer.array());
+System.err.println("[JVDBG] java did invoke decompressIndirect");
         } catch (IOException e) {
+System.err.println("[JVDBG] java got ioex");
+e.printStackTrace();
             throw e;
         } catch (Throwable t) {
+System.err.println("[JVDBG] java got throwable ");
+t.printStackTrace();
             throw new IOException(t);
         } finally {
+System.err.println("[JVDBG] java finally");
             accessLock.unlock();
             dispose();
         }

@@ -104,6 +104,7 @@ static JavaVM *jvm;
 
 JNIEXPORT jint JNICALL
 JNI_OnLoad_javafx_iio(JavaVM *vm, void *reserved) {
+ fprintf(stderr, "[JAVAFXIIO] static build, JNI_OnLoad\n");
     jvm = vm;
 #ifdef JNI_VERSION_1_8
     //min. returned JNI_VERSION required by JDK8 for builtin libraries
@@ -121,6 +122,7 @@ JNI_OnLoad_javafx_iio(JavaVM *vm, void *reserved) {
 
 JNIEXPORT jint JNICALL
 JNI_OnLoad(JavaVM *vm, void *reserved) {
+fprintf(stderr, "[JAVAFXIIO] dynamic build, JNI_OnLoad\n");
     jvm = vm;
     return JNI_VERSION_1_2;
 }
@@ -1514,7 +1516,10 @@ JNIEXPORT jlong JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_initDecompr
 JNIEXPORT jint JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_startDecompression
 (JNIEnv *env, jobject this, jlong ptr, jint outCS, jint dest_width, jint dest_height) {
     imageIODataPtr data = (imageIODataPtr) jlong_to_ptr(ptr);
-    j_decompress_ptr cinfo = (j_decompress_ptr) data->jpegObj;
+    volatile j_decompress_ptr cinfo = (j_decompress_ptr) data->jpegObj;
+fprintf(stderr, "STARTDECOMPRESSION, ptr = %ld and data = %p and cinfo = %p\n", ptr, data, cinfo);
+fprintf(stderr, "STARTDECOMPRESSION, ptr = %ld and data = %p and cinfomem = %p\n", ptr, data, cinfo->mem);
+fprintf(stderr, "STARTDECOMPRESSION, ptr = %ld and data = %p and cinfomemfree = %p\n", ptr, data, cinfo->mem->free_pool);
     struct jpeg_source_mgr *src = cinfo->src;
     sun_jpeg_error_ptr jerr;
 
@@ -1593,6 +1598,7 @@ JNIEXPORT jint JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_startDecompr
 
 JNIEXPORT jboolean JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_decompressIndirect
 (JNIEnv *env, jobject this, jlong ptr, jboolean report_progress, jbyteArray barray) {
+fprintf(stderr, "[JVDBG] IIO decompressIndirect called and started \n");
     imageIODataPtr data = (imageIODataPtr) jlong_to_ptr(ptr);
     j_decompress_ptr cinfo = (j_decompress_ptr) data->jpegObj;
     struct jpeg_source_mgr *src = cinfo->src;
@@ -1606,6 +1612,7 @@ JNIEXPORT jboolean JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_decompre
         ((*env)->GetArrayLength(env, barray) <
          (bytes_per_row * cinfo->output_height)))
      {
+fprintf(stderr, "[JVDBG] IIO decompressIndirect failed 1\n");
         ThrowByName(env,
                 "java/lang/OutOfMemoryError",
                 "Reading JPEG Stream");
@@ -1613,6 +1620,7 @@ JNIEXPORT jboolean JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_decompre
     }
 
     if (GET_ARRAYS(env, data, &cinfo->src->next_input_byte) == NOT_OK) {
+fprintf(stderr, "[JVDBG] IIO decompressIndirect failed 2\n");
         ThrowByName(env,
                 "java/io/IOException",
                 "Array pin failed");
@@ -1620,6 +1628,7 @@ JNIEXPORT jboolean JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_decompre
     }
 
     if (scanline_ptr == NULL) {
+fprintf(stderr, "[JVDBG] IIO decompressIndirect failed 3\n");
         ThrowByName(env,
                 "java/lang/OutOfMemoryError",
                 "Reading JPEG Stream");
@@ -1634,6 +1643,7 @@ JNIEXPORT jboolean JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_decompre
         /* If we get here, the JPEG code has signaled an error
            while reading. */
         if (!(*env)->ExceptionOccurred(env)) {
+fprintf(stderr, "[JVDBG] IIO decompressIndirect failed 4\n");
             char buffer[JMSG_LENGTH_MAX];
             (*cinfo->err->format_message) ((struct jpeg_common_struct *) cinfo,
                     buffer);
@@ -1643,9 +1653,11 @@ JNIEXPORT jboolean JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_decompre
             free(scanline_ptr);
         }
         RELEASE_ARRAYS(env, data, cinfo->src->next_input_byte);
+fprintf(stderr, "[JVDBG] IIO decompressIndirect failed 5\n");
         return JNI_FALSE;
     }
 
+fprintf(stderr, "[JVDBG] IIO decompressIndirect startwhile 6\n");
     while (cinfo->output_scanline < cinfo->output_height) {
         int num_scanlines;
         if (report_progress == JNI_TRUE) {
@@ -1675,6 +1687,7 @@ JNIEXPORT jboolean JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_decompre
             offset += bytes_per_row;
         }
     }
+fprintf(stderr, "[JVDBG] IIO decompressIndirect donehile 6\n");
 
     if (report_progress == JNI_TRUE) {
         RELEASE_ARRAYS(env, data, cinfo->src->next_input_byte);
@@ -1689,10 +1702,14 @@ JNIEXPORT jboolean JNICALL Java_com_sun_javafx_iio_jpeg_JPEGImageLoader_decompre
           return JNI_FALSE;
       }
     }
+fprintf(stderr, "[JVDBG] IIO decompressIndirect busy -- 7\n");
 
     jpeg_finish_decompress(cinfo);
-    free(scanline_ptr);
+fprintf(stderr, "[JVDBG] IIO decompressIndirect Busy 8\n");
+    // free(scanline_ptr);
+fprintf(stderr, "[JVDBG] IIO decompressIndirect busy 9\n");
 
     RELEASE_ARRAYS(env, data, cinfo->src->next_input_byte);
+fprintf(stderr, "[JVDBG] IIO decompressIndirect called and done\n");
     return JNI_TRUE;
 }

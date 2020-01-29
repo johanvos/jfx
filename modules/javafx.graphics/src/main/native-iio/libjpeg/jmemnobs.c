@@ -54,13 +54,20 @@ jpeg_free_small (j_common_ptr cinfo, void * object, size_t sizeofobject)
 GLOBAL(void FAR *)
 jpeg_get_large (j_common_ptr cinfo, size_t sizeofobject)
 {
-  return (void FAR *) malloc(sizeofobject);
+  void FAR * answer = malloc(sizeofobject);
+fprintf(stderr, "Did malloc of %ld, answer at %p, malloc at %p\n", sizeofobject, answer, malloc);
+free(answer);
+  void FAR* answer2 = malloc(sizeofobject);
+fprintf(stderr, "Did malloc of %ld, answer2 at %p, malloc at %p\n", sizeofobject, answer2, malloc);
+return answer2;
 }
 
 GLOBAL(void)
 jpeg_free_large (j_common_ptr cinfo, void FAR * object, size_t sizeofobject)
 {
-  free(object);
+fprintf(stderr, "WILL DO FREE NOW AT %p, free at %p\n", object, free);
+   free(object);
+fprintf(stderr, "DId not FREE\n");
 }
 
 

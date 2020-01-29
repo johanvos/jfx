@@ -372,11 +372,14 @@ jpeg_has_multiple_scans (j_decompress_ptr cinfo)
 GLOBAL(boolean)
 jpeg_finish_decompress (j_decompress_ptr cinfo)
 {
+fprintf(stderr, "finish decompress\n");
   if ((cinfo->global_state == DSTATE_SCANNING ||
        cinfo->global_state == DSTATE_RAW_OK) && ! cinfo->buffered_image) {
     /* Terminate final pass of non-buffered mode */
-    if (cinfo->output_scanline < cinfo->output_height)
+    if (cinfo->output_scanline < cinfo->output_height) {
+fprintf(stderr, "finish decompress, ERREX\n");
       ERREXIT(cinfo, JERR_TOO_LITTLE_DATA);
+}
     (*cinfo->master->finish_output_pass) (cinfo);
     cinfo->global_state = DSTATE_STOPPING;
   } else if (cinfo->global_state == DSTATE_BUFIMAGE) {
@@ -384,16 +387,28 @@ jpeg_finish_decompress (j_decompress_ptr cinfo)
     cinfo->global_state = DSTATE_STOPPING;
   } else if (cinfo->global_state != DSTATE_STOPPING) {
     /* STOPPING = repeat call after a suspension, anything else is error */
+fprintf(stderr, "finish decompress, ERREX 2\n");
     ERREXIT1(cinfo, JERR_BAD_STATE, cinfo->global_state);
   }
   /* Read until EOI */
   while (! cinfo->inputctl->eoi_reached) {
-    if ((*cinfo->inputctl->consume_input) (cinfo) == JPEG_SUSPENDED)
+    if ((*cinfo->inputctl->consume_input) (cinfo) == JPEG_SUSPENDED) {
+fprintf(stderr, "finish decompress, FALSE 2\n");
+}
       return FALSE;        /* Suspend, come back later */
   }
   /* Do final cleanup */
+fprintf(stderr, "finish decompress 2\n");
   (*cinfo->src->term_source) (cinfo);
+fprintf(stderr, "finish decompress 3, cinfo = %p\n", cinfo);
   /* We can use jpeg_abort to release memory and reset global_state */
-  jpeg_abort((j_common_ptr) cinfo);
+j_common_ptr jptr = (j_common_ptr) cinfo;
+fprintf(stderr, "finish decompress 3, cinfoptr = %p\n", jptr);
+fprintf(stderr, "fd3, ptr = %p and cinfomem = %p\n", jptr, jptr->mem);
+fprintf(stderr, "fd3, ptr = %p and cinfomemfree = %p\n", jptr, jptr->mem->free_pool);
+
+jpeg_abort(jptr);
+   // jpeg_abort((j_common_ptr) cinfo);
+fprintf(stderr, "finish decompress done\n");
   return TRUE;
 }

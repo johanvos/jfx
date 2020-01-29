@@ -28,6 +28,7 @@
 GLOBAL(void)
 jpeg_abort (j_common_ptr cinfo)
 {
+fprintf(stderr, "[JVDBG] jpeg_abort 1\n");
   int pool;
 
   /* Do nothing if called on a not-initialized or destroyed JPEG object. */
@@ -38,6 +39,7 @@ jpeg_abort (j_common_ptr cinfo)
    * with some (brain-damaged) malloc libraries.
    */
   for (pool = JPOOL_NUMPOOLS-1; pool > JPOOL_PERMANENT; pool--) {
+fprintf(stderr, "free a pool, pool = %d\n", pool);
     (*cinfo->mem->free_pool) (cinfo, pool);
   }
 
