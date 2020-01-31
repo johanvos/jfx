@@ -97,6 +97,7 @@ public class NativeMediaManager {
      * Create a <code>NativeMediaManager</code>.
      */
     protected NativeMediaManager() {
+System.err.println("NativeMediaManager, protected constructor");
         /*
          * Load native libraries. This must be done early as platforms may need
          * to attempt loading their own native libs that are dependent on these
@@ -258,6 +259,8 @@ public class NativeMediaManager {
      * <code>null</code>.
      */
     public boolean canPlayProtocol(String protocol) {
+System.err.println("canPlayProtocol asked for "+protocol);
+Thread.dumpStack();
         if (protocol == null) {
             throw new IllegalArgumentException("protocol == null!");
         }
@@ -265,6 +268,7 @@ public class NativeMediaManager {
         if (supportedProtocols.isEmpty()) {
             loadProtocols();
         }
+System.err.println("canPlayProtocol asked for "+protocol+" and sup = "+supportedProtocols);
 
         /*
          * Don't just use supportedProtocols.contains(protocol) as that

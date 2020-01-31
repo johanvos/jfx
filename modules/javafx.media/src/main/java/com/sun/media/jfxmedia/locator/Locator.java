@@ -596,6 +596,7 @@ public class Locator {
     }
 
     public ConnectionHolder createConnectionHolder() throws IOException {
+System.err.println("[LOCATOR] createConnectionHolder");
         // first check if it's cached
         if (null != cacheEntry) {
             if (Logger.canLog(Logger.DEBUG)) {

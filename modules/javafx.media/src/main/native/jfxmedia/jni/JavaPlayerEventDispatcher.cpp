@@ -63,6 +63,7 @@ CJavaPlayerEventDispatcher::~CJavaPlayerEventDispatcher()
 
 void CJavaPlayerEventDispatcher::Init(JNIEnv *env, jobject PlayerInstance, CMedia* pMedia)
 {
+fprintf(stderr, "[JVDBG] CJAVAPLAYER 0\n");
     LOWLEVELPERF_EXECTIMESTART("CJavaPlayerEventDispatcher::Init()");
 
     if (env->GetJavaVM(&m_PlayerVM) != JNI_OK) {
@@ -78,14 +79,17 @@ void CJavaPlayerEventDispatcher::Init(JNIEnv *env, jobject PlayerInstance, CMedi
     // the object and not its instance. No, this particular implementation is
     // not thread-safe, but the worst that can happen is that the jmethodIDs are
     // initialized more than once which is still better than once per player.
+fprintf(stderr, "[JVDBG] CJAVAPLAYER 1\n");
     if (false == areJMethodIDsInitialized)
     {
+fprintf(stderr, "[JVDBG] CJAVAPLAYER 2\n");
         CJavaEnvironment javaEnv(env);
         bool hasException = false;
         jclass klass = env->GetObjectClass(m_PlayerInstance);
 
         m_SendWarningMethod = env->GetMethodID(klass, "sendWarning", "(ILjava/lang/String;)V");
         hasException = javaEnv.reportException();
+fprintf(stderr, "[JVDBG] CJAVAPLAYER 3, hasException = %d\n", hasException);
 
         if (!hasException)
         {
@@ -349,14 +353,17 @@ bool CJavaPlayerEventDispatcher::SendFrameSizeChangedEvent(int width, int height
 bool CJavaPlayerEventDispatcher::SendAudioTrackEvent(CAudioTrack* pTrack)
 {
     bool bSucceeded = false;
+fprintf(stderr, "[JVDBG] CJPED 0\n");
     CJavaEnvironment jenv(m_PlayerVM);
     JNIEnv *pEnv = jenv.getEnvironment();
     if (pEnv) {
+fprintf(stderr, "[JVDBG] CJPED 1\n");
         jobject localPlayer = pEnv->NewLocalRef(m_PlayerInstance);
         if (localPlayer) {
             jstring name = NULL;
             jstring language = NULL;
             name = pEnv->NewStringUTF(pTrack->GetName().c_str());
+fprintf(stderr, "[JVDBG] CJPED 2\n");
             if (!jenv.reportException()) {
                 language = pEnv->NewStringUTF(pTrack->GetLanguage().c_str());
 
@@ -379,6 +386,7 @@ bool CJavaPlayerEventDispatcher::SendAudioTrackEvent(CAudioTrack* pTrack)
                     if (nativeChannelMask & CAudioTrack::REAR_CENTER)
                         javaChannelMask |= com_sun_media_jfxmedia_track_AudioTrack_REAR_CENTER;
 
+fprintf(stderr, "[JVDBG] CJPED 3\n");
                     pEnv->CallVoidMethod(localPlayer,
                                          m_SendAudioTrackEventMethod,
                                          (jboolean)pTrack->isEnabled(),
@@ -391,6 +399,7 @@ bool CJavaPlayerEventDispatcher::SendAudioTrackEvent(CAudioTrack* pTrack)
                                          pTrack->GetSampleRate());
                 }
             }
+fprintf(stderr, "[JVDBG] CJPED 4\n");
 
             if (name) {
                 pEnv->DeleteLocalRef(name);

@@ -44,12 +44,18 @@ extern "C" {
      */
   JNIEXPORT jboolean JNICALL Java_com_sun_media_jfxmedia_logging_Logger_nativeInit(JNIEnv *env, jclass cls)
   {
+fprintf(stderr, "NATIVEINITLOGGING!\n");
 #if ENABLE_LOGGING
+fprintf(stderr, "enabled NATIVEINITLOGGING!\n");
       CLogger *pLogger = NULL;
       CLogger::s_Singleton.GetInstance(&pLogger);
+fprintf(stderr, "plogger = %p\n", pLogger);
 
-      return (pLogger != NULL && pLogger->init(env, cls));
+      jboolean answer = (pLogger != NULL && pLogger->init(env, cls));
+fprintf(stderr, "answer = %d\n", answer);
+return answer;
 #else
+fprintf(stderr, "NOT enabled NATIVEINITLOGGING!\n");
       return JNI_TRUE;
 #endif // ENABLE_LOGGING
   }

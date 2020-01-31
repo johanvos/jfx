@@ -54,9 +54,11 @@ public final class PlatformManager {
     private static void getPlatformSettings() {
         // get enabled platforms, comma separated list, e.g., -Djfxmedia.platforms=GSTPlatform,OSXPlatform
         enabledPlatforms = System.getProperty("jfxmedia.platforms", "").toLowerCase();
+System.err.println("SYSPROB for mediaplatform? "+enabledPlatforms);
     }
 
     private static boolean isPlatformEnabled(String name) {
+System.err.println("is enabled asked for "+name+" and ep = "+enabledPlatforms);
         if (null == enabledPlatforms || enabledPlatforms.length() == 0) {
             // everything enabled
             return true;
@@ -186,12 +188,15 @@ public final class PlatformManager {
 
     public List<String> getSupportedProtocols() {
         ArrayList<String> outProtocols = new ArrayList<String>();
+System.err.println("GETSUPPROTOCOLS asked, platforms = "+platforms);
 
         if (!platforms.isEmpty()) {
             for (Platform platty : platforms) {
+System.err.println("supported platform: "+platty);
                 String[] npt = platty.getSupportedProtocols();
                 if (npt != null) {
                     for (String p : npt) {
+System.err.println("Platform provides "+p);
                         if (!outProtocols.contains(p)) {
                             outProtocols.add(p);
                         }
@@ -199,6 +204,7 @@ public final class PlatformManager {
                 }
             }
         }
+System.err.println("result = "+outProtocols);
 
         return outProtocols;
     }

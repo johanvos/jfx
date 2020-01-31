@@ -56,9 +56,12 @@ extern "C" {
 
         if (mid_toString == 0)
         {
+fprintf(stderr, "LOCATORTOSTRING for %p\n", locator);
             jclass klass = env->GetObjectClass(locator);
+fprintf(stderr, "LOCATORTOSTRING for class %p\n", klass);
 
             mid_toString = env->GetMethodID(klass, "getStringLocation", "()Ljava/lang/String;");
+fprintf(stderr, "LOCATORTOSTRING for midstring %p\n", mid_toString);
             env->DeleteLocalRef(klass);
             if (javaEnv.clearException())
                 return NULL;
@@ -80,6 +83,7 @@ extern "C" {
         char*           pjLocation = NULL;
         CMediaManager*  pManager = NULL;
         uint32_t        uErrCode = CMediaManager::GetInstance(&pManager);
+fprintf(stderr, "InitMedia, loc = %p, ct = %p, sizehint = %ld, handle = %p\n",jLocator, jContentType, jSizeHint, jlMediaHandle);
 
         if (ERROR_NONE != uErrCode)
             return uErrCode;
@@ -120,6 +124,7 @@ extern "C" {
             return ERROR_MEDIA_CREATION;
         }
 
+fprintf(stderr, "im8\n");
         locator = new(nothrow) CLocatorStream(callbacks, pjContent, pjLocation, (int64_t)jSizeHint);
         env->ReleaseStringUTFChars(jContentType, pjContent);
         env->ReleaseStringUTFChars(jLocation, pjLocation);
@@ -130,16 +135,20 @@ extern "C" {
         //***** Create the media object
         uErrCode  = pManager->CreatePlayer(locator, pOptions, &pMedia);
 
+fprintf(stderr, "im9\n");
         //***** return
         if (ERROR_NONE == uErrCode)
         {
+fprintf(stderr, "im10\n");
             if (CMedia::IsValid(pMedia))
             {
+fprintf(stderr, "im10a\n");
                 jlong lMediaHandle = (jlong)ptr_to_jlong(pMedia);
                 env->SetLongArrayRegion(jlMediaHandle, 0, 1, &lMediaHandle);
             }
             else
             {
+fprintf(stderr, "im10b\n");
                 uErrCode = ERROR_MEDIA_INVALID;
             }
         }
@@ -151,10 +160,12 @@ extern "C" {
         // Clean up
         if (ERROR_NONE != uErrCode)
         {
+fprintf(stderr, "im11\n");
             if (NULL != pMedia)
                 delete pMedia;
         }
 
+fprintf(stderr, "im12, errcode = %d\n", uErrCode);
         return uErrCode;
     }
 
@@ -168,10 +179,12 @@ extern "C" {
     JNIEXPORT jint JNICALL Java_com_sun_media_jfxmediaimpl_platform_gstreamer_GSTMedia_gstInitNativeMedia
     (JNIEnv *env, jobject obj, jobject jLocator, jstring jContentType, jlong jSizeHint, jlongArray jlMediaHandle)
     {
+fprintf(stderr, "GSTMedia_gstInitNativeMedia!\n");
         LOWLEVELPERF_EXECTIMESTART("gstInitNativeMediaToSendToJavaPlayerStateEventPaused");
         LOWLEVELPERF_EXECTIMESTART("gstInitNativeMedia()");
         uint32_t result = InitMedia(env, NULL, jLocator, jContentType, jSizeHint, jlMediaHandle);
         LOWLEVELPERF_EXECTIMESTOP("gstInitNativeMedia()");
+fprintf(stderr, "GSTMedia_gstInitNativeMedia! result = %d\n", result);
 
         return result;
     }

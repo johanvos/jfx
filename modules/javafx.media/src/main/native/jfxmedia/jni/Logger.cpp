@@ -108,6 +108,7 @@ void CLogger::logMsg(int level, const char *sourceClass, const char *sourceMetho
 // Do NOT use this function. Instead use init() from Java layer.
 bool CLogger::init(JNIEnv *pEnv, jclass cls)
 {
+fprintf(stderr, "Clogger init\n");
     if (!pEnv || !cls) {
         return false;
     }
@@ -120,8 +121,11 @@ bool CLogger::init(JNIEnv *pEnv, jclass cls)
     }
 
     if (!m_areJMethodIDsInitialized) {
+fprintf(stderr, "Clogger init 1\n");
         jclass local_cls = pEnv->FindClass("com/sun/media/jfxmedia/logging/Logger");
+fprintf(stderr, "Clogger init 2\n");
         if (javaEnv.clearException()) {
+fprintf(stderr, "Clogger init 3\n");
             return false;
         }
 
@@ -131,16 +135,20 @@ bool CLogger::init(JNIEnv *pEnv, jclass cls)
             pEnv->DeleteLocalRef(local_cls);
 
             if (NULL != m_cls) {
+fprintf(stderr, "Clogger init 4\n");
                 m_logMsg1Method = pEnv->GetStaticMethodID(m_cls, "logMsg", "(ILjava/lang/String;)V");
                 if (javaEnv.clearException()) {
+fprintf(stderr, "Clogger init 5\n");
                    return false;
                 }
 
                 m_logMsg2Method = pEnv->GetStaticMethodID(m_cls, "logMsg", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
                 if (javaEnv.clearException()) {
+fprintf(stderr, "Clogger init 6\n");
                    return false;
                 }
 
+fprintf(stderr, "Clogger init 7\n");
                 if (NULL != m_logMsg1Method && NULL != m_logMsg2Method) {
                     m_areJMethodIDsInitialized = true;
                 }

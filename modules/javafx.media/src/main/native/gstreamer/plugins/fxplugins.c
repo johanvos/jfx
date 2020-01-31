@@ -23,6 +23,7 @@
  * questions.
  */
 
+#include <stdio.h>
 #include <gst/gst.h>
 
 #include <fxplugins_common.h>
@@ -30,6 +31,7 @@
 #include <progressbuffer.h>
 #include <hlsprogressbuffer.h>
 
+#include <execinfo.h>
 #ifdef OSX
 #include <audioconverter.h>
 #include <avcdecoder.h>
@@ -39,9 +41,12 @@
 gboolean dshowwrapper_init(GstPlugin* aacdecoder);
 #endif
 
-static gboolean fxplugins_init (GstPlugin * plugin)
+void print_stacktrace();
+gboolean fxplugins_init (GstPlugin * plugin)
 {
-    return java_source_plugin_init(plugin) &&
+fprintf(stderr, "FXPLUGINS_INIT CALLED!!!!\n");
+print_stacktrace();
+    gboolean answer = java_source_plugin_init(plugin) &&
            hls_progress_buffer_plugin_init(plugin) &&
 
 #if defined(WIN32)
@@ -51,6 +56,8 @@ static gboolean fxplugins_init (GstPlugin * plugin)
            avcdecoder_plugin_init(plugin) &&
 #endif // WIN32
            progress_buffer_plugin_init(plugin);
+fprintf(stderr, "FXPLUGINS_INIT CALLED, will return %d\n", answer);
+return answer;
 }
 
 #if defined(WIN32)
@@ -71,3 +78,12 @@ GstPluginDesc gst_plugin_desc =
     "http://javafx.com/",
     NULL
 };
+
+void print_stacktrace()
+{
+  void *buffer[50];
+  int levels = backtrace(buffer, 50);
+
+  // print to stderr (fd = 2), and remove this function from the trace
+  backtrace_symbols_fd(buffer + 1, levels - 1, 2);
+}

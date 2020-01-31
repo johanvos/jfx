@@ -54,6 +54,7 @@
  * ]|
  */
 
+#include <stdio.h>
 #include "gst_private.h"
 
 #include "gstelement.h"
@@ -139,6 +140,7 @@ gst_element_factory_find (const gchar * name)
 
   /* this isn't an error, for instance when you query if an element factory is
    * present */
+  fprintf (stderr, "no such element factory \"%s\"\n", name);
   GST_LOG ("no such element factory \"%s\"", name);
   return NULL;
 }
@@ -208,6 +210,7 @@ gst_element_register (GstPlugin * plugin, const gchar * name, guint rank,
   guint n_interfaces, i;
   GstElementClass *klass;
   GList *item;
+fprintf(stderr, "[JVDBG]gst_element_register for %s\n", name);
 
   g_return_val_if_fail (name != NULL, FALSE);
   g_return_val_if_fail (g_type_is_a (type, GST_TYPE_ELEMENT), FALSE);
@@ -305,6 +308,7 @@ gst_element_register (GstPlugin * plugin, const gchar * name, guint rank,
   GST_PLUGIN_FEATURE_CAST (factory)->loaded = TRUE;
 
   gst_registry_add_feature (registry, GST_PLUGIN_FEATURE_CAST (factory));
+fprintf(stderr, "[JVDBG]did gst_element_register for %s\n", name);
 
   return TRUE;
 
@@ -436,19 +440,23 @@ gst_element_factory_make (const gchar * factoryname, const gchar * name)
 {
   GstElementFactory *factory;
   GstElement *element;
+fprintf(stderr, "jgst_elfm\n");
 
   g_return_val_if_fail (factoryname != NULL, NULL);
   g_return_val_if_fail (gst_is_initialized (), NULL);
+fprintf(stderr, "jgst_elfm 1 %s --- %s\n", factoryname, GST_STR_NULL(name));
 
   GST_LOG ("gstelementfactory: make \"%s\" \"%s\"",
       factoryname, GST_STR_NULL (name));
 
   factory = gst_element_factory_find (factoryname);
+fprintf(stderr, "jgst_elfm 2 fact = %p\n", factory);
   if (factory == NULL)
     goto no_factory;
 
   GST_LOG_OBJECT (factory, "found factory %p", factory);
   element = gst_element_factory_create (factory, name);
+fprintf(stderr, "jgst_elfm 3 el = %p\n", element);
   if (element == NULL)
     goto create_failed;
 

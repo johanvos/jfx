@@ -35,7 +35,11 @@ DIRLIST = gstreamer/gst \
           gst-plugins-bad/gst/aiff \
           gst-plugins-base/gst/app
 
-TARGET = $(BUILD_DIR)/lib$(BASE_NAME).so
+ifeq ($(STATIC), true) 
+    TARGET = $(BUILD_DIR)/lib$(BASE_NAME).a
+else
+    TARGET = $(BUILD_DIR)/lib$(BASE_NAME).so
+endif
 
 CFLAGS =-fPIC                   \
         -Wformat                \
@@ -46,11 +50,11 @@ CFLAGS =-fPIC                   \
         -Werror=trampolines     \
         -D_GNU_SOURCE           \
         -DGST_REMOVE_DEPRECATED \
+        -DGST_DISABLE_GST_DEBUG \
         -DGSTREAMER_LITE        \
         -DHAVE_CONFIG_H         \
         -DOUTSIDE_SPEEX         \
         -DLINUX                 \
-        -DGST_DISABLE_GST_DEBUG \
         -DGST_DISABLE_LOADSAVE  \
         -ffunction-sections -fdata-sections
 
@@ -276,5 +280,11 @@ $(OBJ_DIRS):
 $(TARGET_DIRS):
 	mkdir -p $(TARGET_DIRS)
 
+ifeq ($(STATIC), true) 
+    LINKARGS = r $@ $(OBJECTS)
+else 
+    LINKARGS = -shared $(OBJECTS) $(LDFLAGS) -o $@
+endif
+
 $(TARGET): $(OBJECTS)
-	$(LINKER) -shared $(OBJECTS) $(LDFLAGS) -o $@
+	$(LINKER) $(LINKARGS)

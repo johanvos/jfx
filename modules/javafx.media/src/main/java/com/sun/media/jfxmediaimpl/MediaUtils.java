@@ -230,6 +230,9 @@ public class MediaUtils {
      */
     public static void error(Object source, int errCode, String message, Throwable cause) {
         // Log the error.
+System.err.println("I need to print error "+message);
+System.err.println("error is for cause "+cause);
+cause.printStackTrace();
         if (cause != null) {
             StackTraceElement[] stackTrace = cause.getStackTrace();
             if (stackTrace != null && stackTrace.length > 0) {

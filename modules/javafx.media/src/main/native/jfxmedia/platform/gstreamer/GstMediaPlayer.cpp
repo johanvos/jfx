@@ -54,26 +54,35 @@ extern "C" {
 JNIEXPORT jint JNICALL Java_com_sun_media_jfxmediaimpl_platform_gstreamer_GSTMediaPlayer_gstInitPlayer
   (JNIEnv *env, jobject obj, jlong ref_media)
 {
+fprintf(stderr, "GSTINITPLAYER 1\n");
     LOWLEVELPERF_EXECTIMESTART("gstInitPlayer()");
+fprintf(stderr, "GSTINITPLAYER 2\n");
+fprintf(stderr, "GSTINITPLAYER 2a, pm = %p\n", ref_media);
 
     CMedia* pMedia = (CMedia*)jlong_to_ptr(ref_media);
+fprintf(stderr, "GSTINITPLAYER 2b, pMedia = %p\n", pMedia);
     if (NULL == pMedia)
         return ERROR_MEDIA_NULL;
+fprintf(stderr, "GSTINITPLAYER 3\n");
 
     CPipeline* pPipeline = (CPipeline*)pMedia->GetPipeline();
     if (NULL == pPipeline)
         return ERROR_PIPELINE_NULL;
+fprintf(stderr, "GSTINITPLAYER 4\n");
 
     CJavaPlayerEventDispatcher* pEventDispatcher = new(nothrow) CJavaPlayerEventDispatcher();
+fprintf(stderr, "GSTINITPLAYER 5\n");
     if (NULL == pEventDispatcher)
         return ERROR_MEMORY_ALLOCATION;
 
     pEventDispatcher->Init(env, obj, pMedia);
     pPipeline->SetEventDispatcher(pEventDispatcher);
+fprintf(stderr, "GSTINITPLAYER 6\n");
 
     jint iRet = (jint)pPipeline->Init();
 
     LOWLEVELPERF_EXECTIMESTOP("gstInitPlayer()");
+fprintf(stderr, "GSTINITPLAYER 10, return %d\n", iRet);
 
     return iRet;
 }

@@ -132,6 +132,9 @@ static gboolean gst_deinitialized = FALSE;
 
 GstClockTime _priv_gst_start_time;
 
+gboolean fxplugins_init (GstPlugin * plugin);
+gboolean fxavplugins_init (GstPlugin * plugin);
+
 #ifdef G_OS_WIN32
 HMODULE _priv_gst_dll_handle = NULL;
 #endif
@@ -814,10 +817,24 @@ init_post (GOptionContext * context, GOptionGroup * group, gpointer data,
       GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN);
 
 #if defined(GSTREAMER_LITE)
+fprintf(stderr, "GST INIT, REG STATIC part 1\n");
   gst_plugin_register_static (GST_VERSION_MAJOR, GST_VERSION_MINOR,
       "gstplugins-lite", "gstplugins-lite",
       lite_plugins_init, VERSION, GST_LICENSE, PACKAGE,
       GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN);
+fprintf(stderr, "GST INIT, REG STATIC part 1 done\n");
+fprintf(stderr, "GST INIT, REG STATIC PLUGIN\n");
+  gst_plugin_register_static (GST_VERSION_MAJOR, GST_VERSION_MINOR,
+      "fxplugins", "fxplugin",
+      fxplugins_init, VERSION, GST_LICENSE, PACKAGE,
+      GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN);
+fprintf(stderr, "GST INIT, REG STATIC PLUGIN done\n");
+fprintf(stderr, "GST INIT, REG STATIC AV PLUGIN\n");
+  gst_plugin_register_static (GST_VERSION_MAJOR, GST_VERSION_MINOR,
+      "fxavplugins", "fxavplugin",
+      fxavplugins_init, VERSION, GST_LICENSE, PACKAGE,
+      GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN);
+fprintf(stderr, "GST INIT, REG STATIC AV PLUGIN done\n");
 #endif // GSTREAMER_LITE
 
   /*
@@ -834,6 +851,7 @@ init_post (GOptionContext * context, GOptionGroup * group, gpointer data,
   if (!gst_update_registry ())
     return FALSE;
 
+fprintf(stderr, "GST INIT, REG UPDATE done\n");
   GST_INFO ("GLib runtime version: %d.%d.%d", glib_major_version,
       glib_minor_version, glib_micro_version);
   GST_INFO ("GLib headers version: %d.%d.%d", GLIB_MAJOR_VERSION,
