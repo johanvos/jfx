@@ -120,7 +120,7 @@ public class Locator {
     /**
      * iOS only: determines if the given URL points to the iPod library
      */
-    private boolean isIpod;
+    private boolean isIpod = true;
 
     /**
      * Holds connection and response code returned from getConnection()
