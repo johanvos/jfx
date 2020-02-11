@@ -30,6 +30,7 @@ import javafx.scene.web.HTMLEditor;
 import java.util.ArrayList;
 import java.util.List;
 import com.sun.javafx.scene.control.behavior.BehaviorBase;
+import com.sun.javafx.scene.control.inputmap.InputMap;
 import com.sun.javafx.scene.control.inputmap.KeyBinding;
 import javafx.scene.web.HTMLEditorSkin;
 import static javafx.scene.input.KeyCode.B;
