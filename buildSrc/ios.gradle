@@ -458,3 +458,12 @@ IOS.media.x86_64.linker = linker
 IOS.media.x86_64.linkFlags = ["-arch_only", archX86_64, "-syslibroot", sdkPath(iPhoneSim), linkFlags].flatten()
 IOS.media.x86_64.lib = "jfxmedia_${archX86_64}"
 
+project(":web") {
+    apply plugin: 'java'
+
+    sourceSets.main.java.srcDirs = [ 'src/ios/java' ]
+
+    project.ext.moduleSourcePath = cygpath(rootProject.projectDir.path + '/modules/*/src/ios/java') +
+        File.pathSeparator + cygpath(rootProject.projectDir.path + '/modules/*/build/gensrc/{java,jsl-decora,jsl-prism}')
+}
+

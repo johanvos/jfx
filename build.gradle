@@ -1997,7 +1997,10 @@ project(":base") {
 
     commonModuleSetup(project, [ 'base' ])
 
-    project.ext.moduleSourcePath = defaultModuleSourcePath
+    if (!project.hasProperty('moduleSourcePath')) {
+        project.ext.moduleSourcePath = defaultModuleSourcePath
+    }
+
     project.ext.moduleSourcePathShim = defaultModuleSourcePathShim
 
     // We need to take the VersionInfo.java file and replace the various
@@ -3334,7 +3337,11 @@ project(":web") {
         }
     }
 
-    project.ext.moduleSourcePath = defaultModuleSourcePath
+    // project.ext.moduleSourcePath = defaultModuleSourcePath
+    if (!project.hasProperty('moduleSourcePath')) {
+        project.ext.moduleSourcePath = defaultModuleSourcePath
+    }
+
     project.ext.moduleSourcePathShim = defaultModuleSourcePathShim
 
     commonModuleSetup(project, [ 'base', 'graphics', 'controls', 'media', 'web' ])
