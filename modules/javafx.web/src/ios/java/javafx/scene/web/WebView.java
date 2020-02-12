@@ -42,6 +42,8 @@ import com.sun.javafx.scene.DirtyBits;
 import com.sun.javafx.scene.NodeHelper;
 import com.sun.javafx.scene.input.PickResultChooser;
 import com.sun.javafx.scene.SceneHelper;
+import com.sun.java.scene.web.WebViewHelper;
+
 import com.sun.javafx.sg.prism.NGNode;
 import com.sun.javafx.tk.TKPulseListener;
 import com.sun.javafx.tk.Toolkit;
@@ -72,7 +74,6 @@ import javafx.scene.text.FontSmoothingType;
  */
 final public class WebView extends Parent {
     static {
-/*
         WebViewHelper.setWebViewAccessor(new WebViewHelper.WebViewAccessor() {
             @Override
                 public NGNode doCreatePeer(Node node) {
@@ -105,7 +106,6 @@ final public class WebView extends Parent {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
-*/
     }
 
     private static final boolean DEFAULT_CONTEXT_MENU_ENABLED = true;
