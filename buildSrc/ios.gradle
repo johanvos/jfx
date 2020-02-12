@@ -460,9 +460,8 @@ IOS.media.x86_64.lib = "jfxmedia_${archX86_64}"
 
 project(":web") {
     apply plugin: 'java'
-
     sourceSets.main.java.srcDirs = [ 'src/ios/java' ]
-
     project.ext.moduleSourcePath = cygpath(rootProject.projectDir.path + '/modules/*/src/ios/java')
+    project.ext.bundledWebkit = true
 }
 

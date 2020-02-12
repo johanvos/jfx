@@ -1997,9 +1997,7 @@ project(":base") {
 
     commonModuleSetup(project, [ 'base' ])
 
-    if (!project.hasProperty('moduleSourcePath')) {
-        project.ext.moduleSourcePath = defaultModuleSourcePath
-    }
+    project.ext.moduleSourcePath = defaultModuleSourcePath
 
     project.ext.moduleSourcePathShim = defaultModuleSourcePathShim
 
@@ -3337,10 +3335,10 @@ project(":web") {
         }
     }
 
-    // project.ext.moduleSourcePath = defaultModuleSourcePath
     if (!project.hasProperty('moduleSourcePath')) {
         project.ext.moduleSourcePath = defaultModuleSourcePath
-    } else {
+    }
+    if (project.hasProperty('bundledWebkit')) {
         addNative(project, "webview")
     }
 
@@ -3370,7 +3368,7 @@ project(":web") {
     // add in the wrappers to the compile
     sourceSets.main.java.srcDirs += "${gensrcDir}"
 
-    // if (IS_COMPILE_WEBKIT) {
+    if (IS_COMPILE_WEBKIT || project.hasProperty('bundledWebkit')) {
         compileJava {
             // generate the native headers during compile
             // only needed if we are doing the native compile
@@ -3378,7 +3376,7 @@ project(":web") {
                 '-h', "${project.buildDir}/gensrc/headers"
                 ])
         }
-    // }
+    }
 
     // Copy these to a common location in the moduleSourcePath
     def copyWrappers = project.task("copyPreGeneratedWrappers", type: Copy) {
@@ -3386,7 +3384,7 @@ project(":web") {
         into "${gensrcDir}"
     }
 
-    if (!project.hasProperty('moduleSourcePath')) {
+    if (!project.hasProperty('bundledWebkit')) {
         compileJava.dependsOn(copyWrappers);
     }
 
