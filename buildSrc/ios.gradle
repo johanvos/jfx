@@ -382,7 +382,7 @@ IOS.font.x86_64.lib = "javafx_font_${archX86_64}"
 IOS.webview = [:]
 IOS.webview.lib = "javafx_ios_webnode"
 IOS.webview.javahInclude = ["javafx/scene/web/*"]
-IOS.webview.variants = ["arm", "arm64", "x86", "x86_64"];
+IOS.webview.variants = ["arm64"];
 
 IOS.webview.arm = [:]
 IOS.webview.arm.nativeSource = file("${project("web").projectDir}/src/ios/native")
@@ -463,7 +463,6 @@ project(":web") {
 
     sourceSets.main.java.srcDirs = [ 'src/ios/java' ]
 
-    project.ext.moduleSourcePath = cygpath(rootProject.projectDir.path + '/modules/*/src/ios/java') +
-        File.pathSeparator + cygpath(rootProject.projectDir.path + '/modules/*/build/gensrc/{java,jsl-decora,jsl-prism}')
+    project.ext.moduleSourcePath = cygpath(rootProject.projectDir.path + '/modules/*/src/ios/java')
 }
 

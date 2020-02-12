@@ -3340,6 +3340,8 @@ project(":web") {
     // project.ext.moduleSourcePath = defaultModuleSourcePath
     if (!project.hasProperty('moduleSourcePath')) {
         project.ext.moduleSourcePath = defaultModuleSourcePath
+    } else {
+        addNative(project, "webview")
     }
 
     project.ext.moduleSourcePathShim = defaultModuleSourcePathShim
@@ -3368,7 +3370,7 @@ project(":web") {
     // add in the wrappers to the compile
     sourceSets.main.java.srcDirs += "${gensrcDir}"
 
-    if (IS_COMPILE_WEBKIT) {
+    // if (IS_COMPILE_WEBKIT) {
         compileJava {
             // generate the native headers during compile
             // only needed if we are doing the native compile
@@ -3376,7 +3378,7 @@ project(":web") {
                 '-h', "${project.buildDir}/gensrc/headers"
                 ])
         }
-    }
+    // }
 
     // Copy these to a common location in the moduleSourcePath
     def copyWrappers = project.task("copyPreGeneratedWrappers", type: Copy) {
@@ -3384,7 +3386,9 @@ project(":web") {
         into "${gensrcDir}"
     }
 
-    compileJava.dependsOn(copyWrappers);
+    if (!project.hasProperty('moduleSourcePath')) {
+        compileJava.dependsOn(copyWrappers);
+    }
 
     test {
         doFirst {

@@ -72,6 +72,7 @@ import javafx.scene.text.FontSmoothingType;
  */
 final public class WebView extends Parent {
     static {
+/*
         WebViewHelper.setWebViewAccessor(new WebViewHelper.WebViewAccessor() {
             @Override
                 public NGNode doCreatePeer(Node node) {
@@ -104,6 +105,7 @@ final public class WebView extends Parent {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
+*/
     }
 
     private static final boolean DEFAULT_CONTEXT_MENU_ENABLED = true;
@@ -334,7 +336,7 @@ final public class WebView extends Parent {
 
         });
 
-        impl_treeVisibleProperty().addListener(new ChangeListener<Boolean>() {
+       NodeHelper.treeVisibleProperty(this).addListener(new ChangeListener<Boolean>() {
 
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -1019,7 +1021,7 @@ final public class WebView extends Parent {
         // pending render queues, if any, become obsolete and should be
         // discarded.
 
-        boolean reallyVisible = impl_isTreeVisible()
+        boolean reallyVisible = NodeHelper.isTreeVisible(this)
                 && getScene() != null
                 && getScene().getWindow() != null
                 && getScene().getWindow().isShowing();

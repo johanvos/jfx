@@ -26,6 +26,8 @@
 package javafx.scene.web;
 
 
+import com.sun.javafx.scene.control.ControlHelper;
+
 import javafx.css.StyleableProperty;
 
 import javafx.scene.control.Control;
@@ -45,7 +47,7 @@ public class HTMLEditor extends Control {
      * Creates a new instance of the HTMLEditor control.
      */
     public HTMLEditor() {
-        ((StyleableProperty)super.skinClassNameProperty()).applyStyle(
+        ((StyleableProperty) ControlHelper.skinClassNameProperty(this)).applyStyle(
             null,
             "com.sun.javafx.scene.web.skin.HTMLEditorSkin"
         );

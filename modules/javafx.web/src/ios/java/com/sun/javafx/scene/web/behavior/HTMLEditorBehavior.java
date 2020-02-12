@@ -32,6 +32,9 @@ import java.util.List;
 import com.sun.javafx.scene.control.behavior.BehaviorBase;
 import com.sun.javafx.scene.control.inputmap.InputMap;
 import com.sun.javafx.scene.control.inputmap.KeyBinding;
+import com.sun.javafx.scene.control.behavior.FocusTraversalInputMap;
+
+import static com.sun.javafx.scene.control.inputmap.InputMap.KeyMapping;
 import javafx.scene.web.HTMLEditorSkin;
 import static javafx.scene.input.KeyCode.B;
 import static javafx.scene.input.KeyCode.I;
