@@ -127,7 +127,7 @@ ios.prism.static.libraries=true
 ios.prism.useNativeIIO=false"""
 
 IOS.glass = [:]
-IOS.glass.variants = ["arm", "arm64", "x86", "x86_64"];
+IOS.glass.variants = ["arm64"]; // , "arm64", "x86", "x86_64"];
 IOS.glass.javahInclude = [
     "com/sun/glass/events/**",
     "com/sun/glass/ui/*",
@@ -187,7 +187,7 @@ IOS.decora.arm64.lib = "decora_sse_${archArm64}"
 IOS.prism = [:]
 IOS.prism.lib = "prism_common"
 IOS.prism.javahInclude = ["com/sun/prism/impl/**/*", "com/sun/prism/PresentableState*"]
-IOS.prism.variants = ["arm", "arm64", "x86", "x86_64"];
+IOS.prism.variants = ["arm64"]; // ", "arm64", "x86", "x86_64"];
 
 IOS.prism.arm = [:]
 IOS.prism.arm.nativeSource = file("${project("graphics").projectDir}/src/main/native-prism")
@@ -457,4 +457,20 @@ IOS.media.x86_64.ccFlags = ["-x", "objective-c", ccFlags, "-arch", archX86_64, "
 IOS.media.x86_64.linker = linker
 IOS.media.x86_64.linkFlags = ["-arch_only", archX86_64, "-syslibroot", sdkPath(iPhoneSim), linkFlags].flatten()
 IOS.media.x86_64.lib = "jfxmedia_${archX86_64}"
+
+project(":controls") {
+
+    apply plugin: 'java'
+    sourceSets.main.java.srcDirs += ['src/ios/java']
+    task copyResources()  {
+        copy {
+            from ("src/ios/resources")
+            into ("build/classes/java/main/javafx.controls")
+        }
+    }
+
+    assemble.dependsOn("copyResources");
+
+}
+
 

@@ -80,7 +80,7 @@ public abstract class TextInputControlBehavior<T extends TextInputControl> exten
      * Specifies whether we ought to show handles. We should do it on touch platforms, but not
      * iOS (and maybe not Android either?)
      */
-    static final boolean SHOW_HANDLES = Properties.IS_TOUCH_SUPPORTED && !PlatformUtil.isIOS();
+    static final boolean SHOW_HANDLES = Properties.IS_TOUCH_SUPPORTED;//  && !PlatformUtil.isIOS();
 
     public static final String DISABLE_FORWARD_TO_PARENT = "TextInputControlBehavior.disableForwardToParent";
 

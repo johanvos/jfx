@@ -120,7 +120,7 @@ public class TextFieldBehavior extends TextInputControlBehavior<TextField> {
         TextField textField = getNode();
 
         if (textField.isFocused()) {
-            if (PlatformUtil.isIOS()) {
+            if (PlatformUtil.isIOS() && false) {
                 // special handling of focus on iOS is required to allow to
                 // control native keyboard, because nat. keyboard is poped-up only when native
                 // text component gets focus. When we have JFX keyboard we can remove this code
@@ -151,7 +151,7 @@ public class TextFieldBehavior extends TextInputControlBehavior<TextField> {
                 setCaretAnimating(true);
             }
         } else {
-            if (PlatformUtil.isIOS() && textField.getScene() != null) {
+            if (PlatformUtil.isIOS() && false && textField.getScene() != null) {
                 // releasing the focus => we need to hide the native component and also native keyboard
                 WindowHelper.getPeer(textField.getScene().getWindow()).releaseInput();
             }

@@ -1947,6 +1947,8 @@ allprojects {
 project.ext.defaultModuleSourcePath =
     cygpath(rootProject.projectDir.path + '/modules/*/src/main/java') +
         File.pathSeparator  +
+    cygpath(rootProject.projectDir.path + '/modules/*/src/ios/java') +
+        File.pathSeparator  +
     cygpath(rootProject.projectDir.path + '/modules/*/src/android/java') +
         File.pathSeparator  +
     cygpath(rootProject.projectDir.path + '/modules/*/build/gensrc/{java,jsl-decora,jsl-prism}')

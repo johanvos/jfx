@@ -132,7 +132,7 @@ public abstract class TextInputControlSkin<T extends TextInputControl> extends S
      * Specifies whether we ought to show handles. We should do it on touch platforms, but not
      * iOS (and maybe not Android either?)
      */
-    static final boolean SHOW_HANDLES = Properties.IS_TOUCH_SUPPORTED && !PlatformUtil.isIOS();
+    static final boolean SHOW_HANDLES = Properties.IS_TOUCH_SUPPORTED; // && !PlatformUtil.isIOS();
 
     private final static boolean IS_FXVK_SUPPORTED = Platform.isSupported(ConditionalFeature.VIRTUAL_KEYBOARD);
 
@@ -688,7 +688,7 @@ public abstract class TextInputControlSkin<T extends TextInputControl> extends S
         if (textInput.isEditable() && !textInput.textProperty().isBound() && !textInput.isDisabled()) {
 
             // just replace the text on iOS
-            if (PlatformUtil.isIOS()) {
+            if (false && PlatformUtil.isIOS()) {
                textInput.setText(event.getCommitted());
                return;
             }

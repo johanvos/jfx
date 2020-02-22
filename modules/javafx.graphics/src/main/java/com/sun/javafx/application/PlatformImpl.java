@@ -787,6 +787,10 @@ public class PlatformImpl {
                 if (PlatformUtil.isAndroid()) {
                     uaStylesheets.add("com/sun/javafx/scene/control/skin/caspian/android.css");
                 }
+                if (PlatformUtil.isIOS()) {
+System.err.println("ADD0 IOS.CSS stylesheet");
+                    uaStylesheets.add("com/sun/javafx/scene/control/skin/caspian/ios.css");
+                }
             }
 
             if (isSupported(ConditionalFeature.TWO_LEVEL_FOCUS)) {
@@ -815,6 +819,10 @@ public class PlatformImpl {
             }
             if (PlatformUtil.isAndroid()) {
                 uaStylesheets.add("com/sun/javafx/scene/control/skin/modena/android.css");
+            }
+            if (PlatformUtil.isIOS()) {
+System.err.println("ADD1 IOS.CSS stylesheet");
+                uaStylesheets.add("com/sun/javafx/scene/control/skin/modena/ios.css");
             }
 
             if (isSupported(ConditionalFeature.TWO_LEVEL_FOCUS)) {

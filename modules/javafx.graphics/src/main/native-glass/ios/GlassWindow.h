@@ -28,7 +28,7 @@
 #import "GlassDragDelegate.h"
 
 //
-@interface GlassMainWindow : UIWindow {
+@interface GlassMainWindow : UIWindow<UIKeyInput> {
 
 }
 -(void) sendEvent:(UIEvent *)event;

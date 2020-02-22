@@ -83,6 +83,23 @@ static GlassWindow   * focusOwner; // currently focused GlassWindow - i.e. key e
     [focusOwner resignKeyWindow];
 }
 
+- (BOOL) canBecomeFirstResponder {return YES;}
+
+
+- (BOOL)hasText {
+    fprintf(stderr, "hastext? \n");
+        return YES;
+}
+
+- (void)insertText:(NSString *)theText {
+    fprintf(stderr, "INSERT TEXT\n");
+}
+
+- (void)deleteBackward {
+    fprintf(stderr, "DELETEBW TEXT\n");
+}
+
+
 @end
 
 @implementation GlassMainView
@@ -876,6 +893,14 @@ jlong _1createWindow(JNIEnv *env, jobject jWindow, jlong jOwnerPtr, jlong jScree
 @end
 
 
+JNIEXPORT void JNICALL Java_javafx_scene_control_skin_TextFieldSkinIos_showSoftwareKeyboard
+(JNIEnv *env, jobject jTextFieldSkin)
+{
+    fprintf(stderr, "[JVDBG] ShowSoftwareKeyboard asked0 !!\n");
+    fprintf(stderr, "[JVDBG] ShowSoftwareKeyboard asked1, fo = %p\n", focusOwner);
+    [focusOwner becomeFirstResponder];
+    fprintf(stderr, "[JVDBG] ShowSoftwareKeyboard asked and rednered?!!\n");
+}
 
 /*
  * Class:     com_sun_glass_ui_ios_IosWindow
