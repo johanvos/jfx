@@ -49,7 +49,7 @@
     #define MOUSELOG(MSG, ...) GLASS_LOG(MSG, ## __VA_ARGS__);
 #endif
 
-//#define KEYVERBOSE
+#define KEYVERBOSE
 #ifndef KEYVERBOSE
     #define KEYLOG(MSG, ...)
 #else
@@ -472,6 +472,7 @@
 
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {
+fprintf(stderr, "[JDVBG] GV3D, performKeyEquivalent\n");
     KEYLOG("performKeyEquivalent");
     [GlassApplication registerKeyEvent:theEvent];
 
@@ -519,6 +520,7 @@
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+fprintf(stderr, "[JVDBG] 3D KeyDown\n");
     KEYLOG("keyDown");
     [GlassApplication registerKeyEvent:theEvent];
 
@@ -530,6 +532,7 @@
 
 - (void)keyUp:(NSEvent *)theEvent
 {
+fprintf(stderr, "[JVDBG] KeyUP\n");
     KEYLOG("keyUp");
     [self->_delegate sendJavaKeyEvent:theEvent isDown:NO];
 }

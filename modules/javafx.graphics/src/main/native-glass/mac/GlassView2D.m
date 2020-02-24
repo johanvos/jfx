@@ -32,7 +32,7 @@
 #import "GlassMacros.h"
 #import "GlassView2D.h"
 
-//#define VERBOSE
+#define VERBOSE
 #ifndef VERBOSE
     #define LOG(MSG, ...)
 #else
@@ -245,17 +245,20 @@
 
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {
+fprintf(stderr, "[JVDBG] PKE\n");
     [self->delegate sendJavaKeyEvent:theEvent isDown:YES];
     return NO; // return NO to allow system-default processing of Cmd+Q, etc.
 }
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+fprintf(stderr, "[JVDBG] G2 KD\n");
     [self->delegate sendJavaKeyEvent:theEvent isDown:YES];
 }
 
 - (void)keyUp:(NSEvent *)theEvent
 {
+fprintf(stderr, "[JVDBG] G2 KU\n");
     [self->delegate sendJavaKeyEvent:theEvent isDown:NO];
 }
 

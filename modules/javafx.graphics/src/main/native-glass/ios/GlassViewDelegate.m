@@ -35,7 +35,7 @@
 #import "GlassMacros.h"
 #import "GlassWindow.h"
 
-//#define VERBOSE_DND
+#define VERBOSE_DND
 #ifdef VERBOSE_DND
 
 #define DNDLOG NSLog
@@ -546,6 +546,27 @@ static jint getTouchStateFromPhase(int phase)
                            modifiers, isPopupTrigger, isSynthesized);
     GLASS_CHECK_EXCEPTION(env);
 }
+
+/*
+- (BOOL) canBecomeFirstResponder {return YES;}
+
+
+- (BOOL)hasText {
+    fprintf(stderr, "hastext? \n");
+        return YES;
+}
+
+- (void)insertText:(NSString *)theText {
+    fprintf(stderr, "INSERT TEXT\n");
+NSLog(@"TEXT: %@", theText);
+const char * inputString = [theText UTF8String];
+fprintf(stderr, "[JVDBG] insertText, val = %s\n",inputString);
+}
+
+- (void)deleteBackward {
+    fprintf(stderr, "DELETEBW TEXT\n");
+}
+*/
 
 
 - (void)sendJavaKeyEventWithType:(int)type keyCode:(int)code chars:(char)chr modifiers:(int)modif;

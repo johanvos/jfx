@@ -83,6 +83,7 @@ static GlassWindow   * focusOwner; // currently focused GlassWindow - i.e. key e
     [focusOwner resignKeyWindow];
 }
 
+/*
 - (BOOL) canBecomeFirstResponder {return YES;}
 
 
@@ -93,11 +94,23 @@ static GlassWindow   * focusOwner; // currently focused GlassWindow - i.e. key e
 
 - (void)insertText:(NSString *)theText {
     fprintf(stderr, "INSERT TEXT\n");
+NSLog(@"TEXT: %@", theText);
+const char * inputString = [theText UTF8String];
+fprintf(stderr, "[JVDBG] insertText, val = %s\n",inputString);
+NSLog(@"evaluate subviews.. ");
+    for(GlassViewGL * subView in [self subviews]) {
+NSLog(@"evaluate subview %@",subView);
+        if(subView != nil && [subView isKindOfClass:[GlassViewGL class]] == YES) {
+NSLog(@"pos evaluate subview %@",subView);
+            [subView doInsertText:theText];
+        }
+    }
 }
 
 - (void)deleteBackward {
     fprintf(stderr, "DELETEBW TEXT\n");
 }
+*/
 
 
 @end
@@ -229,6 +242,32 @@ static inline void setWindowFrame(GlassWindow *window, CGFloat x, CGFloat y, CGF
 
 +(GlassMainView *) getMasterWindowHost {
     return masterWindowHost;
+}
+- (BOOL) canBecomeFirstResponder {return YES;}
+
+
+- (BOOL)hasText {
+    fprintf(stderr, "hastext? \n");
+        return YES;
+}
+
+- (void)insertText:(NSString *)theText {
+    fprintf(stderr, "INSERT TEXT\n");
+NSLog(@"TEXT: %@", theText);
+const char * inputString = [theText UTF8String];
+fprintf(stderr, "[JVDBG] insertText, val = %s\n",inputString);
+NSLog(@"evaluate subviews.. ");
+    for(GlassViewGL * subView in [self->hostView subviews]) {
+NSLog(@"evaluate subview %@",subView);
+        if(subView != nil && [subView isKindOfClass:[GlassViewGL class]] == YES) {
+NSLog(@"pos evaluate subview %@",subView);
+            [subView doInsertText:theText];
+        }
+    }
+}
+
+- (void)deleteBackward {
+    fprintf(stderr, "DELETEBW TEXT\n");
 }
 // request subviews to repaint
 - (void) displaySubviews
@@ -514,6 +553,7 @@ static inline void setWindowFrame(GlassWindow *window, CGFloat x, CGFloat y, CGF
 
 - (void)addChildWindow:(GlassWindow*)child
 {
+NSLog(@"Add child window %@ to %@", child, self);
     NSAssert([[NSThread currentThread] isMainThread] == YES, @"must be on main thread" );
     if (child != nil) {
         child->parentWindow = self;

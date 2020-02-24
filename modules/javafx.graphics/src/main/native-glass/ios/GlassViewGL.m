@@ -124,6 +124,14 @@ static EAGLContext * ctx = nil;
 
 @implementation GlassViewGL : GLView
 
+-(void) doInsertText:(NSString*)myText {
+    fprintf(stderr, "GLView: doInsertText called\n");
+    int asciiCode = [myText characterAtIndex:0];
+    [self->delegate sendJavaKeyEventWithType:111 keyCode:asciiCode chars:(char)asciiCode modifiers:0];
+    [self->delegate sendJavaKeyEventWithType:113 keyCode:asciiCode chars:(char)asciiCode modifiers:0];
+    [self->delegate sendJavaKeyEventWithType:112 keyCode:asciiCode chars:(char)asciiCode modifiers:0];
+
+}
 
 -(BOOL) touchesShouldBegin:(NSSet *)touches withEvent:(UIEvent *)event inContentView:(UIView *)view
 {

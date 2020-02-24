@@ -28,7 +28,7 @@
 #import "GlassDragDelegate.h"
 
 //
-@interface GlassMainWindow : UIWindow<UIKeyInput> {
+@interface GlassMainWindow : UIWindow {
 
 }
 -(void) sendEvent:(UIEvent *)event;
@@ -40,7 +40,7 @@
 
 @end
 
-@interface GlassWindow : UIView
+@interface GlassWindow : UIView<UIKeyInput>
 {
     jobject             jWindow; // Glass java Window object
 
