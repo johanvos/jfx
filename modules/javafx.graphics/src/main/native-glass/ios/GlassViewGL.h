@@ -53,6 +53,7 @@
     UIView              *nativeView; // view used for user input
 }
 -(void) doInsertText:(NSString*)myText; 
+-(void) doDeleteBackward;
 
 
 @end

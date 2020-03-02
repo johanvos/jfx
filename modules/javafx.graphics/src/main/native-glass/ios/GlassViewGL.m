@@ -130,7 +130,14 @@ static EAGLContext * ctx = nil;
     [self->delegate sendJavaKeyEventWithType:111 keyCode:asciiCode chars:(char)asciiCode modifiers:0];
     [self->delegate sendJavaKeyEventWithType:113 keyCode:asciiCode chars:(char)asciiCode modifiers:0];
     [self->delegate sendJavaKeyEventWithType:112 keyCode:asciiCode chars:(char)asciiCode modifiers:0];
+}
 
+-(void) doDeleteBackward {
+    fprintf(stderr, "GLView: doDeletebw called\n");
+    int asciiCode = 8;
+    [self->delegate sendJavaKeyEventWithType:111 keyCode:asciiCode chars:(char)asciiCode modifiers:0];
+    [self->delegate sendJavaKeyEventWithType:113 keyCode:asciiCode chars:(char)asciiCode modifiers:0];
+    [self->delegate sendJavaKeyEventWithType:112 keyCode:asciiCode chars:(char)asciiCode modifiers:0];
 }
 
 -(BOOL) touchesShouldBegin:(NSSet *)touches withEvent:(UIEvent *)event inContentView:(UIView *)view

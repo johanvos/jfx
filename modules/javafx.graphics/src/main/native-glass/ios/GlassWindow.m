@@ -267,7 +267,14 @@ NSLog(@"pos evaluate subview %@",subView);
 }
 
 - (void)deleteBackward {
-    fprintf(stderr, "DELETEBW TEXT\n");
+    fprintf(stderr, "DELETEbackward TEXT\n");
+    for(GlassViewGL * subView in [self->hostView subviews]) {
+NSLog(@"evaluate subview %@",subView);
+        if(subView != nil && [subView isKindOfClass:[GlassViewGL class]] == YES) {
+NSLog(@"pos evaluate subview %@",subView);
+            [subView doDeleteBackward];
+        }
+    }
 }
 // request subviews to repaint
 - (void) displaySubviews
@@ -936,10 +943,17 @@ jlong _1createWindow(JNIEnv *env, jobject jWindow, jlong jOwnerPtr, jlong jScree
 JNIEXPORT void JNICALL Java_javafx_scene_control_skin_TextFieldSkinIos_showSoftwareKeyboard
 (JNIEnv *env, jobject jTextFieldSkin)
 {
-    fprintf(stderr, "[JVDBG] ShowSoftwareKeyboard asked0 !!\n");
     fprintf(stderr, "[JVDBG] ShowSoftwareKeyboard asked1, fo = %p\n", focusOwner);
     [focusOwner becomeFirstResponder];
     fprintf(stderr, "[JVDBG] ShowSoftwareKeyboard asked and rednered?!!\n");
+}
+
+JNIEXPORT void JNICALL Java_javafx_scene_control_skin_TextFieldSkinIos_hideSoftwareKeyboard
+(JNIEnv *env, jobject jTextFieldSkin)
+{
+    fprintf(stderr, "[JVDBG] HideSoftwareKeyboard asked1, fo = %p\n", focusOwner);
+    [focusOwner resignFirstResponder];
+    fprintf(stderr, "[JVDBG] HideSoftwareKeyboard asked and rednered?!!\n");
 }
 
 /*
