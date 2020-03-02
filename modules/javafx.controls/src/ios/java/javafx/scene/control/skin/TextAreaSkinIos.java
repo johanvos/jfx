@@ -44,7 +44,7 @@ public class TextAreaSkinIos extends TextAreaSkin {
                 if (textArea.isEditable()) {
                     if (isFocused) {
                         showSoftwareKeyboard();
-                        adjustSize(460);
+                        // adjustSize(460);
                     } else {
                         hideSoftwareKeyboard();
                             if(control.getScene() != null) {

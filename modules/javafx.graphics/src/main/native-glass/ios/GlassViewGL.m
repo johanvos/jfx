@@ -393,6 +393,7 @@ static EAGLContext * ctx = nil;
                  mzx:(double)mzx mzy:(double)mzy mzz:(double)mzz mzt:(double)mzt
 {
 
+fprintf(stderr, "REQUESTINPUT ASKED!!\n");
     if (type == 0 || type == 1) { // TextField or PasswordField
 
         UITextField* textField = [[UITextField alloc] initWithFrame:CGRectMake(mxt + 1, myt + 1, width - 2, height - 2)];

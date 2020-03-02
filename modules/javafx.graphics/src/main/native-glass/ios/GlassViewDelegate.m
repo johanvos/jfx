@@ -547,28 +547,6 @@ static jint getTouchStateFromPhase(int phase)
     GLASS_CHECK_EXCEPTION(env);
 }
 
-/*
-- (BOOL) canBecomeFirstResponder {return YES;}
-
-
-- (BOOL)hasText {
-    fprintf(stderr, "hastext? \n");
-        return YES;
-}
-
-- (void)insertText:(NSString *)theText {
-    fprintf(stderr, "INSERT TEXT\n");
-NSLog(@"TEXT: %@", theText);
-const char * inputString = [theText UTF8String];
-fprintf(stderr, "[JVDBG] insertText, val = %s\n",inputString);
-}
-
-- (void)deleteBackward {
-    fprintf(stderr, "DELETEBW TEXT\n");
-}
-*/
-
-
 - (void)sendJavaKeyEventWithType:(int)type keyCode:(int)code chars:(char)chr modifiers:(int)modif;
 {
     GET_MAIN_JENV;

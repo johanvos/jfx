@@ -83,36 +83,6 @@ static GlassWindow   * focusOwner; // currently focused GlassWindow - i.e. key e
     [focusOwner resignKeyWindow];
 }
 
-/*
-- (BOOL) canBecomeFirstResponder {return YES;}
-
-
-- (BOOL)hasText {
-    fprintf(stderr, "hastext? \n");
-        return YES;
-}
-
-- (void)insertText:(NSString *)theText {
-    fprintf(stderr, "INSERT TEXT\n");
-NSLog(@"TEXT: %@", theText);
-const char * inputString = [theText UTF8String];
-fprintf(stderr, "[JVDBG] insertText, val = %s\n",inputString);
-NSLog(@"evaluate subviews.. ");
-    for(GlassViewGL * subView in [self subviews]) {
-NSLog(@"evaluate subview %@",subView);
-        if(subView != nil && [subView isKindOfClass:[GlassViewGL class]] == YES) {
-NSLog(@"pos evaluate subview %@",subView);
-            [subView doInsertText:theText];
-        }
-    }
-}
-
-- (void)deleteBackward {
-    fprintf(stderr, "DELETEBW TEXT\n");
-}
-*/
-
-
 @end
 
 @implementation GlassMainView
@@ -252,7 +222,7 @@ static inline void setWindowFrame(GlassWindow *window, CGFloat x, CGFloat y, CGF
 }
 
 - (void)insertText:(NSString *)theText {
-    fprintf(stderr, "INSERT TEXT\n");
+    fprintf(stderr, "INSERTAAAA TEXT\n");
 NSLog(@"TEXT: %@", theText);
 const char * inputString = [theText UTF8String];
 fprintf(stderr, "[JVDBG] insertText, val = %s\n",inputString);
@@ -954,6 +924,21 @@ JNIEXPORT void JNICALL Java_javafx_scene_control_skin_TextFieldSkinIos_hideSoftw
     fprintf(stderr, "[JVDBG] HideSoftwareKeyboard asked1, fo = %p\n", focusOwner);
     [focusOwner resignFirstResponder];
     fprintf(stderr, "[JVDBG] HideSoftwareKeyboard asked and rednered?!!\n");
+}
+
+JNIEXPORT void JNICALL Java_javafx_scene_control_skin_TextAreaSkinIos_showSoftwareKeyboard
+(JNIEnv *env, jobject jTextAreaSkin)
+{
+    fprintf(stderr, "[JVDBG] ShowSoftwareKeyboard asked for textarea, fo = %p\n", focusOwner);
+    [focusOwner becomeFirstResponder];
+    fprintf(stderr, "[JVDBG] ShowSoftwareKeyboard asked and rednered?!!\n");
+}
+
+JNIEXPORT void JNICALL Java_javafx_scene_control_skin_TextAreaSkinIos_hideSoftwareKeyboard
+(JNIEnv *env, jobject jTextAreaSkin)
+{
+    fprintf(stderr, "[JVDBG] HideSoftwareKeyboard asked for textarea, fo = %p\n", focusOwner);
+    [focusOwner resignFirstResponder];
 }
 
 /*
@@ -1710,6 +1695,8 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_ios_IosWindow__1requestInput
     jdouble myx, jdouble myy, jdouble myz, jdouble myt,
     jdouble mzx, jdouble mzy, jdouble mzz, jdouble mzt)
 {
+fprintf(stderr, "IOSWINDOW, resuqestinput, RETRUN!!!!!!\n");
+if (1 < 2) return;
     GLASS_ASSERT_MAIN_JAVA_THREAD(env);
     GLASS_POOL_ENTER;
 

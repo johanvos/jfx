@@ -147,9 +147,12 @@ public class TextAreaBehavior extends TextInputControlBehavior<TextArea> {
                 // The only real difference is that TextFieldBehavior selects all the text when the control
                 // receives focus (when not gained by mouse click), whereas TextArea doesn't, and also the
                 // TextArea doesn't lose selection on focus lost, whereas the TextField does.
+System.err.println("TEXTAREABEHAVIOR1 ");
                 final TextArea textArea = getNode();
                 if (textArea.isFocused()) {
-                    if (PlatformUtil.isIOS()) {
+System.err.println("TEXTAREABEHAVIOR2 ");
+                    if (PlatformUtil.isIOS() && false) {
+System.err.println("TEXTAREABEHAVIOR3 ");
                         // Special handling of focus on iOS is required to allow to
                         // control native keyboard, because native keyboard is popped-up only when native
                         // text component gets focus. When we have JFX keyboard we can remove this code
@@ -172,8 +175,10 @@ public class TextAreaBehavior extends TextInputControlBehavior<TextArea> {
                     }
                 } else {
 //                    skin.hideCaret();
-                    if (PlatformUtil.isIOS() && textArea.getScene() != null) {
+System.err.println("TEXTAREABEHAVIOR4 ");
+                    if (PlatformUtil.isIOS() && textArea.getScene() != null && false) {
                         // releasing the focus => we need to hide the native component and also native keyboard
+System.err.println("TEXTAREABEHAVIOR5 ");
                         WindowHelper.getPeer(textArea.getScene().getWindow()).releaseInput();
                     }
                     focusGainedByMouseClick = false;
