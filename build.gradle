@@ -1481,6 +1481,7 @@ void addJSL(Project project, String name, String pkg, List<String> addExports, C
         destinationDir = project.file("$project.buildDir/classes/jsl-compilers/$lowerName")
 
         options.compilerArgs.addAll([
+            "-XDstringConcat=inline",
             "-implicit:none",
             "--module-path", modulePath,
             "--add-modules=javafx.graphics"
@@ -2177,6 +2178,7 @@ project(":graphics") {
         destinationDir = project.sourceSets.main.java.outputDir
         options.compilerArgs.addAll([
             '-h', "$buildDir/gensrc/headers/",  // Note: this creates the native headers
+            '-XDstringConcat=inline',
             '-implicit:none',
             '--module-source-path', defaultModuleSourcePath
             ] )
@@ -3829,7 +3831,7 @@ allprojects {
 
         compile.options.warnings = IS_LINT
 
-        compile.options.compilerArgs += ["-XDignore.symbol.file", "-encoding", "UTF-8"]
+        compile.options.compilerArgs += ["-XDstringConcat=inline", "-XDignore.symbol.file", "-encoding", "UTF-8"]
 
         // we use a custom javadoc command
         project.javadoc.enabled = false
