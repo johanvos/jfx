@@ -135,10 +135,13 @@ public class LauncherImpl {
     @SuppressWarnings("unchecked")
     public static void launchApplication(final Class<? extends Application> appClass,
             final String[] args) {
+System.err.println("[JVDBG] LI, launchapp1");
 
         Class<? extends Preloader> preloaderClass = savedPreloaderClass;
+System.err.println("[JVDBG] LI, launchapp2");
 
         if (preloaderClass == null) {
+System.err.println("[JVDBG] LI, launchapp3");
             String preloaderByProperty = AccessController.doPrivileged((PrivilegedAction<String>) () ->
                     System.getProperty("javafx.preloader"));
             if (preloaderByProperty != null) {
@@ -152,6 +155,7 @@ public class LauncherImpl {
                 }
             }
         }
+System.err.println("[JVDBG] LI, launchapp4");
 
         launchApplication(appClass, preloaderClass, args);
     }
@@ -171,6 +175,7 @@ public class LauncherImpl {
             final Class<? extends Preloader> preloaderClass,
             final String[] args) {
 
+System.err.println("[JVDBG] LI, launchappA1");
         if (launchCalled.getAndSet(true)) {
             throw new IllegalStateException("Application launch must not be called more than once");
         }
@@ -192,6 +197,7 @@ public class LauncherImpl {
         final CountDownLatch launchLatch = new CountDownLatch(1);
         Thread launcherThread = new Thread(() -> {
             try {
+System.err.println("[JVDBG] LI, launchappA2");
                 launchApplication1(appClass, preloaderClass, args);
             } catch (RuntimeException rte) {
                 launchException = rte;
