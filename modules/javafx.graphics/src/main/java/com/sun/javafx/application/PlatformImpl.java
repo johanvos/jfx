@@ -25,7 +25,7 @@
 
 package com.sun.javafx.application;
 
-import static com.sun.javafx.FXPermissions.CREATE_TRANSPARENT_WINDOW_PERMISSION;
+// import static com.sun.javafx.FXPermissions.CREATE_TRANSPARENT_WINDOW_PERMISSION;
 import com.sun.javafx.PlatformUtil;
 import com.sun.javafx.css.StyleManager;
 import com.sun.javafx.tk.TKListener;
@@ -55,7 +55,7 @@ import javafx.application.ConditionalFeature;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Scene;
-import javafx.util.FXPermission;
+// import javafx.util.FXPermission;
 
 public class PlatformImpl {
 
@@ -102,8 +102,8 @@ public class PlatformImpl {
                     -> Boolean.getBoolean("com.sun.javafx.application.debug"));
 
     // Internal permission used by FXCanvas (SWT interop)
-    private static final FXPermission FXCANVAS_PERMISSION =
-            new FXPermission("accessFXCanvasInternals");
+    // private static final FXPermission FXCANVAS_PERMISSION =
+            // new FXPermission("accessFXCanvasInternals");
 
     /**
      * Set a flag indicating whether this application should show up in the
@@ -155,7 +155,9 @@ public class PlatformImpl {
      * @param r
      */
     public static void startup(final Runnable r) {
+System.err.println("PI, startup 1");
         startup(r, false);
+System.err.println("PI, startup 2");
     }
 
     /**
@@ -169,6 +171,7 @@ public class PlatformImpl {
      * @param preventDuplicateCalls
      */
     public static void startup(final Runnable r, boolean preventDuplicateCalls) {
+System.err.println("PI, startup2 1");
 
         // NOTE: if we ever support re-launching an application and/or
         // launching a second application in the same VM/classloader
@@ -176,6 +179,7 @@ public class PlatformImpl {
         if (platformExit.get()) {
             throw new IllegalStateException("Platform.exit has been called");
         }
+System.err.println("PI, startup2 2");
 
         if (initialized.getAndSet(true)) {
             if (preventDuplicateCalls) {
@@ -186,6 +190,7 @@ public class PlatformImpl {
             runLater(r);
             return;
         }
+System.err.println("PI, startup2 3");
 
         AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
             applicationType = System.getProperty("com.sun.javafx.application.type");
@@ -250,6 +255,7 @@ public class PlatformImpl {
 
         // Create Toolkit listener and register it with the Toolkit.
         // Call notifyFinishListeners when we get notified.
+System.err.println("PI, startup2 4");
         toolkitListener = new TKListener() {
             @Override public void changedTopLevelWindows(List<TKStage> windows) {
                 numWindows.set(windows.size());
@@ -264,17 +270,26 @@ public class PlatformImpl {
                 checkIdle();
             }
         };
+System.err.println("PI, startup2 5");
+System.err.println("PI, startup2 5a, tkl = "+toolkitListener);
+System.err.println("PI, startup2 5b, tk = "+Toolkit.getToolkit());
         Toolkit.getToolkit().addTkListener(toolkitListener);
+System.err.println("PI, startup2 6");
 
         Toolkit.getToolkit().startup(() -> {
+System.err.println("PI, startup2 7");
             startupLatch.countDown();
+System.err.println("PI, startup2 7a");
             r.run();
+System.err.println("PI, startup2 7b");
         });
+System.err.println("PI, startup2 8");
 
         //Initialize the thread merging mechanism
         if (isThreadMerged) {
             installFwEventQueue();
         }
+System.err.println("PI, startup2 DONE");
     }
 
     // Pass certain system properties to glass via the device details Map
@@ -325,6 +340,7 @@ public class PlatformImpl {
     // FXCanvas-specific initialization
     private static void initFXCanvas() {
         // Verify that we have the appropriate permission
+/*
         final SecurityManager sm = System.getSecurityManager();
         if (sm != null) {
             try {
@@ -335,6 +351,7 @@ public class PlatformImpl {
                 return;
             }
         }
+*/
 
         // Find the calling class, ignoring any stack frames from FX application classes
         Predicate<StackWalker.StackFrame> classFilter = f ->
@@ -625,6 +642,7 @@ public class PlatformImpl {
 
     public static boolean isSupported(ConditionalFeature feature) {
         final boolean supported = isSupportedImpl(feature);
+/*
         if (supported && (feature == ConditionalFeature.TRANSPARENT_WINDOW)) {
             // some features require the application to have the corresponding
             // permissions, if the application doesn't have them, the platform
@@ -642,6 +660,7 @@ public class PlatformImpl {
             return true;
         }
 
+*/
         return supported;
    }
 

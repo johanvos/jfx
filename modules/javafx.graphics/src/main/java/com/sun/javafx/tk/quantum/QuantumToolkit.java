@@ -241,9 +241,13 @@ public final class QuantumToolkit extends Toolkit {
         /*
          * Glass Mac, X11 need Application.setDeviceDetails to happen prior to Glass Application.Run
          */
+System.err.println("[QTK] init 1");
         renderer = QuantumRenderer.getInstance();
+System.err.println("[QTK] init 2");
         collector = PaintCollector.createInstance(this);
+System.err.println("[QTK] init 3");
         pipeline = GraphicsPipeline.getPipeline();
+System.err.println("[QTK] init 4");
 
         /* shutdown the pipeline on System.exit, ^c
          * needed with X11 and Windows, see RT-32501

@@ -199,19 +199,25 @@ System.err.println("[JVDBG] LI, launchappA1");
             try {
 System.err.println("[JVDBG] LI, launchappA2");
                 launchApplication1(appClass, preloaderClass, args);
+System.err.println("[JVDBG] LI, launchappA3 done");
             } catch (RuntimeException rte) {
+System.err.println("RTE: " +rte);
                 launchException = rte;
             } catch (Exception ex) {
+System.err.println("EX: " + ex);
                 launchException =
                     new RuntimeException("Application launch exception", ex);
             } catch (Error err) {
+System.err.println("ERR: " + err);
                 launchException =
                     new RuntimeException("Application launch error", err);
             } finally {
+System.err.println("[JVDBG] LI, launchappA4 finally");
                 launchLatch.countDown();
             }
         });
         launcherThread.setName("JavaFX-Launcher");
+System.err.println("[JVDBG] LI, launchapp start LauncherThread");
         launcherThread.start();
 
         // Wait for FX launcher thread to finish before returning to user
@@ -654,17 +660,22 @@ System.err.println("[JVDBG] LI, launchappA2");
     }
 
     private static void startToolkit() throws InterruptedException {
+System.err.println("Start toolkit 0");
         if (toolkitStarted.getAndSet(true)) {
             return;
         }
+System.err.println("Start toolkit 1");
 
         final CountDownLatch startupLatch = new CountDownLatch(1);
+System.err.println("Start toolkit 2");
 
         // Note, this method is called on the FX Application Thread
         PlatformImpl.startup(() -> startupLatch.countDown());
+System.err.println("Start toolkit 3");
 
         // Wait for FX platform to start
         startupLatch.await();
+System.err.println("Start toolkit 4");
     }
 
     private static volatile boolean error = false;
@@ -680,8 +691,9 @@ System.err.println("[JVDBG] LI, launchappA2");
     private static void launchApplication1(final Class<? extends Application> appClass,
             final Class<? extends Preloader> preloaderClass,
             final String[] args) throws Exception {
-
+System.err.println("launchApp1 - 1");
         startToolkit();
+System.err.println("launchApp1 - 2");
 
         if (savedMainCcl != null) {
             /*
@@ -699,6 +711,7 @@ System.err.println("[JVDBG] LI, launchappA2");
             }
         }
 
+System.err.println("launchApp1 - 2");
         final AtomicBoolean pStartCalled = new AtomicBoolean(false);
         final AtomicBoolean startCalled = new AtomicBoolean(false);
         final AtomicBoolean exitCalled = new AtomicBoolean(false);
@@ -706,6 +719,7 @@ System.err.println("[JVDBG] LI, launchappA2");
         final CountDownLatch shutdownLatch = new CountDownLatch(1);
         final CountDownLatch pShutdownLatch = new CountDownLatch(1);
 
+System.err.println("launchApp1 - 3");
         final PlatformImpl.FinishListener listener = new PlatformImpl.FinishListener() {
             @Override public void idle(boolean implicitExit) {
                 if (!implicitExit) {
@@ -726,7 +740,9 @@ System.err.println("[JVDBG] LI, launchappA2");
                 shutdownLatch.countDown();
             }
         };
+System.err.println("launchApp1 - 4");
         PlatformImpl.addListener(listener);
+System.err.println("launchApp1 - 5");
 
         try {
             final AtomicReference<Preloader> pldr = new AtomicReference<>();
@@ -747,7 +763,9 @@ System.err.println("[JVDBG] LI, launchappA2");
                     }
                 });
             }
+System.err.println("launchApp1 - 6");
             currentPreloader = pldr.get();
+System.err.println("launchApp1 - 7");
 
             // Call init method unless exit called or error detected
             if (currentPreloader != null && !error && !exitCalled.get()) {
@@ -788,6 +806,7 @@ System.err.println("[JVDBG] LI, launchappA2");
             // Construct an instance of the application on the FX thread, then
             // call its init method on this (launcher) thread. Then call
             // the start method on the FX thread.
+System.err.println("launchApp1 - 8");
             final AtomicReference<Application> app = new AtomicReference<>();
             if (!error && !exitCalled.get()) {
                 if (currentPreloader != null) {
@@ -802,8 +821,10 @@ System.err.println("[JVDBG] LI, launchappA2");
                             StateChangeNotification.Type.BEFORE_LOAD, null);
                 }
 
+System.err.println("launchApp1 - 9");
                 PlatformImpl.runAndWait(() -> {
                     try {
+System.err.println("launchApp1 - 10");
                         Constructor<? extends Application> c = appClass.getConstructor();
                         app.set(c.newInstance());
                         // Set startup parameters
@@ -816,7 +837,9 @@ System.err.println("[JVDBG] LI, launchappA2");
                     }
                 });
             }
+System.err.println("launchApp1 - 11");
             final Application theApp = app.get();
+System.err.println("launchApp1 - 12");
 
             // Call init method unless exit called or error detected
             if (!error && !exitCalled.get()) {
@@ -913,6 +936,7 @@ System.err.println("[JVDBG] LI, launchappA2");
                 }
             }
         } finally {
+System.err.println("launchApp1 - finally");
             PlatformImpl.removeListener(listener);
             PlatformImpl.tkExit();
         }

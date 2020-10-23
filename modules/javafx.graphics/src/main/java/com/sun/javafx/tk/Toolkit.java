@@ -192,8 +192,9 @@ public abstract class Toolkit {
         } else if (PlatformUtil.isAndroid()) {
            return DEFAULT_TOOLKIT;
         }
+        return DEFAULT_TOOLKIT;
 
-        throw new UnsupportedOperationException(System.getProperty("os.name") + " is not supported");
+        // throw new UnsupportedOperationException(System.getProperty("os.name") + " is not supported");
     }
 
     public static synchronized Toolkit getToolkit() {
