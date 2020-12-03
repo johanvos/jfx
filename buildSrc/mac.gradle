@@ -121,6 +121,7 @@ if (!file(MACOSX_SDK_PATH).isDirectory()) {
 
 // NOTE: There is no space between -iframework and the specified path
 def commonParams = [
+        "-target","arm64-apple-macos11",
         "-mmacosx-version-min=$MACOSX_MIN_VERSION",
         "-isysroot", "$MACOSX_SDK_PATH",
         "-iframework$MACOSX_SDK_PATH/System/Library/Frameworks",

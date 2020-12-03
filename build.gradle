@@ -3456,7 +3456,8 @@ project(":web") {
                     if (IS_STATIC_BUILD) {
                         cmakeArgs = " $cmakeArgs -DSTATIC_BUILD=1 -DUSE_THIN_ARCHIVES=OFF";
                     }
-                    cmakeArgs = " $cmakeArgs -DCMAKE_C_COMPILER='${webkitProperties.compiler}'"
+                    cmakeArgs = " -target arm64-apple-macos11 $cmakeArgs -DCMAKE_C_COMPILER='${webkitProperties.compiler}'"
+
                     if (t.name == "win") {
                         // To enable ninja build on Windows
                         environment(WINDOWS_NATIVE_COMPILE_ENVIRONMENT)
