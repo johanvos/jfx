@@ -224,6 +224,7 @@ public abstract class Application {
      * method, start method, or stop method.
      */
     public static void launch(Class<? extends Application> appClass, String... args) {
+System.err.println("javafx.application.Application.launch() is called, invoke launchApplication now on LauncherImpl");
         LauncherImpl.launchApplication(appClass, args);
     }
 

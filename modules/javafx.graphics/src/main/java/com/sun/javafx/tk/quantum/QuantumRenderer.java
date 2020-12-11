@@ -25,6 +25,8 @@
 
 package com.sun.javafx.tk.quantum;
 
+// import org.apidesign.bck2brwsr.core.JavaScriptBody;
+
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Map;
@@ -255,14 +257,18 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
     }
 
     public static synchronized QuantumRenderer getInstance() {
+System.err.println("[QR] getIstance asked!");
         if (instanceReference.get() == null) {
             synchronized (QuantumRenderer.class) {
                 QuantumRenderer newTk = null;
                 try {
                     newTk = new QuantumRenderer();
+System.err.println("[QR] ready to prestart!");
                     newTk.prestartCoreThread();
+System.err.println("[QR] ready to prestart done!");
 
                     newTk.initLatch.await();
+System.err.println("[QR] ready to prestart awaited!");
                 } catch (Throwable t) {
                     if (newTk != null) {
                         newTk.setInitThrowable(t);

@@ -118,8 +118,8 @@ public class LauncherImpl {
     private static ClassLoader savedMainCcl = null;
 
     static {
-        verbose = AccessController.doPrivileged((PrivilegedAction<Boolean>) () ->
-                Boolean.getBoolean("javafx.verbose"));
+System.err.println("[JVDBG] LI, launchapp0");
+        verbose = true;
     }
 
     /**
