@@ -247,7 +247,7 @@ System.err.println("[QTK] init 2");
         collector = PaintCollector.createInstance(this);
 System.err.println("[QTK] init 3");
         pipeline = GraphicsPipeline.getPipeline();
-System.err.println("[QTK] init 4");
+System.err.println("[QTK] init 4a");
 
         /* shutdown the pipeline on System.exit, ^c
          * needed with X11 and Windows, see RT-32501
@@ -257,10 +257,12 @@ System.err.println("[QTK] init 4");
                 dispose();
             }
         };
-        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
-            Runtime.getRuntime().addShutdownHook(shutdownHook);
-            return null;
-        });
+System.err.println("[QTK] init 5");
+        // AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            // Runtime.getRuntime().addShutdownHook(shutdownHook);
+            // return null;
+        // });
+System.err.println("[QTK] init 6");
         return true;
     }
 

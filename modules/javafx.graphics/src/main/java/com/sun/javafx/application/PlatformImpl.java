@@ -271,8 +271,9 @@ System.err.println("PI, startup2 4");
             }
         };
 System.err.println("PI, startup2 5");
-System.err.println("PI, startup2 5a, tkl = "+toolkitListener);
-System.err.println("PI, startup2 5b, tk = "+Toolkit.getToolkit());
+System.err.println("PI, startup2 5a0, tkl = "+toolkitListener);
+Toolkit mt = Toolkit.getToolkit();
+System.err.println("PI, startup2 5a, tk = "+mt);
         Toolkit.getToolkit().addTkListener(toolkitListener);
 System.err.println("PI, startup2 6");
 

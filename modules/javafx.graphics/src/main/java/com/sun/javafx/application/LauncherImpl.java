@@ -195,7 +195,7 @@ System.err.println("[JVDBG] LI, launchappA1");
 
         // Create a new Launcher thread and then wait for that thread to finish
         final CountDownLatch launchLatch = new CountDownLatch(1);
-        Thread launcherThread = new Thread(() -> {
+        // Thread launcherThread = new Thread(() -> {
             try {
 System.err.println("[JVDBG] LI, launchappA2");
                 launchApplication1(appClass, preloaderClass, args);
@@ -215,10 +215,10 @@ System.err.println("ERR: " + err);
 System.err.println("[JVDBG] LI, launchappA4 finally");
                 launchLatch.countDown();
             }
-        });
-        launcherThread.setName("JavaFX-Launcher");
-System.err.println("[JVDBG] LI, launchapp start LauncherThread");
-        launcherThread.start();
+        // });
+        // launcherThread.setName("JavaFX-Launcher");
+// System.err.println("[JVDBG] LI, launchapp start LauncherThread");
+        // launcherThread.start();
 
         // Wait for FX launcher thread to finish before returning to user
         try {

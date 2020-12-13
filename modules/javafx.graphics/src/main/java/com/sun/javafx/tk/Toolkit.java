@@ -198,7 +198,9 @@ public abstract class Toolkit {
     }
 
     public static synchronized Toolkit getToolkit() {
+System.err.println("[TK] getToolkit() asked");
         if (TOOLKIT != null) {
+System.err.println("[TK] TOOLKIT exists");
             return TOOLKIT;
         }
 
@@ -258,13 +260,17 @@ public abstract class Toolkit {
                         + forcedToolkit);
             }
 
+System.err.println("[TK] getToolkit() asked, instance from clz");
             TOOLKIT = (Toolkit)clz.newInstance();
+System.err.println("[TK] getToolkit() asked, instance from clz done");
             if (TOOLKIT.init()) {
+System.err.println("[TK] getToolkit() asked, init from clz ok");
                 if (printToolkit) {
                     System.err.println("JavaFX: using " + forcedToolkit);
                 }
                 return TOOLKIT;
             }
+System.err.println("[TK] getToolkit() asked, return NULL");
             TOOLKIT = null;
         } catch (Exception any) {
             TOOLKIT = null;
