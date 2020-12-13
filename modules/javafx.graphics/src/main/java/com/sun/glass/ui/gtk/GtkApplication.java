@@ -59,6 +59,7 @@ final class GtkApplication extends Application implements
 
 
     static  {
+System.err.println("[JVDBG] GTKApp start");
         //check for SWT-GTK lib presence
         Class<?> OS = AccessController.
                 doPrivileged((PrivilegedAction<Class<?>>) () -> {
@@ -105,10 +106,12 @@ final class GtkApplication extends Application implements
             forcedGtkVersion = 0;
         }
 
+System.err.println("[JVDBG] GTKApp start 1");
         AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
             Application.loadNativeLibrary();
             return null;
         });
+System.err.println("[JVDBG] GTKApp clinit done ");
     }
 
     public static  int screen = -1;
@@ -143,6 +146,7 @@ final class GtkApplication extends Application implements
     }
 
     GtkApplication() {
+System.err.println("[GTKApp] init 0");
 
         final int gtkVersion = forcedGtkVersion == 0 ?
             AccessController.doPrivileged((PrivilegedAction<Integer>) () -> {
@@ -166,7 +170,9 @@ final class GtkApplication extends Application implements
             overrideUIScale = -1.0f;
         }
 
+System.err.println("[GTKApp] init 1");
         int libraryToLoad = _queryLibrary(gtkVersion, gtkVersionVerbose);
+System.err.println("[GTKApp] init 2");
 
         AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
             if (libraryToLoad == QUERY_NO_DISPLAY) {
@@ -191,6 +197,7 @@ final class GtkApplication extends Application implements
             return null;
         });
 
+System.err.println("[GTKApp] init 3");
         int version = _initGTK(gtkVersion, gtkVersionVerbose, overrideUIScale);
 
         if (version == -1) {
@@ -206,6 +213,7 @@ final class GtkApplication extends Application implements
         } else {
             invokeLaterDispatcher = null;
         }
+System.err.println("[GTKApp] init 4");
     }
 
     @Native private static final int QUERY_ERROR = -2;
@@ -222,6 +230,7 @@ final class GtkApplication extends Application implements
     private static native int _initGTK(int version, boolean verbose, float overrideUIScale);
 
     private void initDisplay() {
+System.err.println("[GTKApp] initdisplay ");
         Map ds = getDeviceDetails();
         if (ds != null) {
             Object value;
@@ -241,6 +250,7 @@ final class GtkApplication extends Application implements
     }
 
     private void init() {
+System.err.println("[GTKApp] init 000 ");
         initDisplay();
         long eventProc = 0;
         Map map = getDeviceDetails();
@@ -252,11 +262,14 @@ final class GtkApplication extends Application implements
         final boolean disableGrab = AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> Boolean.getBoolean("sun.awt.disablegrab") ||
                Boolean.getBoolean("glass.disableGrab"));
 
+System.err.println("[GTKApp] init 001 ");
         _init(eventProc, disableGrab);
+System.err.println("[GTKApp] init 002 ");
     }
 
     @Override
     protected void runLoop(final Runnable launchable) {
+System.err.println("[GTKApp] runloop! ");
         // Embedded in SWT, with shared event thread
         final boolean isEventThread = AccessController
             .doPrivileged((PrivilegedAction<Boolean>) () -> Boolean.getBoolean("javafx.embed.isEventThread"));

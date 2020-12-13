@@ -46,6 +46,8 @@ public class NativeLibLoader {
     private static final HashSet<String> loaded = new HashSet<String>();
 
     public static synchronized void loadLibrary(String libname) {
+System.err.println("[NLL] I need to find " + libname);
+if (1 < 2) return;
         if (!loaded.contains(libname)) {
             StackWalker walker = AccessController.doPrivileged((PrivilegedAction<StackWalker>) () ->
             StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE));
@@ -56,6 +58,8 @@ public class NativeLibLoader {
     }
 
     public static synchronized void loadLibrary(String libname, List<String> dependencies) {
+System.err.println("[NLL] I need to findwithdeps " + libname);
+if (1 < 2) return;
         if (!loaded.contains(libname)) {
             StackWalker walker = AccessController.doPrivileged((PrivilegedAction<StackWalker>) () ->
             StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE));

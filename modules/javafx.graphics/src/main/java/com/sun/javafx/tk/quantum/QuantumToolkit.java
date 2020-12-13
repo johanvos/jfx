@@ -276,6 +276,7 @@ System.err.println("[QTK] init 6");
      *                            functionality after the toolkit has been initialized.
      */
     @Override public void startup(final Runnable userStartupRunnable) {
+System.err.println("[QT] startup called");
         // Save the context class loader of the launcher thread
         ccl = Thread.currentThread().getContextClassLoader();
 
@@ -283,7 +284,9 @@ System.err.println("[QTK] init 6");
             this.userRunnable = userStartupRunnable;
 
             // Ensure that the toolkit can only be started here
+System.err.println("[QT] startup called, app.run will be called with runToolkit");
             Application.run(() -> runToolkit());
+System.err.println("[QT] startup called, app.run was called with runToolkit");
         } catch (RuntimeException ex) {
             if (verbose) {
                 ex.printStackTrace();
@@ -329,6 +332,7 @@ System.err.println("[QTK] init 6");
 
     // Called by Glass from Application.run()
     void runToolkit() {
+System.err.println("[QT] runToolkit start");
         Thread user = Thread.currentThread();
 
         if (!toolkitRunning.getAndSet(true)) {
@@ -399,6 +403,7 @@ System.err.println("[QTK] init 6");
             }
             PerformanceTracker.logEvent("Toolkit.startup - finished");
         }
+System.err.println("[QT] runToolkit done");
     }
 
     /**

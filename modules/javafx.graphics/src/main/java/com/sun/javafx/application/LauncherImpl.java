@@ -201,7 +201,8 @@ System.err.println("[JVDBG] LI, launchappA2");
                 launchApplication1(appClass, preloaderClass, args);
 System.err.println("[JVDBG] LI, launchappA3 done");
             } catch (RuntimeException rte) {
-System.err.println("RTE: " +rte);
+System.err.println("RTEee: " +rte);
+rte.printStackTrace();
                 launchException = rte;
             } catch (Exception ex) {
 System.err.println("EX: " + ex);
