@@ -171,6 +171,7 @@ System.err.println("[GTKApp] init 0");
         }
 
 System.err.println("[GTKApp] init 1");
+/*
         int libraryToLoad = _queryLibrary(gtkVersion, gtkVersionVerbose);
 System.err.println("[GTKApp] init 2");
 
@@ -197,13 +198,14 @@ System.err.println("[GTKApp] init 2");
             return null;
         });
 
-System.err.println("[GTKApp] init 3");
         int version = _initGTK(gtkVersion, gtkVersionVerbose, overrideUIScale);
 
         if (version == -1) {
             throw new RuntimeException("Error loading GTK libraries");
         }
+*/
 
+System.err.println("[GTKApp] init 3");
         // Embedded in SWT, with shared event thread
         boolean isEventThread = AccessController
                 .doPrivileged((PrivilegedAction<Boolean>) () -> Boolean.getBoolean("javafx.embed.isEventThread"));

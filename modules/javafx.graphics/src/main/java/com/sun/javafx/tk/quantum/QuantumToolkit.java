@@ -299,11 +299,13 @@ System.err.println("[QT] startup called, app.run was called with runToolkit");
             throw new RuntimeException(t);
         }
 
+/*
         try {
             launchLatch.await();
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
+*/
     }
 
     // restart the toolkit if previously terminated

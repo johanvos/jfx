@@ -222,15 +222,19 @@ System.err.println("[JVDBG] LI, launchappA4 finally");
         // launcherThread.start();
 
         // Wait for FX launcher thread to finish before returning to user
+/*
         try {
             launchLatch.await();
         } catch (InterruptedException ex) {
             throw new RuntimeException("Unexpected exception: ", ex);
         }
+*/
 
         if (launchException != null) {
+System.err.println("We have a launch exception!");
             throw launchException;
         }
+System.err.println("[JVDBG] LI, launchapp DONE");
     }
 
     /**
@@ -675,7 +679,7 @@ System.err.println("Start toolkit 2");
 System.err.println("Start toolkit 3");
 
         // Wait for FX platform to start
-        startupLatch.await();
+        // startupLatch.await();
 System.err.println("Start toolkit 4");
     }
 
@@ -823,7 +827,7 @@ System.err.println("launchApp1 - 8");
                 }
 
 System.err.println("launchApp1 - 9");
-                PlatformImpl.runAndWait(() -> {
+                // PlatformImpl.runAndWait(() -> {
                     try {
 System.err.println("launchApp1 - 10");
                         Constructor<? extends Application> c = appClass.getConstructor();
@@ -836,7 +840,7 @@ System.err.println("launchApp1 - 10");
                         constructorError = t;
                         error = true;
                     }
-                });
+                // });
             }
 System.err.println("launchApp1 - 11");
             final Application theApp = app.get();
