@@ -20,17 +20,30 @@
 
 package com.sun.glass.ui.web;
 
+// import com.gluonhq.webscheduler.Util;
 import com.sun.glass.ui.*;
 import com.sun.glass.ui.CommonDialogs.ExtensionFilter;
 import com.sun.glass.ui.CommonDialogs.FileChooserResult;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 public final class WebApplication extends Application {
+
+    static Method scheduleMethod;
+
+    static {
+        try {
+            Class c = Class.forName("com.gluonhq.webscheduler.Util");
+            scheduleMethod = c.getMethod("schedule", Runnable.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void runLoop(final Runnable launchable) {
@@ -90,7 +103,15 @@ public final class WebApplication extends Application {
     native protected void _invokeAndWait(Runnable runnable);
 
     @Override
-    native protected void _invokeLater(Runnable runnable);
+    protected void _invokeLater(Runnable runnable) {
+System.err.println("[WEB] invokelater asked, invoke " + scheduleMethod);
+        try {
+            scheduleMethod.invoke(null, runnable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+System.err.println("[WEB] invokelater asked, invoked " + scheduleMethod);
+    }
 
     @Override
     protected boolean _supportsTransparentWindows() {

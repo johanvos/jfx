@@ -931,6 +931,7 @@ List<String> computeModulePathArgs(String  pname, List<String> deps, boolean tes
             }
         }
     }
+// mp = mp + File.pathSeparator+"/home/johan/.m2/repository/com/gluonhq/webscheduler/1.0.0-SNAPSHOT/webscheduler-1.0.0-SNAPSHOT.jar"
 
     // in some cases like base we could end up with an empty
     // path... make sure we don't pass one back
@@ -1864,6 +1865,7 @@ allprojects {
 
     if (JFX_DEPS_URL == "") {
         repositories {
+            mavenLocal()
             mavenCentral()
             ivy {
                 url "https://download.eclipse.org/eclipse/updates/4.6/R-4.6.3-201703010400/plugins/"
@@ -2084,6 +2086,7 @@ project(":graphics") {
     }
 
     dependencies {
+        // compile group: "com.gluonhq", name: "webscheduler", version: "1.0.0-SNAPSHOT"
         stubCompile group: "junit", name: "junit", version: "4.8.2"
 
         antlr group: "org.antlr", name: "antlr4", version: "4.7.2", classifier: "complete"
@@ -2344,6 +2347,7 @@ project(":graphics") {
 
                 classpath += files("$buildDir/classes/jsl-compilers/decora")
                 jvmArgs += "--module-path=$modulePath"
+                // jvmArgs += "--module-path=$modulePath:/home/johan/.m2/repository/com/gluonhq/webscheduler/1.0.0-SNAPSHOT/webscheduler-1.0.0-SNAPSHOT.jar"
                 jvmArgs += "--add-modules=javafx.graphics"
                 jvmArgs += decoraAddExports
                 args += ["-i", sourceDir, "-o", destinationDir, "-t", "-pkg", "com/sun/scenario/effect", "$settings.outputs", "$settings.fileName"]

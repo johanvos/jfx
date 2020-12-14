@@ -828,18 +828,27 @@ System.err.println("launchApp1 - 8");
 
 System.err.println("launchApp1 - 9");
                 // PlatformImpl.runAndWait(() -> {
-                    try {
-System.err.println("launchApp1 - 10");
+                    // try {
+System.err.println("launchApp1 - 10a");
+System.err.println("launchApp1 - 10appclass = "+appClass);
                         Constructor<? extends Application> c = appClass.getConstructor();
+System.err.println("launchApp1 - 10b");
+System.err.println("launchApp1 - 10bcon = "+ c);
                         app.set(c.newInstance());
+System.err.println("launchApp1 - 10c");
                         // Set startup parameters
                         ParametersImpl.registerParameters(app.get(), new ParametersImpl(args));
+System.err.println("launchApp1 - 10d");
                         PlatformImpl.setApplicationName(appClass);
+System.err.println("launchApp1 - 10e");
+/*
                     } catch (Throwable t) {
+t.printStackTrace();
                         System.err.println("Exception in Application constructor");
                         constructorError = t;
                         error = true;
                     }
+*/
                 // });
             }
 System.err.println("launchApp1 - 11");

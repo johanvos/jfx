@@ -424,12 +424,13 @@ System.err.println("PI, startup2 DONE");
     }
 
     private static void runLater(final Runnable r, boolean exiting) {
+System.err.println("[PI] runLater asked, runnable " + r);
         if (!initialized.get()) {
             throw new IllegalStateException("Toolkit not initialized");
         }
 
         pendingRunnables.incrementAndGet();
-        waitForStart();
+        // waitForStart();
 
         synchronized (runLaterLock) {
             if (!exiting && toolkitExit.get()) {
@@ -443,6 +444,7 @@ System.err.println("PI, startup2 DONE");
             Toolkit.getToolkit().defer(() -> {
                 try {
                     AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+System.err.println("[PI] runLater will really run now, runnable " + r);
                         r.run();
                         return null;
                     }, acc);
@@ -452,6 +454,7 @@ System.err.println("PI, startup2 DONE");
                 }
             });
         }
+System.err.println("[PI] runLater queued, runnable " + r);
     }
 
     public static void runAndWait(final Runnable r) {
@@ -472,6 +475,7 @@ System.err.println("PI, startup2 DONE");
                 try {
                     r.run();
                 } finally {
+System.err.println("[JVDBG] PI, I should wait internally on doneLatch but ignore");
                     doneLatch.countDown();
                 }
             }, exiting);
@@ -480,11 +484,14 @@ System.err.println("PI, startup2 DONE");
                 throw new IllegalStateException("Toolkit has exited");
             }
 
+System.err.println("[JVDBG] PI, I should wait on doneLatch but ignore");
+/*
             try {
-                doneLatch.await();
+                // doneLatch.await();
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
+*/
         }
     }
 
