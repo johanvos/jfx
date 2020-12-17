@@ -78,19 +78,30 @@ public final class Screen {
     }
 
     private static void checkDirty() {
+try {
         if (configurationDirty.compareAndSet(true, false)) {
             updateConfiguration();
         }
+} catch (Exception e) {
+System.err.println("[SCREEN] checkDirty failed");
+System.err.println("[SCREEN] checkDirty failed because of "+ e);
+throw new RuntimeException (e);
+}
     }
 
     private static void updateConfiguration() {
+System.err.println("UC1");
         Object primaryScreen = Toolkit.getToolkit().getPrimaryScreen();
+System.err.println("UC2");
         Screen screenTmp = nativeToScreen(primaryScreen, Screen.primary);
+System.err.println("UC3");
         if (screenTmp != null) {
             Screen.primary = screenTmp;
         }
+System.err.println("UC4");
 
         List<?> screens = Toolkit.getToolkit().getScreens();
+System.err.println("UC5");
         // go through the list of new screens, see if they match the
         // existing list; if they do reuse the list; if they don't
         // at least try to reuse some of the old ones
@@ -98,6 +109,7 @@ public final class Screen {
         // if the size of the new and the old one are different just
         // recreate the list
         boolean canKeepOld = (Screen.screens.size() == screens.size());
+System.err.println("UC6");
         for (int i = 0; i < screens.size(); i++) {
             Object obj = screens.get(i);
             Screen origScreen = null;
@@ -113,11 +125,13 @@ public final class Screen {
                 newScreens.add(newScreen);
             }
         }
+System.err.println("UC7");
         if (!canKeepOld) {
             Screen.screens.setAll(newScreens);
         }
 
         configurationDirty.set(false);
+System.err.println("UC8");
     }
 
     // returns null if the new one is to be equal the old one

@@ -202,9 +202,17 @@ System.err.println("[WEB] runnable is scheduled: " + runnable);
     protected native double staticScreen_getVideoRefreshPeriod();
 
     @Override
-    protected native Screen[] staticScreen_getScreens();
-
-
+    protected Screen[] staticScreen_getScreens() {
+        Screen s = new Screen (0,0,0,0,640,480,
+                               0,0,640,480,
+                               0,0,640,480,
+                               10,10,
+                               1f,1f,1f,1f);
+        Screen[] answer = new Screen[1];
+        answer[0] = s;
+System.err.println("WebApp.staticScreen_getScreens asked, return array with " + s);
+        return answer;
+    }
 
 
 }
