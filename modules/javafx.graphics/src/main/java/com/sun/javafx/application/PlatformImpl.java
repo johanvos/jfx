@@ -134,7 +134,12 @@ public class PlatformImpl {
      * @param appClass the Application class.
      */
     public static void setApplicationName(final Class appClass) {
-        runLater(() -> com.sun.glass.ui.Application.GetApplication().setName(appClass.getName()));
+System.err.println("Need to set Appname, later...");
+        runLater(() -> {
+            System.err.println("RUNLATERnow to set appname...");
+            com.sun.glass.ui.Application.GetApplication().setName(appClass.getName());
+            System.err.println("RUNLATER to set appname done ...");
+        });
     }
 
     /**
@@ -443,6 +448,7 @@ System.err.println("[PI] runLater asked, runnable " + r);
             // Don't catch exceptions, they are handled by Toolkit.defer()
             Toolkit.getToolkit().defer(() -> {
                 try {
+System.err.println("[PI] Runnable is about to get called: " + r);
                     AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
 System.err.println("[PI] runLater will really run now, runnable " + r);
                         r.run();

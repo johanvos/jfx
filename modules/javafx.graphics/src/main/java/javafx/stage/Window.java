@@ -102,6 +102,7 @@ public class Window implements EventTarget {
     private WindowHelper windowHelper = null;
 
     static {
+System.err.println("[WINDOW] clinit start");
         WindowHelper.setWindowAccessor(
                 new WindowHelper.WindowAccessor() {
                     @Override
@@ -203,6 +204,7 @@ public class Window implements EventTarget {
                         return window.acc;
                     }
                 });
+System.err.println("[WINDOW] clinit done");
     }
 
     /**
@@ -224,9 +226,11 @@ public class Window implements EventTarget {
     final AccessControlContext acc = AccessController.getContext();
 
     protected Window() {
+System.err.println("[WINDOW] init start");
         // necessary for WindowCloseRequestHandler
         initializeInternalEventDispatcher();
         WindowHelper.initHelper(this);
+System.err.println("[WINDOW] init done");
     }
 
     /*

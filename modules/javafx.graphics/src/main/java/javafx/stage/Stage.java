@@ -177,6 +177,7 @@ public class Stage extends Window {
     private boolean inNestedEventLoop = false;
 
     static {
+System.err.println("[STAGE] clinit start");
         StageHelper.setStageAccessor(new StageHelper.StageAccessor() {
             @Override public void doVisibleChanging(Window window, boolean visible) {
                 ((Stage) window).doVisibleChanging(visible);
@@ -200,6 +201,7 @@ public class Stage extends Window {
                 stage.setImportant(important);
             }
         });
+System.err.println("[STAGE] clinit done");
     }
 
     private static final StagePeerListener.StageAccessor STAGE_ACCESSOR = new StagePeerListener.StageAccessor() {
@@ -250,12 +252,16 @@ public class Stage extends Window {
      */
     public Stage(@NamedArg(value="style", defaultValue="DECORATED") StageStyle style) {
         super();
+System.err.println("[STAGE] init 1");
 
         Toolkit.getToolkit().checkFxUserThread();
+System.err.println("[STAGE] init 2");
 
         // Set the style
         initStyle(style);
+System.err.println("[STAGE] init 3");
         StageHelper.initHelper(this);
+System.err.println("[STAGE] init 4");
     }
 
     /**

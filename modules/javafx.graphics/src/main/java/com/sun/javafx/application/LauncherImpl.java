@@ -834,8 +834,12 @@ System.err.println("launchApp1 - 10appclass = "+appClass);
                         Constructor<? extends Application> c = appClass.getConstructor();
 System.err.println("launchApp1 - 10b");
 System.err.println("launchApp1 - 10bcon = "+ c);
+Application abc = c.newInstance();
+System.err.println("launchApp1 - 10bc, abc = " + abc);
                         app.set(c.newInstance());
 System.err.println("launchApp1 - 10c");
+Application aaa = app.get();
+System.err.println("aaa = " + aaa);
                         // Set startup parameters
                         ParametersImpl.registerParameters(app.get(), new ParametersImpl(args));
 System.err.println("launchApp1 - 10d");
@@ -881,13 +885,20 @@ System.err.println("launchApp1 - 12");
                 // Call the application start method on FX thread
                 PlatformImpl.runAndWait(() -> {
                     try {
+System.err.println("LI, start0");
                         startCalled.set(true);
+System.err.println("LI, start1");
 
                         // Create primary stage and call application start method
                         final Stage primaryStage = new Stage();
+System.err.println("LI, start2");
                         StageHelper.setPrimary(primaryStage, true);
+System.err.println("LI, start3");
                         theApp.start(primaryStage);
+System.err.println("LI, start4");
                     } catch (Throwable t) {
+t.printStackTrace();
+System.err.println("startError, t= " + t);
                         System.err.println("Exception in Application start method");
                         startError = t;
                         error = true;
@@ -949,10 +960,15 @@ System.err.println("launchApp1 - 12");
                     }
                 }
             }
+System.err.println("We made it all the way to the end of launchApplication1");
+        } catch (Throwable t) {
+System.err.println("Bummer!! " + t);
+t.printStackTrace();
+System.err.println("done");
         } finally {
-System.err.println("launchApp1 - finally");
-            PlatformImpl.removeListener(listener);
-            PlatformImpl.tkExit();
+System.err.println("launchApp1 - finally done!");
+            // PlatformImpl.removeListener(listener);
+            // PlatformImpl.tkExit();
         }
     }
 

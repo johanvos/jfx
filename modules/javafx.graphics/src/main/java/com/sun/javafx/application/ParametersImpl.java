@@ -68,6 +68,7 @@ public class ParametersImpl extends Parameters {
      * @param args list of command line arguments
      */
     public ParametersImpl(List<String> args) {
+System.err.println("[JVDBG] ParametersImpl constructor with list");
         if (args != null) {
             init(args);
         }
@@ -80,6 +81,7 @@ public class ParametersImpl extends Parameters {
      * @param args array of command line arguments
      */
     public ParametersImpl(String[] args) {
+System.err.println("[JVDBG] ParametersImpl constructor with array");
         if (args != null) {
             init(Arrays.asList(args));
         }
@@ -93,6 +95,7 @@ public class ParametersImpl extends Parameters {
      * object.
      */
     public ParametersImpl(Map params, String[] arguments) {
+System.err.println("[JVDBG] ParametersImpl constructor with map and ages");
         init(params, arguments);
     }
 
@@ -160,6 +163,7 @@ public class ParametersImpl extends Parameters {
      * @return true if key is a valid key, otherwise false
      */
     private boolean validKey(Object key) {
+System.err.println("validkey checked for key = " + key);
         if (key instanceof String) {
             String keyStr = (String)key;
             if (keyStr.length() > 0 && keyStr.indexOf('=') < 0) {

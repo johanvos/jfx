@@ -819,9 +819,12 @@ System.err.println("[QT] runToolkit done");
     // shutdown. Calling Platform.runLater *is* thread-safe even when the
     // toolkit is shutting down.
     @Override public void defer(Runnable runnable) {
+System.err.println("[QT] defer runnable: " + runnable);
         if (!toolkitRunning.get()) return;
+System.err.println("[QT] defer2 runnable: " + runnable);
 
         Application.invokeLater(runnable);
+System.err.println("[QT] defer3 runnable: " + runnable);
     }
 
     @Override public void exit() {

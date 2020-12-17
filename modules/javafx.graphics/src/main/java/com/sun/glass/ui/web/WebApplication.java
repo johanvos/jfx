@@ -47,9 +47,12 @@ public final class WebApplication extends Application {
 
     @Override
     protected void runLoop(final Runnable launchable) {
-        ClassLoader ccl = WebApplication.class.getClassLoader();
-        _runLoop(launchable, ccl);
+        launchable.run();
+System.err.println ("[JVDBG] WEB runloop, need to launch thread for getting user input!");
+        // ClassLoader ccl = WebApplication.class.getClassLoader();
+        // _runLoop(launchable, ccl);
     }
+
     private native void _runLoop(Runnable launchable, ClassLoader contextClassLoader);
 
     @Override
@@ -111,6 +114,7 @@ System.err.println("[WEB] invokelater asked, invoke " + scheduleMethod);
             e.printStackTrace();
         }
 System.err.println("[WEB] invokelater asked, invoked " + scheduleMethod);
+System.err.println("[WEB] runnable is scheduled: " + runnable);
     }
 
     @Override
