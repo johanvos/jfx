@@ -182,11 +182,14 @@ System.err.println("[QR] create newThread, inited pipeline = " + pipeline);
 
         submit(job);
 
+System.err.println("[QR] createResourceFactory should wait, but we ignore that.");
+/*
         try {
             createLatch.await();
         } catch (Throwable th) {
             th.printStackTrace(System.err);
         }
+*/
     }
 
     /*

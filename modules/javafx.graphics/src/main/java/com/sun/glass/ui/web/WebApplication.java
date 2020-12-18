@@ -77,7 +77,7 @@ System.err.println ("[JVDBG] WEB runloop, need to launch thread for getting user
 
     @Override
     public Timer createTimer(Runnable runnable) {
-        throw new RuntimeException ("Not implemented");
+        return new WebTimer(runnable);
     }
 
     @Override

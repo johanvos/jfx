@@ -230,7 +230,8 @@ Class[] empty = new Class[0];
                 Method m = klass.getMethod("getInstance", empty);
 System.err.println("[GP] 06 method = " + m);
                 GraphicsPipeline newPipeline = (GraphicsPipeline)
-                    m.invoke(null, (Object[])null);
+                    // m.invoke(null, (Object[])null);
+                    m.invoke(null, empty);
 System.err.println("[GP] 07");
 System.err.println("[GP] 08 np = " + newPipeline);
                 if (newPipeline != null && newPipeline.init()) {
