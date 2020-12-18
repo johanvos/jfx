@@ -747,9 +747,13 @@ System.err.println("[QT] runToolkit done");
     }
 
     private static void assignScreensAdapters() {
+System.err.println("[QT] assignScreensAdapters0");
         GraphicsPipeline pipeline = GraphicsPipeline.getPipeline();
+System.err.println("[QT] assignScreensAdapters1, pipeline = "+pipeline);
         for (Screen screen : Screen.getScreens()) {
+System.err.println("[QT] assignScreensAdapters3, screen = "+screen);
             screen.setAdapterOrdinal(pipeline.getAdapterOrdinal(screen));
+System.err.println("[QT] assignScreensAdapters4, pipeline = "+pipeline);
         }
     }
 

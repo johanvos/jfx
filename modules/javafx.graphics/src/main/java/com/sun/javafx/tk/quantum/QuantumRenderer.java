@@ -93,6 +93,7 @@ final class QuantumRenderer extends AbstractExecutorService {
         }
 
         public void init() {
+System.err.println("[QR] Pipeline init");
             try {
                 if (GraphicsPipeline.createPipeline() == null) {
                     String MSG = "Error initializing QuantumRenderer: no suitable pipeline found";
@@ -139,7 +140,11 @@ final class QuantumRenderer extends AbstractExecutorService {
         final AtomicInteger threadNumber = new AtomicInteger(0);
 
         @Override public Thread newThread(Runnable r) {
+System.err.println("[QR] create newThread");
         final PipelineRunnable pipeline = new PipelineRunnable(r);
+System.err.println("[QR] create newThread, pipeline = " + pipeline);
+pipeline.init();
+System.err.println("[QR] create newThread, inited pipeline = " + pipeline);
             _renderer =
                 AccessController.doPrivileged((PrivilegedAction<Thread>) () -> {
                     Thread th = new Thread(pipeline);
@@ -313,7 +318,10 @@ System.err.println("[QR] getIstance asked!");
                 QuantumRenderer newTk = null;
                 try {
                     newTk = new QuantumRenderer();
-System.err.println("[QR] ready to prestart!");
+System.err.println("[QR] ready to prestart0!");
+// QuantumThreadFactory qtf = new QuantumThreadFactory();
+// System.err.println("[QR] created qtf!");
+// Thread t = qtf.newThread(null);
                     // newTk.prestartCoreThread();
 System.err.println("[QR] ready to prestart done!");
 
