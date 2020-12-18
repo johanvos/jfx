@@ -93,13 +93,15 @@ final class QuantumRenderer extends AbstractExecutorService {
         }
 
         public void init() {
-System.err.println("[QR] Pipeline init");
+System.err.println("[QR] Pipeline init0");
             try {
                 if (GraphicsPipeline.createPipeline() == null) {
+System.err.println("[QR] Pipeline init1");
                     String MSG = "Error initializing QuantumRenderer: no suitable pipeline found";
                     System.err.println(MSG);
                     throw new RuntimeException(MSG);
                 } else {
+System.err.println("[QR] Pipeline init2");
                     Map device = GraphicsPipeline.getPipeline().getDeviceDetails();
                     if (device == null) {
                         device = new HashMap();
@@ -113,7 +115,10 @@ System.err.println("[QR] Pipeline init");
                     Application.setDeviceDetails(device);
                 }
             } catch (Throwable th) {
-                QuantumRenderer.this.setInitThrowable(th);
+System.err.println("[QR] error Pipeline init");
+th.printStackTrace();
+throw new InternalError();
+                // QuantumRenderer.this.setInitThrowable(th);
             } finally {
                 initLatch.countDown();
             }
@@ -328,6 +333,8 @@ System.err.println("[QR] ready to prestart done!");
                     // newTk.initLatch.await();
 System.err.println("[QR] ready to prestart awaited!");
                 } catch (Throwable t) {
+System.err.println("[QR] Bummer! throwable detected: "+t);
+t.printStackTrace();
                     if (newTk != null) {
                         newTk.setInitThrowable(t);
                     }
@@ -335,7 +342,9 @@ System.err.println("[QR] ready to prestart awaited!");
                         t.printStackTrace();
                     }
                 }
+System.err.println("is newtk null? " + newTk);
                 if (newTk != null && newTk.initThrowable() != null) {
+System.err.println("problem!!!");
                     if (PrismSettings.noFallback) {
                         System.err.println("Cannot initialize a graphics pipeline, and Prism fallback is disabled");
                         throw new InternalError("Could not initialize prism toolkit, " +

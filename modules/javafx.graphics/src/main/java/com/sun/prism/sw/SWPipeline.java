@@ -38,10 +38,12 @@ import java.util.HashMap;
 public final class SWPipeline extends GraphicsPipeline {
 
     static {
+System.err.println("[SWP] clinit start");
         AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
             NativeLibLoader.loadLibrary("prism_sw");
             return null;
         });
+System.err.println("[SWP] clinit done");
     }
 
     @Override public boolean init() {
@@ -54,9 +56,11 @@ public final class SWPipeline extends GraphicsPipeline {
     }
 
     public static SWPipeline getInstance() {
+System.err.println("[SWP] getinstance, theInstance = " + theInstance);
         if (theInstance == null) {
             theInstance = new SWPipeline();
         }
+System.err.println("[SWP] getinstance, return theInstance = " + theInstance);
         return theInstance;
     }
 

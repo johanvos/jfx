@@ -28,6 +28,7 @@ package com.sun.prism.impl;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import com.sun.javafx.PlatformUtil;
@@ -113,9 +114,11 @@ public final class PrismSettings {
     }
 
     static {
+System.err.println("[PS] clinit 0");
         final Properties systemProperties =
                 (Properties) AccessController.doPrivileged(
                         (PrivilegedAction) () -> System.getProperties());
+System.err.println("[PS] clinit 1");
 
         /* Vsync */
         isVsyncEnabled  = getBoolean(systemProperties, "prism.vsync", true)
@@ -131,6 +134,7 @@ public final class PrismSettings {
                                                "prism.occlusion.culling",
                                                true);
 
+System.err.println("[PS] clinit 2");
         // The maximum number of dirty regions to use. The absolute max that we can
         // support at present is 15.
         dirtyRegionCount = Utils.clamp(0, getInt(systemProperties, "prism.dirtyregioncount", 6, null), 15);
@@ -154,6 +158,7 @@ public final class PrismSettings {
         /* Prints out the render graph, annotated with dirty opts information */
         printRenderGraph = getBoolean(systemProperties, "prism.printrendergraph", false);
 
+System.err.println("[PS] clinit 3");
         /* Force scene repaint on every frame */
         forceRepaint = getBoolean(systemProperties, "prism.forcerepaint", false);
 
@@ -173,14 +178,17 @@ public final class PrismSettings {
             cacheSimpleShapes = false;
             cacheComplexShapes = false;
         }
+System.err.println("[PS] clinit 4");
 
         /* New javafx-iio image loader */
         useNewImageLoader = getBoolean(systemProperties, "prism.newiio", true);
 
         /* Verbose output*/
-        verbose = getBoolean(systemProperties, "prism.verbose", false);
+        // verbose = getBoolean(systemProperties, "prism.verbose", true);
+        verbose = true;
 
         /* Prism statistics print frequency, <=0 means "do not print" */
+System.err.println("[PS] clinit 5");
         prismStatFrequency =
                 getInt(systemProperties, "prism.printStats",
                        0, 1, "Try -Dprism.printStats=<true or number>");
@@ -202,38 +210,63 @@ public final class PrismSettings {
         /* Force GPU, if GPU is PS 3 capable, disable GPU qualification check. */
         forceGPU = getBoolean(systemProperties, "prism.forceGPU", false);
 
+System.err.println("[PS] clinit 6");
         String order = systemProperties.getProperty("prism.order");
+System.err.println("order = " + order);
         String[] tryOrderArr;
         if (order != null) {
             tryOrderArr = split(order, ",");
+System.err.println("tryorder1 = " + tryOrderArr);
         } else {
+System.err.println("tryorder2");
             if (PlatformUtil.isWindows()) {
                 tryOrderArr = new String[] { "d3d", "sw" };
+System.err.println("tryorder3 = " + tryOrderArr);
             } else if (PlatformUtil.isMac()) {
                 tryOrderArr = new String[] { "es2", "sw" };
+System.err.println("tryorder4 = " + tryOrderArr);
             } else if (PlatformUtil.isIOS()) {
                 tryOrderArr = new String[] { "es2" };
+System.err.println("tryorder5 = " + tryOrderArr);
             } else if (PlatformUtil.isAndroid()) {
                     tryOrderArr = new String[] { "es2" };
+System.err.println("tryorder6 = " + tryOrderArr);
             } else if (PlatformUtil.isLinux()) {
                 tryOrderArr = new String[] { "es2", "sw" };
+System.err.println("tryorder7 = " + tryOrderArr);
             } else {
                 tryOrderArr = new String[] { "sw" };
+System.err.println("tryorder8 = " + tryOrderArr);
             }
         }
-
-        tryOrder = List.of(tryOrderArr);
+System.err.println("tryOrderarr = " +tryOrderArr);
+System.err.println("tryOrderarrlen = " +tryOrderArr.length);
+System.err.println("[PS] clinit 7");
+        tryOrder = new LinkedList<>();
+        for (String oo : tryOrderArr) {
+tryOrder.add(oo);
+        }
+// List.of(tryOrderArr);
+System.err.println("[PS] tryOrder = " + tryOrder);
+System.err.println("[PS] clinit 7a");
 
         RasterizerType rSpec = null;
+System.err.println("[PS] clinit 7b");
         String rOrder = systemProperties.getProperty("prism.rasterizerorder");
+System.err.println("[PS] clinit 7c");
         if (rOrder != null) {
+System.err.println("[PS] clinit 7d");
+System.err.println("rOrder = " + rOrder);
             for (String s : split(rOrder.toLowerCase(), ",")) {
+System.err.println("[PS] clinit 7e, s = "+ s);
                 switch (s) {
                     case "marlin":
                     case "doublemarlin":
+System.err.println("[PS] clinit 7f, s = "+ s);
                         rSpec = RasterizerType.DoubleMarlin;
                         break;
                     case "floatmarlin":
+System.err.println("[PS] clinit 7g, s = "+ s);
                         rSpec = RasterizerType.FloatMarlin;
                         break;
                     default:
@@ -241,7 +274,9 @@ public final class PrismSettings {
                 }
                 break;
             }
+System.err.println("[PS] clinit 7h,");
         }
+System.err.println("[PS] clinit 8");
         if (rSpec == null) {
             boolean useMarlinRasterizerDP;
             useMarlinRasterizerDP = getBoolean(systemProperties, "prism.marlin.double", true);
@@ -360,6 +395,7 @@ public final class PrismSettings {
 
         // Force non anti-aliasing (not smooth) shape rendering
         forceNonAntialiasedShape = getBoolean(systemProperties, "prism.forceNonAntialiasedShape", false);
+System.err.println("[PS] clinit DONE");
 
     }
 

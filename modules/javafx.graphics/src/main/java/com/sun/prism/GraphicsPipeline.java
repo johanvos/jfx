@@ -178,7 +178,9 @@ public abstract class GraphicsPipeline {
     private static GraphicsPipeline installedPipeline;
 
     public static GraphicsPipeline createPipeline() {
+System.err.println("[JVDBG] GP createPipeline 00");
         if (PrismSettings.tryOrder.isEmpty()) {
+System.err.println("[JVDBG] GP createPipeline 01");
             // if no pipelines specified just return null
             if (PrismSettings.verbose) {
                 System.out.println("No Prism pipelines specified");
@@ -186,11 +188,13 @@ public abstract class GraphicsPipeline {
             return null;
         }
 
+System.err.println("[JVDBG] GP createPipeline 02");
         if (installedPipeline != null) {
             throw new IllegalStateException("pipeline already created:"+
                                             installedPipeline);
         }
         for (String prefix : PrismSettings.tryOrder) {
+System.err.println("[JVDBG] GP createPipeline 03");
             // Warn if j2d pipeline is specified
             if ("j2d".equals(prefix)) {
                 System.err.println(
@@ -208,9 +212,11 @@ public abstract class GraphicsPipeline {
                     System.err.println("*** Fallback to Prism SW pipeline");
                 }
             }
+System.err.println("[JVDBG] GP createPipeline 04");
 
             String className =
                 "com.sun.prism."+prefix+"."+prefix.toUpperCase()+"Pipeline";
+System.err.println("[JVDBG] GP createPipeline 05");
             try {
                 if (PrismSettings.verbose) {
                     System.out.println("Prism pipeline name = " + className);
@@ -219,15 +225,21 @@ public abstract class GraphicsPipeline {
                 if (PrismSettings.verbose) {
                     System.out.println("(X) Got class = " + klass);
                 }
-                Method m = klass.getMethod("getInstance", (Class[])null);
+Class[] empty = new Class[0];
+                // Method m = klass.getMethod("getInstance", (Class[])null);
+                Method m = klass.getMethod("getInstance", empty);
+System.err.println("[GP] 06 method = " + m);
                 GraphicsPipeline newPipeline = (GraphicsPipeline)
                     m.invoke(null, (Object[])null);
+System.err.println("[GP] 07");
+System.err.println("[GP] 08 np = " + newPipeline);
                 if (newPipeline != null && newPipeline.init()) {
                     if (PrismSettings.verbose) {
                         System.out.println("Initialized prism pipeline: " +
                                            klass.getName());
                     }
                     installedPipeline = newPipeline;
+System.err.println("[GP] 09 np will return " + installedPipeline);
                     return installedPipeline;
                 }
                 if (newPipeline != null) {
