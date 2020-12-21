@@ -117,6 +117,16 @@ System.err.println("[WEB] invokelater asked, invoked " + scheduleMethod);
 System.err.println("[WEB] runnable is scheduled: " + runnable);
     }
 
+    public static void invokeOtherJob(Runnable runnable) {
+System.err.println("[WEB] invokeOtherJob will schedule " +runnable);
+        try {
+            scheduleMethod.invoke(null, runnable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+System.err.println("[WEB] invokeOtherJob did schedule " + runnable);
+    }
+
     @Override
     protected boolean _supportsTransparentWindows() {
         return true;
@@ -143,12 +153,12 @@ System.err.println("[WEB] runnable is scheduled: " + runnable);
 
     @Override
     protected int staticTimer_getMinPeriod() {
-        throw new RuntimeException ("Not implemented");
+        return WebTimer.getMinPeriod_impl();
     }
 
     @Override
     protected int staticTimer_getMaxPeriod() {
-        throw new RuntimeException ("Not implemented");
+        return WebTimer.getMaxPeriod_impl();
     }
 
     @Override
@@ -199,7 +209,10 @@ System.err.println("[WEB] runnable is scheduled: " + runnable);
     }
 
     @Override
-    protected native double staticScreen_getVideoRefreshPeriod();
+    protected double staticScreen_getVideoRefreshPeriod() {
+System.err.println("[JVDBG] getVideoRefreshPeriod asked, return 0.0");
+        return 0.0;
+    }
 
     @Override
     protected Screen[] staticScreen_getScreens() {

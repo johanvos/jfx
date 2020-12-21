@@ -180,7 +180,8 @@ System.err.println("[QR] create newThread, inited pipeline = " + pipeline);
 
         final RenderJob job = new RenderJob(factoryCreator, createDone);
 
-        submit(job);
+        // submit(job);
+        com.sun.glass.ui.web.WebApplication.invokeOtherJob(job);
 
 System.err.println("[QR] createResourceFactory should wait, but we ignore that.");
 /*
