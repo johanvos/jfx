@@ -489,18 +489,22 @@ System.err.println("[QT] runToolkit done");
     }
 
     void postPulse() {
+System.err.println("[QT] POSTPULSE!");
         if (toolkitRunning.get() &&
             (animationRunning.get() || nextPulseRequested.get()) &&
             !setPulseRunning()) {
 
+System.err.println("[QT] invokelater "+pulseRunnable);
             Application.invokeLater(pulseRunnable);
+                System.err.println("JJ QT.postPulse@(" + System.nanoTime() + "): " + pulseString());
 
             if (debug) {
                 System.err.println("QT.postPulse@(" + System.nanoTime() + "): " + pulseString());
             }
         } else if (!animationRunning.get() && !nextPulseRequested.get() && !pulseRunning.get()) {
+System.err.println("[QT] pause!");
             pauseTimer();
-        } else if (debug) {
+        } else {
             System.err.println("QT.postPulse#(" + System.nanoTime() + "): DROP : " + pulseString());
         }
     }

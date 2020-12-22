@@ -246,10 +246,14 @@ public class Stylesheet {
     final void readBinary(int bssVersion, DataInputStream is, String[] strings)
         throws IOException
     {
+System.err.println("[SS] readBinary, bssversion = "+bssVersion);
         this.stringStore = strings;
         final int index = is.readShort();
+System.err.println("[SS] readBinary, index = "+index);
         this.setOrigin(StyleOrigin.valueOf(strings[index]));
+System.err.println("[SS] readBinary, indexread! ");
         final int nRules = is.readShort();
+System.err.println("[SS] readBinary, nRules = "+nRules);
         List<Rule> persistedRules = new ArrayList<Rule>(nRules);
         for (int n=0; n<nRules; n++) {
             persistedRules.add(Rule.readBinary(bssVersion,is,strings));
@@ -259,11 +263,13 @@ public class Stylesheet {
         if (bssVersion >= 5) {
             List<FontFace> fontFaceList = this.getFontFaces();
             int nFontFaces = is.readShort();
+System.err.println("[SS] readBinary, nff = "+nFontFaces);
             for (int n=0; n<nFontFaces; n++) {
                 FontFace fontFace = FontFaceImpl.readBinary(bssVersion, is, strings);
                 fontFaceList.add(fontFace);
             }
         }
+System.err.println("[SS] readBinary DONE! ");
     }
 
     private String[] stringStore;
@@ -278,51 +284,74 @@ public class Stylesheet {
      * css version or if an I/O error occurs while reading from the stream
      */
     public static Stylesheet loadBinary(URL url) throws IOException {
+System.err.println("[STYLESHEET] loadBinary from url = " + url);
 
         if (url == null) return null;
 
         Stylesheet stylesheet = null;
 
+System.err.println("[STYLESHEET] try...");
         try (DataInputStream dataInputStream =
                      new DataInputStream(new BufferedInputStream(url.openStream(), 40 * 1024))) {
 
+System.err.println("[STYLESHEET] got something...");
             // read file version
             final int bssVersion = dataInputStream.readShort();
+System.err.println("[STYLESHEET] bss version = " + bssVersion);
             if (bssVersion > Stylesheet.BINARY_CSS_VERSION) {
                 throw new IOException(url.toString() + " wrong binary CSS version: "
                         + bssVersion + ". Expected version less than or equal to" +
                         Stylesheet.BINARY_CSS_VERSION);
             }
             // read strings
+System.err.println("[SS] reading strings...");
             final String[] strings = StringStore.readBinary(dataInputStream);
+System.err.println("[SS] reading strings done...");
+if (strings != null) {
+for (String s: strings) {
+System.err.println("DID READ " + s);
+}
+}
             // read binary data
             stylesheet = new Stylesheet(url.toExternalForm());
 
             try {
+System.err.println("[SS] mark...");
 
                 dataInputStream.mark(Integer.MAX_VALUE);
+System.err.println("[SS] mark 1 ...");
                 stylesheet.readBinary(bssVersion, dataInputStream, strings);
+System.err.println("[SS] mark 2...");
 
             } catch (Exception e) {
+System.err.println("[CSS] Got exception " + e);
 
+System.err.println("re-read 1");
                 stylesheet = new Stylesheet(url.toExternalForm());
+System.err.println("re-read 2");
 
                 dataInputStream.reset();
+System.err.println("re-read 3");
 
                 if (bssVersion == 2) {
+System.err.println("re-read 4");
                     // RT-31022
                     stylesheet.readBinary(3, dataInputStream, strings);
                 } else {
+System.err.println("re-read 5");
                     stylesheet.readBinary(Stylesheet.BINARY_CSS_VERSION, dataInputStream, strings);
                 }
+System.err.println("re-read 6");
             }
 
         } catch (FileNotFoundException fnfe) {
+System.err.println("[STYLESHEET] fnfe");
             // This comes from url.openStream() and is expected.
             // It just means that the .bss file doesn't exist.
         }
 
         // return stylesheet
+System.err.println("[STYLESHEET] loadBinary will return "+stylesheet);
         return stylesheet;
     }
 

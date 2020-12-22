@@ -35,11 +35,13 @@ import java.security.PrivilegedAction;
 public final class WebApplication extends Application {
 
     static Method scheduleMethod;
+    static Method intervalMethod;
 
     static {
         try {
             Class c = Class.forName("com.gluonhq.webscheduler.Util");
             scheduleMethod = c.getMethod("schedule", Runnable.class);
+            intervalMethod = c.getMethod("interval", Runnable.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,8 +49,10 @@ public final class WebApplication extends Application {
 
     @Override
     protected void runLoop(final Runnable launchable) {
-        launchable.run();
-System.err.println ("[JVDBG] WEB runloop, need to launch thread for getting user input!");
+        // launchable.run();
+System.err.println ("[JVDBG] WEB runloop, schedule launchable now...");
+        invokeLater(launchable);
+System.err.println ("[JVDBG] WEB runloop, scheduled launchable ...");
         // ClassLoader ccl = WebApplication.class.getClassLoader();
         // _runLoop(launchable, ccl);
     }
@@ -125,6 +129,16 @@ System.err.println("[WEB] invokeOtherJob will schedule " +runnable);
             e.printStackTrace();
         }
 System.err.println("[WEB] invokeOtherJob did schedule " + runnable);
+    }
+
+    public static void invokeOtherIntervalJob(Runnable runnable) {
+System.err.println("[WEB] invokeOtherJob will intervalschedule " +runnable);
+        try {
+            intervalMethod.invoke(null, runnable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+System.err.println("[WEB] invokeOtherJob did sintervalchedule " + runnable);
     }
 
     @Override

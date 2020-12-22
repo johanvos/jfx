@@ -24,7 +24,9 @@ final class WebTimer extends Timer {
     }
 
     @Override protected long _start(final Runnable runnable, int period) {
-System.err.println("[WEB] _start called on timer");
+System.err.println("[WEB] _start called on timer, dont IGNORE FOR NOW");
+        WebApplication.invokeOtherIntervalJob(runnable);
+/*
         if (scheduler == null) {
             scheduler = new ScheduledThreadPoolExecutor(1, target -> {
                 Thread thread = new Thread(target, THREAD_NAME);
@@ -34,6 +36,7 @@ System.err.println("[WEB] _start called on timer");
         }
 
         task = scheduler.scheduleAtFixedRate(runnable, 0, period, TimeUnit.MILLISECONDS);
+*/
         return 1; // need something non-zero to denote success.
     }
 

@@ -906,9 +906,10 @@ System.err.println("startError, t= " + t);
                 });
             }
 
+/*
             if (!error) {
                 shutdownLatch.await();
-//                System.err.println("JavaFX Launcher: time to call stop");
+                System.err.println("JavaFX Launcher: time to call stop");
             }
 
             // Call stop method if start was called
@@ -924,6 +925,7 @@ System.err.println("startError, t= " + t);
                     }
                 });
             }
+*/
 
             if (error) {
                 if (pConstructorError != null) {
