@@ -828,7 +828,10 @@ System.err.println("[QT] assignScreensAdapters4, pipeline = "+pipeline);
     // toolkit is shutting down.
     @Override public void defer(Runnable runnable) {
 System.err.println("[QT] defer runnable: " + runnable);
-        if (!toolkitRunning.get()) return;
+        if (!toolkitRunning.get()) {
+System.err.println("[QT] Warning, toolkit not yet running!");
+            // return;
+        }
 System.err.println("[QT] defer2 runnable: " + runnable);
 
         Application.invokeLater(runnable);
@@ -911,6 +914,8 @@ System.err.println("[QT] defer3 runnable: " + runnable);
     }
 
     @Override public void requestNextPulse() {
+System.err.println("[QT] requestNextPulse asked!");
+Thread.dumpStack();
         nextPulseRequested.set(true);
     }
 

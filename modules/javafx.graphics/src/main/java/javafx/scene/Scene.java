@@ -352,7 +352,9 @@ public class Scene implements EventTarget {
                     + "ConditionalFeature.SCENE3D");
         }
 
+System.err.println("Scene <init>0");
         init();
+System.err.println("Scene <init>");
         setRoot(root);
         init(width, height);
         setFill(fill);
@@ -1175,6 +1177,7 @@ public class Scene implements EventTarget {
     private ObjectProperty<Parent> root;
 
     public final void setRoot(Parent value) {
+System.err.println("[Scene] setRootProperty to " + value);
         rootProperty().set(value);
     }
 
@@ -1194,7 +1197,9 @@ public class Scene implements EventTarget {
 
                 @Override
                 protected void invalidated() {
+System.err.println("[SCENE] rootProp invalidated");
                     Parent _value = get();
+System.err.println("[SCENE] rootProp invalidated, val = "+ _value);
 
                     if (_value == null) {
                         if (isBound()) forceUnbind();
@@ -1225,6 +1230,7 @@ public class Scene implements EventTarget {
                     _value.setScenes(Scene.this, null);
                     markDirty(DirtyBits.ROOT_DIRTY);
                     _value.resize(getWidth(), getHeight()); // maybe no-op if root is not resizable
+System.err.println("[SCENE] request layout from " + _value);
                     _value.requestLayout();
                 }
 

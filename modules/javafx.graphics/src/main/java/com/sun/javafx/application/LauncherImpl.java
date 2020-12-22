@@ -868,6 +868,7 @@ System.err.println("launchApp1 - 12");
 
                 try {
                     // Call the application init method (on the Launcher thread)
+System.err.println("launchApp1 - 13");
                     theApp.init();
                 } catch (Throwable t) {
                     System.err.println("Exception in Application init method");
@@ -875,14 +876,17 @@ System.err.println("launchApp1 - 12");
                     error = true;
                 }
             }
+System.err.println("launchApp1 - 14");
 
             // Call start method unless exit called or error detected
             if (!error && !exitCalled.get()) {
+System.err.println("launchApp1 - 15");
                 if (currentPreloader != null) {
                     notifyStateChange(currentPreloader,
                             StateChangeNotification.Type.BEFORE_START, theApp);
                 }
                 // Call the application start method on FX thread
+System.err.println("launchApp1 - 16");
                 PlatformImpl.runAndWait(() -> {
                     try {
 System.err.println("LI, start0");
@@ -905,6 +909,7 @@ System.err.println("startError, t= " + t);
                     }
                 });
             }
+System.err.println("launchApp1 - 17");
 
 /*
             if (!error) {

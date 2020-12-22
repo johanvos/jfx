@@ -468,18 +468,24 @@ System.err.println("[PI] runLater queued, runnable " + r);
     }
 
     private static void runAndWait(final Runnable r, boolean exiting) {
+System.err.println("[RUNANDWAIT], asked to run " + r);
         if (isFxApplicationThread()) {
              try {
+System.err.println("[RUNANDWAIT], on appthread, asked to run " + r);
                  r.run();
+System.err.println("[RUNANDWAIT], on appthread, did run " + r);
              } catch (Throwable t) {
                  System.err.println("Exception in runnable");
                  t.printStackTrace();
              }
         } else {
             final CountDownLatch doneLatch = new CountDownLatch(1);
+System.err.println("[RUNANDWAIT], now on appthread, will runlater " + r);
             runLater(() -> {
                 try {
+System.err.println("[RUNANDWAIT], now on appthread, will run " + r);
                     r.run();
+System.err.println("[RUNANDWAIT], now on appthread, did run " + r);
                 } finally {
 System.err.println("[JVDBG] PI, I should wait internally on doneLatch but ignore");
                     doneLatch.countDown();

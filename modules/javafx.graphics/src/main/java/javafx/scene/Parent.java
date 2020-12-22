@@ -933,17 +933,22 @@ public abstract class Parent extends Node {
     }
 
     private void markDirtyLayout(boolean local, boolean forceParentLayout) {
+System.err.println("[Parent] markDirtyLayout");
         setLayoutFlag(LayoutFlags.NEEDS_LAYOUT);
         if (local || layoutRoot) {
+System.err.println("[Parent] local or layoutroot");
             if (sceneRoot) {
+System.err.println("[Parent] sceneRoot!");
                 Toolkit.getToolkit().requestNextPulse();
                 if (getSubScene() != null) {
                     getSubScene().setDirtyLayout(this);
                 }
             } else {
+System.err.println("[Parent] NOsceneRoot!");
                 markDirtyLayoutBranch();
             }
         } else {
+System.err.println("[Parent] requestParentLayout!");
             requestParentLayout(forceParentLayout);
         }
     }
