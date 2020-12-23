@@ -39,17 +39,18 @@ public class FTFactory extends PrismFontFactory {
     public static PrismFontFactory getFactory() {
         PrismFontFactory factory = null;
         long[] ptr = new long[1];
-        int error = OSFreetype.FT_Init_FreeType(ptr);
+        // int error = OSFreetype.FT_Init_FreeType(ptr);
+        int error = 0;
         long library = ptr[0];
         int[] major = new int[1], minor = new int[1], patch = new int[1];
         if (error == 0) {
             factory = new FTFactory();
-            OSFreetype.FT_Library_Version(library, major, minor, patch);
+            // OSFreetype.FT_Library_Version(library, major, minor, patch);
 
             /* This implementation only supports LCD if freetype has support. */
-            error = OSFreetype.FT_Library_SetLcdFilter(library, OSFreetype.FT_LCD_FILTER_DEFAULT);
+            // error = OSFreetype.FT_Library_SetLcdFilter(library, OSFreetype.FT_LCD_FILTER_DEFAULT);
             LCD_SUPPORT = error == 0;
-            OSFreetype.FT_Done_FreeType(library);
+            // OSFreetype.FT_Done_FreeType(library);
         }
         if (PrismFontFactory.debugFonts) {
             if (factory != null) {

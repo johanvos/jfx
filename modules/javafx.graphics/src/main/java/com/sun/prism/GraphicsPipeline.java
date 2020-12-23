@@ -152,8 +152,10 @@ public abstract class GraphicsPipeline {
     }
 
     public FontFactory getFontFactory() {
+System.err.println("[GPL] GetFontFactory, current = " + fontFactory);
         if (fontFactory == null) {
             fontFactory = PrismFontFactory.getFontFactory();
+System.err.println("[GPL] GetFontFactory, created = " + fontFactory);
         }
         return fontFactory;
     }
@@ -274,6 +276,7 @@ System.err.println("[GP] 09 np will return " + installedPipeline);
     }
 
     public static GraphicsPipeline getPipeline() {
+System.err.println("[GPL] getPipeline asked, return " + installedPipeline);
         return installedPipeline;
     }
 

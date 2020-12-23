@@ -1098,7 +1098,8 @@ final public class StyleManager {
                         try {
                             // RT-36332: if loadBinary throws an IOException, make sure to try .css
                             stylesheet = Stylesheet.loadBinary(url);
-                        } catch (IOException ioe) {
+                        } catch (Exception ioe) {
+System.err.println("[CSSManager] got an error: " + ioe);
                             stylesheet = null;
                         }
 
@@ -1664,8 +1665,13 @@ final public class StyleManager {
             Node region = node;
             while (region != null) {
                 if (region instanceof Region) {
-                    regionUserAgentStylesheet = weakRegionUserAgentStylesheetMap.computeIfAbsent(
-                            (Region)region, Region::getUserAgentStylesheet);
+                    // regionUserAgentStylesheet = weakRegionUserAgentStylesheetMap.computeIfAbsent(
+                            // (Region)region, Region::getUserAgentStylesheet);
+                    regionUserAgentStylesheet = weakRegionUserAgentStylesheetMap.get((Region)region);
+                    if (regionUserAgentStylesheet == null) {
+                        regionUserAgentStylesheet = ((Region)region).getUserAgentStylesheet();
+                        weakRegionUserAgentStylesheetMap.put((Region)region, regionUserAgentStylesheet);
+                    }
 
                     if (regionUserAgentStylesheet != null) {
                         // We want 'region' to be the node that has the user agent stylesheet.
