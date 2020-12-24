@@ -146,7 +146,29 @@ System.err.println(level+": " + String.format(format, params));
     public void log(System.Logger.Level level, ResourceBundle bundle, String msg, Throwable thrown) {
         // loggerProxy.log(level, bundle, msg, thrown);
 System.err.println(level+": " + msg);
+System.err.println(level+": thrown: "+thrown);
     }
+        public void log(Level level, String msg) {
+            log(getSystemLoggerLevel(level), (ResourceBundle) null, msg, (Object[]) null);
+        }
+
+        public void log(Level level, String msg, Throwable thrown) {
+            this.log(getSystemLoggerLevel(level), null, msg, thrown);
+        }
+
+        public void log(System.Logger.Level level, String msg) {
+            log(level, (ResourceBundle) null, msg, (Object[]) null);
+        }
+
+        public void log(System.Logger.Level level, String msg, Throwable thrown) {
+            this.log(level, null, msg, thrown);
+        }
+
+ public void log(System.Logger.Level level, String format, Object... params) {
+               this.log(level, null, format, params);
+        }
+
+
 
     // ------------------------------------------------------------------------
 
