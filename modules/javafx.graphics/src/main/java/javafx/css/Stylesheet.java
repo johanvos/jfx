@@ -307,11 +307,11 @@ System.err.println("[STYLESHEET] bss version = " + bssVersion);
 System.err.println("[SS] reading strings...");
             final String[] strings = StringStore.readBinary(dataInputStream);
 System.err.println("[SS] reading strings done...");
-if (strings != null) {
-for (String s: strings) {
-System.err.println("DID READ " + s);
-}
-}
+// if (strings != null) {
+// for (String s: strings) {
+// System.err.println("DID READ " + s);
+// }
+// }
             // read binary data
             stylesheet = new Stylesheet(url.toExternalForm());
 

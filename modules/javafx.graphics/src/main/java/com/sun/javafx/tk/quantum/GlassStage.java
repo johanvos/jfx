@@ -120,8 +120,8 @@ abstract class GlassStage implements TKStage {
         AccessControlContext acc = AccessController.getContext();
         // JDK doesn't provide public APIs to get ACC intersection,
         // so using this ugly workaround
-        accessCtrlCtx = doIntersectionPrivilege(
-                () -> AccessController.getContext(), acc, ctx);
+        // accessCtrlCtx = doIntersectionPrivilege(
+                // () -> AccessController.getContext(), acc, ctx);
     }
 
     @Override public void requestFocus() {

@@ -915,7 +915,7 @@ System.err.println("[QT] defer3 runnable: " + runnable);
 
     @Override public void requestNextPulse() {
 System.err.println("[QT] requestNextPulse asked!");
-Thread.dumpStack();
+// Thread.dumpStack();
         nextPulseRequested.set(true);
     }
 

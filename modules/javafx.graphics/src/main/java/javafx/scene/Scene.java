@@ -354,10 +354,13 @@ public class Scene implements EventTarget {
 
 System.err.println("Scene <init>0");
         init();
-System.err.println("Scene <init>");
+System.err.println("Scene <init>1");
         setRoot(root);
+System.err.println("Scene <init>2");
         init(width, height);
+System.err.println("Scene <init>3");
         setFill(fill);
+System.err.println("Scene <init>4");
     }
 
     static {

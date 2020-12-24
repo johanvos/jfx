@@ -283,7 +283,8 @@ System.err.println(level+": thrown: "+thrown);
     public void finer(String msg) {
         if (!loggingEnabled) return;
         // loggerProxy.log(System.Logger.Level.TRACE, msg, (Object[])null);
-        log(System.Logger.Level.TRACE, msg, (Object[])null);
+Object[] empty = new Object[0];
+        log(System.Logger.Level.TRACE, msg, empty);
     }
 
     public void finer(String msg, Throwable t) {
