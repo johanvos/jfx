@@ -562,23 +562,33 @@ System.err.println("[QT] pause!");
 
     void pulse(boolean collect) {
         try {
+System.err.println("[PULSE] 1");
             inPulse++;
             if (PULSE_LOGGING_ENABLED) {
                 PulseLogger.pulseStart();
             }
+System.err.println("[PULSE] 2");
 
             if (!toolkitRunning.get()) {
                 return;
             }
+System.err.println("[PULSE] 3");
             nextPulseRequested.set(false);
+System.err.println("[PULSE] 4");
             if (animationRunnable != null) {
                 animationRunning.set(true);
                 animationRunnable.run();
             } else {
                 animationRunning.set(false);
             }
+System.err.println("[PULSE] 5");
             firePulse();
+System.err.println("[PULSE] 6");
             if (collect) collector.renderAll();
+System.err.println("[PULSE] 7");
+        } catch (Exception e) {
+System.err.println("[PULSE] got exception: " + e);
+e.printStackTrace();
         } finally {
             inPulse--;
             if (PULSE_LOGGING_ENABLED) {

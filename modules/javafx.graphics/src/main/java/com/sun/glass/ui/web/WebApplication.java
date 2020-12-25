@@ -61,7 +61,7 @@ System.err.println ("[JVDBG] WEB runloop, scheduled launchable ...");
 
     @Override
     public Window createWindow(Window owner, Screen screen, int styleMask) {
-        throw new RuntimeException ("Not implemented");
+        return new WebWindow(owner, screen, styleMask);
     }
 
     @Override
@@ -71,7 +71,8 @@ System.err.println ("[JVDBG] WEB runloop, scheduled launchable ...");
 
     @Override
     public View createView() {
-        throw new RuntimeException ("Not implemented");
+        View answer = new WebGLView();
+        return answer;
     }
 
     @Override
@@ -214,7 +215,7 @@ System.err.println("[WEB] invokeOtherJob did sintervalchedule " + runnable);
 
     @Override
     protected int staticPixels_getNativeFormat() {
-        throw new RuntimeException ("Not implemented");
+        return Pixels.Format.BYTE_BGRA_PRE;
     }
 
     @Override
