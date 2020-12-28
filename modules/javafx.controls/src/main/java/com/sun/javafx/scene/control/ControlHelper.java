@@ -52,7 +52,9 @@ public class ControlHelper extends RegionHelper {
     }
 
     public static void superProcessCSS(Node node) {
+System.err.println("[CONTROLHELPER] START superProcessCSS on " + node);
         ((ControlHelper) getHelper(node)).superProcessCSSImpl(node);
+System.err.println("[CONTROLHELPER] START superProcessCSS on " + node);
     }
 
     public static StringProperty skinClassNameProperty(Control control) {
@@ -60,7 +62,9 @@ public class ControlHelper extends RegionHelper {
     }
 
     void superProcessCSSImpl(Node node) {
+System.err.println("[CONTROLHELPER] START superProcessCSSImpl on " + node+" and this = " + this);
         super.processCSSImpl(node);
+System.err.println("[CONTROLHELPER] START superProcessCSSImpl on " + node+" and this = " + this);
     }
 
     protected void processCSSImpl(Node node) {

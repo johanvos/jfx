@@ -122,7 +122,9 @@ public abstract class Parent extends Node {
 
             @Override
             public void doProcessCSS(Node node) {
-                ((Parent) node).doProcessCSS();
+System.err.println("[PARENTACC] doProcessCSS START for " + node+" and accessor(me) = "+this);
+                ((Parent) node).parentdoProcessCSS();
+System.err.println("[PARENTACC] doProcessCSS DONE for " + node);
             }
 
             @Override
@@ -1358,7 +1360,7 @@ System.err.println("[Parent] requestParentLayout!");
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private void doProcessCSS() {
+    private void parentdoProcessCSS() {
 System.err.println("[PARENT] doprocessCSS START on " + this);
 
         // Nothing to do...

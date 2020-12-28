@@ -86,7 +86,7 @@ public abstract class Control extends Region implements Skinnable {
         ControlHelper.setControlAccessor(new ControlHelper.ControlAccessor() {
             @Override
             public void doProcessCSS(Node node) {
-                ((Control) node).doProcessCSS();
+                ((Control) node).controldoProcessCSS();
             }
             @Override
             public StringProperty skinClassNameProperty(Control control) {
@@ -881,7 +881,7 @@ public abstract class Control extends Region implements Skinnable {
      * Note: This method MUST only be called via its accessor method.
      */
     private boolean skinCreationLocked = false;
-    private void doProcessCSS() {
+    private void controldoProcessCSS() {
 
         ControlHelper.superProcessCSS(this);
 

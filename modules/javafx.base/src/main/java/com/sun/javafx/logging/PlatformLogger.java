@@ -45,6 +45,7 @@ import java.util.ResourceBundle;
 public class PlatformLogger implements System.Logger {
 
     private String loggerName;
+    private Object[] emptyObj = new Object[0];
 
     /**
      * PlatformLogger logging levels.
@@ -149,7 +150,7 @@ System.err.println(level+": " + msg);
 System.err.println(level+": thrown: "+thrown);
     }
         public void log(Level level, String msg) {
-            log(getSystemLoggerLevel(level), (ResourceBundle) null, msg, (Object[]) null);
+            log(getSystemLoggerLevel(level), (ResourceBundle) null, msg, emptyObj);
         }
 
         public void log(Level level, String msg, Throwable thrown) {
@@ -157,7 +158,7 @@ System.err.println(level+": thrown: "+thrown);
         }
 
         public void log(System.Logger.Level level, String msg) {
-            log(level, (ResourceBundle) null, msg, (Object[]) null);
+            log(level, (ResourceBundle) null, msg, emptyObj);
         }
 
         public void log(System.Logger.Level level, String msg, Throwable thrown) {
@@ -195,7 +196,7 @@ System.err.println(level+": thrown: "+thrown);
     public void severe(String msg) {
         if (!loggingEnabled) return;
         // loggerProxy.log(System.Logger.Level.ERROR, msg, (Object[])null);
-        log(System.Logger.Level.ERROR, msg, (Object[])null);
+        log(System.Logger.Level.ERROR, msg, emptyObj);
     }
 
     public void severe(String msg, Throwable t) {
@@ -217,7 +218,7 @@ System.err.println(level+": thrown: "+thrown);
     public void warning(String msg) {
         if (!loggingEnabled) return;
         // loggerProxy.log(System.Logger.Level.WARNING, msg, (Object[])null);
-        log(System.Logger.Level.WARNING, msg, (Object[])null);
+        log(System.Logger.Level.WARNING, msg, emptyObj);
     }
 
     public void warning(String msg, Throwable t) {
@@ -239,7 +240,7 @@ System.err.println(level+": thrown: "+thrown);
     public void info(String msg) {
         if (!loggingEnabled) return;
         // loggerProxy.log(System.Logger.Level.INFO, msg, (Object[])null);
-        log(System.Logger.Level.INFO, msg, (Object[])null);
+        log(System.Logger.Level.INFO, msg, emptyObj);
     }
 
     public void info(String msg, Throwable t) {
@@ -261,7 +262,7 @@ System.err.println(level+": thrown: "+thrown);
     public void fine(String msg) {
         if (!loggingEnabled) return;
         // loggerProxy.log(System.Logger.Level.DEBUG, msg, (Object[])null);
-        log(System.Logger.Level.DEBUG, msg, (Object[])null);
+        log(System.Logger.Level.DEBUG, msg, emptyObj);
     }
 
     public void fine(String msg, Throwable t) {
@@ -306,7 +307,7 @@ Object[] empty = new Object[0];
     public void finest(String msg) {
         if (!loggingEnabled) return;
         // loggerProxy.log(System.Logger.Level.TRACE, msg, (Object[])null);
-        log(System.Logger.Level.TRACE, msg, (Object[])null);
+        log(System.Logger.Level.TRACE, msg, emptyObj);
     }
 
     public void finest(String msg, Throwable t) {

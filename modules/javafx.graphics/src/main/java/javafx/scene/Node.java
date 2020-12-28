@@ -479,7 +479,7 @@ public abstract class Node implements EventTarget, Styleable {
             @Override
             public void doProcessCSS(Node node) {
 System.err.println("[NODEACCESSOR] doProcessCSS STAT called on this = " + this+" and node = " + node);
-                node.doProcessCSS();
+                node.privatedoProcessCSS();
 System.err.println("[NODEACCESSOR] doProcessCSS END called on this = " + this+" and node = " + node);
             }
 
@@ -9651,7 +9651,7 @@ return clazz.getName();
      *
      * Note: This method MUST only be called via its accessor method.
      */
-    private void doProcessCSS() {
+    private void privatedoProcessCSS() {
 System.err.println("[NODE] doProcessCSS() START on this = " + this);
 
         // Nothing to do...

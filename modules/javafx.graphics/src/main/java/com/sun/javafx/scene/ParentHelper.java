@@ -61,7 +61,10 @@ public class ParentHelper extends NodeHelper {
 
     public static void superProcessCSS(Node node) {
 System.err.println("[PARENTHELPER] superprocessCss START with node = " + node);
-        ((ParentHelper) getHelper(node)).superProcessCSSImpl(node);
+ParentHelper ph = (ParentHelper) getHelper(node);
+System.err.println("[PARENTHELPER] call super on ph = " + ph);
+        // ((ParentHelper) getHelper(node)).superProcessCSSImpl(node);
+        ph.parentsuperProcessCSSImpl(node);
 System.err.println("[PARENTHELPER] superprocessCss DONE with node = " + node);
     }
 
@@ -91,7 +94,7 @@ System.err.println("[PARENTHELPER] superprocessCss DONE with node = " + node);
         return parentAccessor.doComputeContains(node, localX, localY);
     }
 
-    void superProcessCSSImpl(Node node) {
+    void parentsuperProcessCSSImpl(Node node) {
 System.err.println("[PARENTHELPER] superprocessCssImpl START with this = " + this+" and node = " + node);
         super.processCSSImpl(node);
 System.err.println("[PARENTHELPER] superprocessCssImpl DONE with this = " + this+" and node = " + node);

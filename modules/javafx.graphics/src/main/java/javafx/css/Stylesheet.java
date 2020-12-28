@@ -35,6 +35,7 @@ import com.sun.javafx.css.FontFaceImpl;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -290,9 +291,19 @@ System.err.println("[STYLESHEET] loadBinary from url = " + url);
 
         Stylesheet stylesheet = null;
 
-System.err.println("[STYLESHEET] try...");
-        try (DataInputStream dataInputStream =
-                     new DataInputStream(new BufferedInputStream(url.openStream(), 40 * 1024))) {
+System.err.println("[STYLESHEET] Try ...");
+InputStream is = url.openStream();
+if (is == null) {
+System.err.println("[STYLESHEET] not found...");
+return null;
+}
+System.err.println("[STYLESHEET] got is ...");
+BufferedInputStream bis = new BufferedInputStream(is, 40 * 1024);
+System.err.println("[STYLESHEET] got bis ...");
+        try {
+DataInputStream dataInputStream =
+                     new DataInputStream(bis);
+                     // new DataInputStream(new BufferedInputStream(url.openStream(), 40 * 1024))) {
 
 System.err.println("[STYLESHEET] got something...");
             // read file version
