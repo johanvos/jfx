@@ -1359,6 +1359,7 @@ System.err.println("[Parent] requestParentLayout!");
      * Note: This method MUST only be called via its accessor method.
      */
     private void doProcessCSS() {
+System.err.println("[PARENT] doprocessCSS START on " + this);
 
         // Nothing to do...
         if (cssFlag == CssFlags.CLEAN) return;
@@ -1404,6 +1405,7 @@ System.err.println("[Parent] requestParentLayout!");
             }
             NodeHelper.processCSS(child);
         }
+System.err.println("[PARENT] doprocessCSS DONE on " + this);
     }
 
     /***********************************************************************

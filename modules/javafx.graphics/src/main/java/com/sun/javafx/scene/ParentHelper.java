@@ -60,7 +60,9 @@ public class ParentHelper extends NodeHelper {
     }
 
     public static void superProcessCSS(Node node) {
+System.err.println("[PARENTHELPER] superprocessCss START with node = " + node);
         ((ParentHelper) getHelper(node)).superProcessCSSImpl(node);
+System.err.println("[PARENTHELPER] superprocessCss DONE with node = " + node);
     }
 
     public static List<String> getAllParentStylesheets(Parent parent) {
@@ -90,12 +92,16 @@ public class ParentHelper extends NodeHelper {
     }
 
     void superProcessCSSImpl(Node node) {
+System.err.println("[PARENTHELPER] superprocessCssImpl START with this = " + this+" and node = " + node);
         super.processCSSImpl(node);
+System.err.println("[PARENTHELPER] superprocessCssImpl DONE with this = " + this+" and node = " + node);
     }
 
     @Override
     protected void processCSSImpl(Node node) {
+System.err.println("[PARENTHELPER] processCssImpl START with this = " + this+" and node = " + node);
         parentAccessor.doProcessCSS(node);
+System.err.println("[PARENTHELPER] processCssImpl DONE with this = " + this+" and node = " + node);
     }
 
     protected List<String> getAllParentStylesheetsImpl(Parent parent) {
