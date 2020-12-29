@@ -112,7 +112,7 @@ public abstract class Parent extends Node {
             @Override
             public BaseBounds doComputeGeomBounds(Node node,
                     BaseBounds bounds, BaseTransform tx) {
-                return ((Parent) node).doComputeGeomBounds(bounds, tx);
+                return ((Parent) node).parentdoComputeGeomBounds(bounds, tx);
             }
 
             @Override
@@ -1496,7 +1496,7 @@ System.err.println("[PARENT] doprocessCSS DONE on " + this);
     private Node near;
     private Node far;
 
-    private BaseBounds doComputeGeomBounds(BaseBounds bounds, BaseTransform tx) {
+    private BaseBounds parentdoComputeGeomBounds(BaseBounds bounds, BaseTransform tx) {
         // If we have no children, our bounds are invalid
         if (children.isEmpty()) {
             return bounds.makeEmpty();

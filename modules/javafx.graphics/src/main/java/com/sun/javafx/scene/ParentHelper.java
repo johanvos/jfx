@@ -86,7 +86,10 @@ System.err.println("[PARENTHELPER] superprocessCss DONE with node = " + node);
     @Override
     protected BaseBounds computeGeomBoundsImpl(Node node, BaseBounds bounds,
             BaseTransform tx) {
-        return parentAccessor.doComputeGeomBounds(node, bounds, tx);
+System.err.println("[PARENTHELPER] computeGeomBoundsImpl START with this = " + this+" and node = " + node+" and pa = " + parentAccessor);
+        BaseBounds answer = parentAccessor.doComputeGeomBounds(node, bounds, tx);
+System.err.println("[PARENTHELPER] computeGeomBoundsImpl DONE with this = " + this+" and node = " + node);
+        return answer;
     }
 
     @Override
