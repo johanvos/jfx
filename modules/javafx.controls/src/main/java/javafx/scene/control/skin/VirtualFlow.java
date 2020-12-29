@@ -337,6 +337,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 */
                 double virtualDelta = 0.0;
                 if (isVertical()) {
+                    System.err.println("SCROLL, units = " + event.getTextDeltaYUnits());
                     switch(event.getTextDeltaYUnits()) {
                         case PAGES:
                             virtualDelta = event.getTextDeltaY() * lastHeight;
@@ -867,7 +868,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
     };
     public final double getPosition() { return position.get(); }
     public final void setPosition(double value) { position.set(value); }
-    public final DoubleProperty positionProperty() { return position; }
+    // public final DoubleProperty positionProperty() { return position; }
 
     // --- fixed cell size
     /**
@@ -1532,6 +1533,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * @return the number of pixels actually moved
      */
     public double scrollPixels(final double delta) {
+        System.err.println("[VF] scrollPixels asked for delta = "+delta);
         // Short cut this method for cases where nothing should be done
         if (delta == 0) return 0;
 
@@ -1542,13 +1544,14 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         double pos = getPosition();
         if (pos == 0.0f && delta < 0) return 0;
         if (pos == 1.0f && delta > 0) return 0;
-
+        System.err.println("[VF] pos = "+pos);
         adjustByPixelAmount(delta);
         if (pos == getPosition()) {
             // The pos hasn't changed, there's nothing to do. This is likely
             // to occur when we hit either extremity
             return 0;
         }
+        System.err.println("[VF] newpos = "+getPosition());
 
         // Now move stuff around. Translating by pixels fundamentally means
         // moving the cells by the delta. However, after having
@@ -2486,10 +2489,11 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             if (numCellsVisibleOnScreen == 0 && cellCount == 1) {
                 // special case to help resolve RT-17701 and the case where we have
                 // only a single row and it is bigger than the viewport
-                lengthBar.setVisibleAmount(flowLength / sumCellLength);
+            //    lengthBar.setVisibleAmount(flowLength / sumCellLength);
             } else {
                 lengthBar.setVisibleAmount(numCellsVisibleOnScreen / (float) cellCount);
             }
+            System.err.println("Changed SCrollbar visibleamount to "+lengthBar.getVisibleAmount());
         }
 
         if (lengthBar.isVisible()) {
@@ -2778,6 +2782,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * strictly between 0 and 1
      */
     private void adjustByPixelAmount(double numPixels) {
+        System.err.println("[VF] adjustByPixelAmount asked, np = "+numPixels+", pos = "+getPosition());
         if (numPixels == 0) return;
         // Starting from the current cell, we move in the direction indicated
         // by numPixels one cell at a team. For each cell, we discover how many
@@ -2841,11 +2846,13 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             setPosition(forward ? 1.0f : 0.0f);
         } else if (forward) {
             double rate = cellPercent / Math.abs(end - start);
+            System.err.println("set new position, p = " + p+", rate = "+rate+", n = "+n);
             setPosition(p + (rate * n));
         } else {
             double rate = cellPercent / Math.abs(end - start);
             setPosition((p + cellPercent) - (rate * n));
         }
+        System.err.println("[VF] new position = "+getPosition());
     }
 
     private int computeCurrentIndex() {

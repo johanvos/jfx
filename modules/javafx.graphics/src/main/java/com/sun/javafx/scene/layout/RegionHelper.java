@@ -59,7 +59,8 @@ public class RegionHelper extends ParentHelper {
 
     public static BaseBounds superComputeGeomBounds(Node node, BaseBounds bounds,
             BaseTransform tx) {
-        return ((RegionHelper) getHelper(node)).superComputeGeomBoundsImpl(node, bounds, tx);
+System.err.println("[REGIONHELPER] superComputeGeomBounds");
+        return ((RegionHelper) getHelper(node)).regionsuperComputeGeomBoundsImpl(node, bounds, tx);
     }
 
     @Override
@@ -73,7 +74,7 @@ public class RegionHelper extends ParentHelper {
         regionAccessor.doUpdatePeer(node);
     }
 
-   BaseBounds superComputeGeomBoundsImpl(Node node, BaseBounds bounds,
+   BaseBounds regionsuperComputeGeomBoundsImpl(Node node, BaseBounds bounds,
             BaseTransform tx) {
         return super.computeGeomBoundsImpl(node, bounds, tx);
    }
@@ -86,6 +87,7 @@ public class RegionHelper extends ParentHelper {
     @Override
     protected BaseBounds computeGeomBoundsImpl(Node node, BaseBounds bounds,
             BaseTransform tx) {
+System.err.println("[REGIONHELPER] computeGeomBoundsImpl " );
         return regionAccessor.doComputeGeomBounds(node, bounds, tx);
     }
 

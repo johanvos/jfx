@@ -2452,6 +2452,7 @@ System.err.println("[SCENE] request layout from " + _value);
 
         @Override
         public void pulse() {
+System.err.println("SCENE: pulse");
             if (Scene.this.tracker != null) {
                 Scene.this.tracker.pulse();
             }
@@ -2494,7 +2495,10 @@ System.err.println("[SCENE] request layout from " + _value);
                 if (PULSE_LOGGING_ENABLED) {
                     PulseLogger.newPhase("Update bounds");
                 }
+System.err.println("[SCENE] calling updateBounds on root ");
+System.err.println("[SCENE] root = " + getRoot());
                 getRoot().updateBounds();
+System.err.println("[SCENE] called updateBounds on root ");
                 if (peer != null) {
                     try {
                         if (PULSE_LOGGING_ENABLED) {

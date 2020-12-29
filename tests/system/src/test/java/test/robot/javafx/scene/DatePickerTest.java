@@ -66,6 +66,7 @@ public class DatePickerTest {
     CountDownLatch onActionLatch;
 
     private void mouseClick(double x, double y) {
+System.err.println("[DPT] mouseClick");
         Util.runAndWait(() -> {
             robot.mouseMove((int) (scene.getWindow().getX() + scene.getX() + x),
                     (int) (scene.getWindow().getY() + scene.getY() + y));
@@ -103,6 +104,7 @@ public class DatePickerTest {
 
     @Test
     public void testDatePickerSceneChange() throws Exception {
+System.err.println("[DPT] testDatePsc");
         // Disable on mac untill JDK-8208523 is fixed.
         assumeTrue(!PlatformUtil.isMac());
         Thread.sleep(1000); // Wait for stage to layout
@@ -150,6 +152,7 @@ public class DatePickerTest {
 
     @After
     public void resetUI() {
+System.err.println("[DPT] testDatePsc");
         Platform.runLater(() -> {
             datePicker.setOnShown(null);
             datePicker.setOnAction(null);
@@ -159,6 +162,7 @@ public class DatePickerTest {
 
     @Before
     public void setupUI() {
+System.err.println("[DPT] testDatePsc");
         Platform.runLater(() -> {
             datePicker = new DatePicker();
             datePicker.setOnShown(event -> {
@@ -175,12 +179,14 @@ public class DatePickerTest {
 
     @BeforeClass
     public static void initFX() throws Exception {
+System.err.println("[DPT] testDatePsc");
         new Thread(() -> Application.launch(TestApp.class, (String[])null)).start();
         waitForLatch(startupLatch, 10, "FX runtime failed to start.");
     }
 
     @AfterClass
     public static void exit() {
+System.err.println("[DPT] testDatePsc");
         Platform.runLater(() -> {
             stage.hide();
         });
@@ -190,6 +196,7 @@ public class DatePickerTest {
     public static class TestApp extends Application {
         @Override
         public void start(Stage primaryStage) {
+System.err.println("[DPT] testDatePsc");
             robot = new Robot();
             stage = primaryStage;
             root = new VBox();
@@ -204,6 +211,7 @@ public class DatePickerTest {
     }
 
     public static void waitForLatch(CountDownLatch latch, int seconds, String msg) throws Exception {
+System.err.println("[DPT] testDatePsc");
         Assert.assertTrue("Timeout: " + msg, latch.await(seconds, TimeUnit.SECONDS));
     }
 }
