@@ -542,17 +542,26 @@ System.err.println("[QT] pause!");
     }
 
     private void endPulseRunning() {
+System.err.println("[QT] endPulseRunning 0");
         pulseRunning.set(false);
+System.err.println("[QT] endPulseRunning 1");
         if (debug) {
             System.err.println("QT.endPulse: " + System.nanoTime());
         }
+System.err.println("[QT] endPulseRunning 2");
     }
 
     void pulseFromQueue() {
         try {
+System.err.println("[QT] pulseFromQueue 0");
             pulse();
+System.err.println("[QT] pulseFromQueue 1");
+        } catch (Throwable t) {
+System.err.println("[QT] ERROR in pulseFromQueue: " + t);
         } finally {
+System.err.println("[QT] pulseFromQueue 2");
             endPulseRunning();
+System.err.println("[QT] pulseFromQueue 3");
         }
     }
 
@@ -590,10 +599,12 @@ System.err.println("[PULSE] 7");
 System.err.println("[PULSE] got exception: " + e);
 e.printStackTrace();
         } finally {
+System.err.println("[PULSE] 8");
             inPulse--;
             if (PULSE_LOGGING_ENABLED) {
                 PulseLogger.pulseEnd();
             }
+System.err.println("[PULSE] 9");
         }
     }
 
