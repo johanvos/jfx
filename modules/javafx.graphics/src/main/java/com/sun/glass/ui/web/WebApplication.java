@@ -77,7 +77,7 @@ System.err.println ("[JVDBG] WEB runloop, scheduled launchable ...");
 
     @Override
     public Cursor createCursor(int type) {
-        throw new RuntimeException ("Not implemented");
+        return new WebCursor(type);
     }
 
     @Override

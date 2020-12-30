@@ -303,9 +303,10 @@ public void afterExecute(Runnable r, Throwable t) {
     @Override
     public void execute(Runnable r) {
 System.err.println("[QR] EXECUTE! " + r);
-        Thread t = new Thread(r);
-System.err.println("[QR] startEXECUTE! " + r);
-        t.start();
+System.err.println("[QR] startEXECUTE! r.run " + r);
+r.run();
+        //Thread t = new Thread(r);
+        // t.start();
 System.err.println("[QR] startEXECUTEdone! " + r);
 
 /*

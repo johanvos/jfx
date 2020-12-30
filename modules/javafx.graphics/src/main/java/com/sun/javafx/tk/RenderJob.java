@@ -36,14 +36,17 @@ public class RenderJob extends FutureTask {
 
     private CompletionListener listener;
     private Object             futureReturn;
+private Runnable rif = null;
 
     public RenderJob(Runnable pen) {
         super(pen, null);
+this.rif = pen;
     }
 
     public RenderJob(Runnable pen, CompletionListener cl) {
         super(pen, null);
         setCompletionListener(cl);
+this.rif = pen;
     }
 
     public CompletionListener getCompletionListener() {
@@ -56,6 +59,7 @@ public class RenderJob extends FutureTask {
 
     @Override public void run() {
 System.err.println("[RENDERJOB] run called");
+System.err.println("[RENDERJOB] should run "+ rif);
         if (super.runAndReset() == false) {
 System.err.println("[RENDERJOB] superrun false");
             // if (PrismSettings.verbose) {

@@ -198,14 +198,11 @@ public abstract class Toolkit {
     }
 
     public static synchronized Toolkit getToolkit() {
-System.err.println("[TK] Toolkit.getToolkit() asked");
         if (TOOLKIT != null) {
-System.err.println("[TK] TOOLKIT exists");
             return TOOLKIT;
         }
-System.err.println("[TK] Toolkit.getToolkit() asked1");
 try {
-System.err.println("[TK] Toolkit.getToolkit() asked2");
+System.err.println("[TK] Toolkit.getToolkit() asked, didn't exist. Create it now.");
 
         AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
             // Get the javafx.version and javafx.runtime.version from a preconstructed
@@ -213,13 +210,11 @@ System.err.println("[TK] Toolkit.getToolkit() asked2");
             VersionInfo.setupSystemProperties();
             return null;
         });
-System.err.println("[TK] Toolkit.getToolkit() asked3");
 
         // Load required Microsoft runtime DLLs on Windows platforms
         if (PlatformUtil.isWindows()) {
             loadMSWindowsLibraries();
         }
-System.err.println("[TK] Toolkit.getToolkit() asked4");
 
         boolean userSpecifiedToolkit = true;
 
@@ -229,7 +224,6 @@ System.err.println("[TK] Toolkit.getToolkit() asked4");
         try {
             forcedToolkit = System.getProperty("javafx.toolkit");
         } catch (SecurityException ex) {}
-System.err.println("[TK] Toolkit.getToolkit() asked5");
 
         if (forcedToolkit == null) {
             forcedToolkit = tk;
@@ -243,7 +237,6 @@ System.err.println("[TK] Toolkit.getToolkit() asked5");
             // Turn a short name into a fully qualified classname
             forcedToolkit = lookupToolkitClass(forcedToolkit);
         }
-System.err.println("[TK] Toolkit.getToolkit() asked6");
 
         boolean printToolkit = verbose
                 || (userSpecifiedToolkit && !forcedToolkit.endsWith("StubToolkit"));
@@ -260,7 +253,6 @@ System.err.println("[TK] Toolkit.getToolkit() asked6");
                 final ClassLoader loader = Thread.currentThread().getContextClassLoader();
                 clz = Class.forName(forcedToolkit, false, loader);
             }
-System.err.println("[TK] Toolkit.getToolkit() asked7");
 
             // Check that clz is a subclass of Toolkit
             if (!Toolkit.class.isAssignableFrom(clz)) {
@@ -278,7 +270,7 @@ System.err.println("[TK] getToolkit() asked, init from clz ok");
                 }
                 return TOOLKIT;
             }
-System.err.println("[TK] getToolkit() asked, return NULL");
+System.err.println("[TK] getToolkit() asked but failed, return NULL");
             TOOLKIT = null;
         } catch (Exception any) {
             TOOLKIT = null;
