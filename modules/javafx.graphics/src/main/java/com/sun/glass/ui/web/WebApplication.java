@@ -36,16 +36,20 @@ public final class WebApplication extends Application {
 
     static Method scheduleMethod;
     static Method intervalMethod;
+    static Method uploadPixelMethod;
 
     static {
         try {
             Class c = Class.forName("com.gluonhq.webscheduler.Util");
             scheduleMethod = c.getMethod("schedule", Runnable.class);
             intervalMethod = c.getMethod("interval", Runnable.class);
+            uploadPixelMethod = c.getMethod("uploadPixels", long.class, int[].class, int.class, int.class, int.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private native void _uploadPixelsIntArray(long viewPtr, int[] pixels, int offset, int width, int height);
 
     @Override
     protected void runLoop(final Runnable launchable) {
@@ -200,17 +204,21 @@ System.err.println("[WEB] invokeOtherJob did sintervalchedule " + runnable);
 
     @Override
     public Pixels createPixels(int width, int height, ByteBuffer data) { 
-        throw new RuntimeException ("Not implemented");
+        return new WebPixels(width, height, data);
     }
 
     @Override
     public Pixels createPixels(int width, int height, IntBuffer data) { 
-        throw new RuntimeException ("Not implemented");
+        Pixels answer = new WebPixels(width, height, data);
+System.err.println("[WEBAPP] createPixels1 called, return " + answer);
+        return answer;
     }
 
     @Override
     public Pixels createPixels(int width, int height, IntBuffer data, float scalex, float scaley) {
-        throw new RuntimeException ("Not implemented");
+        Pixels answer = new WebPixels(width, height, data);
+System.err.println("[WEBAPP] createPixels called, return " + answer);
+        return answer;
     }
 
     @Override

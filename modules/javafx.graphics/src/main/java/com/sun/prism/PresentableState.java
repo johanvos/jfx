@@ -302,10 +302,13 @@ public abstract class PresentableState {
      * @param source - the source for the Pixels object to be uploaded
      */
     public void uploadPixels(PixelSource source) {
+System.err.println("[PRESENTABLESTATE] upload pixels");
         Pixels pixels = source.getLatestPixels();
         if (pixels != null) {
             try {
+System.err.println("[PRESENTABLESTATE] upload pixels to view " + view);
                 view.uploadPixels(pixels);
+System.err.println("[PRESENTABLESTATE] upload pixels DONE to view " + view);
             } finally {
                 source.doneWithPixels(pixels);
             }
@@ -322,6 +325,7 @@ public abstract class PresentableState {
                           float renderScaleX, float renderScaleY,
                           float outputScaleX, float outputScaleY)
     {
+System.err.println("[PRESENTABLESTATE] update to " + viewScaleX+", " + viewScaleY+", "+renderScaleX+", "+renderScaleY+", "+ outputScaleX+", " + outputScaleY);
         this.renderScaleX = renderScaleX;
         this.renderScaleY = renderScaleY;
         this.outputScaleX = outputScaleX;
@@ -352,6 +356,7 @@ public abstract class PresentableState {
      */
     public void update() {
         // should only be called on the event thread
+System.err.println("[PRESENTABLESTATE] update");
         if (view != null) {
             viewWidth = view.getWidth();
             viewHeight = view.getHeight();
@@ -360,6 +365,7 @@ public abstract class PresentableState {
             viewWidth = viewHeight = -1;
             window = null;
         }
+System.err.println("vw = " + viewWidth+", vh = " +viewHeight+", window = " + window);
         if (window != null) {
             windowX = window.getX();
             windowY = window.getY();
@@ -373,6 +379,7 @@ public abstract class PresentableState {
                    window.getRenderScaleX(),   window.getRenderScaleY(),
                    window.getOutputScaleX(),   window.getOutputScaleY());
             Screen screen = window.getScreen();
+System.err.println("screen = " + screen);
             if (screen != null) {
                 // note only used by Embedded Z order painting
                 // !hasWindowManager so should be safe to ignore

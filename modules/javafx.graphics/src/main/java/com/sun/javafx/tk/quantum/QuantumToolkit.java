@@ -243,11 +243,9 @@ public final class QuantumToolkit extends Toolkit {
          */
 System.err.println("[QTK] init 1");
         renderer = QuantumRenderer.getInstance();
-System.err.println("[QTK] init 2");
         collector = PaintCollector.createInstance(this);
-System.err.println("[QTK] init 3");
+System.err.println("[QTK] init 2, collector = " + collector);
         pipeline = GraphicsPipeline.getPipeline();
-System.err.println("[QTK] init 4a");
 
         /* shutdown the pipeline on System.exit, ^c
          * needed with X11 and Windows, see RT-32501
@@ -257,12 +255,11 @@ System.err.println("[QTK] init 4a");
                 dispose();
             }
         };
-System.err.println("[QTK] init 5");
         // AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
             // Runtime.getRuntime().addShutdownHook(shutdownHook);
             // return null;
         // });
-System.err.println("[QTK] init 6");
+System.err.println("[QTK] init DONE");
         return true;
     }
 
@@ -592,7 +589,7 @@ System.err.println("[PULSE] 4");
             }
 System.err.println("[PULSE] 5");
             firePulse();
-System.err.println("[PULSE] 6");
+System.err.println("[PULSE] 6, render if we need to collect? " + collect);
             if (collect) collector.renderAll();
 System.err.println("[PULSE] 7");
         } catch (Exception e) {

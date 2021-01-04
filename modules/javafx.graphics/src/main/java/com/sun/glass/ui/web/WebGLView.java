@@ -17,8 +17,18 @@ public class WebGLView extends View {
     private int lastCaret;
 
     private native void enableInputMethodEventsImpl(long ptr, boolean enable);
+    private static WebGLView instance = null;
 
     public WebGLView() {
+        instance= this;
+    }
+
+    public WebGLView getInstance() {
+        return instance;
+    }
+
+    public static void doResize(int w, int h ) {
+        instance.notifyResize(w, h);
     }
 
     @Override
@@ -66,16 +76,29 @@ return 1;
 
     @Override
     protected void _uploadPixels(long ptr, Pixels pixels) {
+System.err.println("[WEBGLVIEW] uploadPixels asked, ptr = " + ptr+", pixels = " + pixels);
         Buffer data = pixels.getPixels();
+System.err.println("[WEBGLVIEW] data = " + data);
         if (data.isDirect() == true) {
+System.err.println("[WEBGLVIEW] data direct! ");
             _uploadPixelsDirect(ptr, data, pixels.getWidth(), pixels.getHeight());
         } else if (data.hasArray() == true) {
+System.err.println("[WEBGLVIEW] data has array! ");
             if (pixels.getBytesPerComponent() == 1) {
+System.err.println("[WEBGLVIEW] data has BYTES! ");
                 ByteBuffer bytes = (ByteBuffer)data;
                 _uploadPixelsByteArray(ptr, bytes.array(), bytes.arrayOffset(), pixels.getWidth(), pixels.getHeight());
             } else {
+System.err.println("[WEBGLVIEW] data has ints! ");
                 IntBuffer ints = (IntBuffer)data;
-                _uploadPixelsIntArray(ptr, ints.array(), ints.arrayOffset(), pixels.getWidth(), pixels.getHeight());
+                try {
+                    WebApplication.uploadPixelMethod.invoke(null, ptr, ints.array(), ints.arrayOffset(), pixels.getWidth(), pixels.getHeight());
+                } catch (Throwable t) {
+System.err.println("Error uploading pixels native web! " + t);
+t.printStackTrace();
+                }
+                // _uploadPixelsIntArray(ptr, ints.array(), ints.arrayOffset(), pixels.getWidth(), pixels.getHeight());
+System.err.println("[WEBGLVIEW] data has uploaded to native layer native ! ");
             }
         } else {
             // gznote: what are the circumstances under which this can happen?

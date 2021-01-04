@@ -74,14 +74,15 @@ final class UploadingPainter extends ViewPainter implements Runnable {
     }
 
     @Override public void run() {
+System.err.println("[UPLOADINGPAINTER] run start");
         renderLock.lock();
 
         boolean errored = false;
         try {
             if (!validateStageGraphics()) {
-                if (QuantumToolkit.verbose) {
+                // if (QuantumToolkit.verbose) {
                     System.err.println("UploadingPainter: validateStageGraphics failed");
-                }
+                // }
                 paintImpl(null);
                 return;
             }
@@ -90,6 +91,7 @@ final class UploadingPainter extends ViewPainter implements Runnable {
                 factory = GraphicsPipeline.getDefaultResourceFactory();
             }
             if (factory == null || !factory.isDeviceReady()) {
+System.err.println("[UPLOADINGPAINTER] factory null or devnotready");
                 return;
             }
 
@@ -134,6 +136,7 @@ final class UploadingPainter extends ViewPainter implements Runnable {
             }
             Graphics g = rttexture.createGraphics();
             if (g == null) {
+System.err.println("[UPLOADINGPAINTER] rtttexture.creategraphics returned null");
                 disposeRTTexture();
                 sceneState.getScene().entireSceneNeedsRepaint();
                 return;
@@ -152,6 +155,7 @@ final class UploadingPainter extends ViewPainter implements Runnable {
             } else {
                 rtt = rttexture;
             }
+System.err.println("[UPLOADINGPAINTER] so far so good");
 
             Pixels pix = pixelSource.getUnusedPixels(outWidth, outHeight, outScaleX, outScaleY);
             IntBuffer bits = (IntBuffer) pix.getPixels();
@@ -172,6 +176,7 @@ final class UploadingPainter extends ViewPainter implements Runnable {
             if (rttexture != null) {
                 rttexture.unlock();
             }
+System.err.println("[UPLOADINGPAINTER] ready to upload");
 
             if (pix != null) {
                 /* transparent pixels created and ready for upload */
@@ -179,9 +184,11 @@ final class UploadingPainter extends ViewPainter implements Runnable {
                 // ensure they still exist once event queue is consumed.
                 pixelSource.enqueuePixels(pix);
                 sceneState.uploadPixels(pixelSource);
+System.err.println("[UPLOADINGPAINTER] upload DONE");
             }
 
         } catch (Throwable th) {
+System.err.println("[UPLOADINGPAINTER got throwable: " + th);
             errored = true;
             th.printStackTrace(System.err);
         } finally {
@@ -202,6 +209,7 @@ final class UploadingPainter extends ViewPainter implements Runnable {
 
             renderLock.unlock();
         }
+System.err.println("[UPLOADINGPAINTER] run DONE");
     }
 
     private RTTexture resolveRenderTarget(Graphics g, int width, int height) {

@@ -83,7 +83,9 @@ class SceneState extends PresentableState {
      * render lock.
      */
     public boolean isValid() {
-        return getWindow() != null && getView() != null && !isViewClosed() && getWidth() > 0 && getHeight() > 0;
+        boolean answer = getWindow() != null && getView() != null && !isViewClosed() && getWidth() > 0 && getHeight() > 0;
+        System.err.println("SceneState, isvalid asked, return " + answer);
+        return answer;
     }
 
     /** Updates the state of this object based on the current

@@ -135,13 +135,11 @@ System.err.println("[JVDBG] LI, launchapp0");
     @SuppressWarnings("unchecked")
     public static void launchApplication(final Class<? extends Application> appClass,
             final String[] args) {
-System.err.println("[JVDBG] LI, launchapp1");
+System.err.println("[LauncherImpl] launchApplication2arg");
 
         Class<? extends Preloader> preloaderClass = savedPreloaderClass;
-System.err.println("[JVDBG] LI, launchapp2");
 
         if (preloaderClass == null) {
-System.err.println("[JVDBG] LI, launchapp3");
             String preloaderByProperty = AccessController.doPrivileged((PrivilegedAction<String>) () ->
                     System.getProperty("javafx.preloader"));
             if (preloaderByProperty != null) {
@@ -155,9 +153,9 @@ System.err.println("[JVDBG] LI, launchapp3");
                 }
             }
         }
-System.err.println("[JVDBG] LI, launchapp4");
 
         launchApplication(appClass, preloaderClass, args);
+System.err.println("[LauncherImpl] launchApplication2arg DONE");
     }
 
     /**
@@ -175,7 +173,7 @@ System.err.println("[JVDBG] LI, launchapp4");
             final Class<? extends Preloader> preloaderClass,
             final String[] args) {
 
-System.err.println("[JVDBG] LI, launchappA1");
+System.err.println("[LauncherImpl] launchApplication");
         if (launchCalled.getAndSet(true)) {
             throw new IllegalStateException("Application launch must not be called more than once");
         }
@@ -197,9 +195,7 @@ System.err.println("[JVDBG] LI, launchappA1");
         final CountDownLatch launchLatch = new CountDownLatch(1);
         // Thread launcherThread = new Thread(() -> {
             try {
-System.err.println("[JVDBG] LI, launchappA2");
                 launchApplication1(appClass, preloaderClass, args);
-System.err.println("[JVDBG] LI, launchappA3 done");
             } catch (RuntimeException rte) {
 System.err.println("RTEee: " +rte);
 rte.printStackTrace();
@@ -213,7 +209,7 @@ System.err.println("ERR: " + err);
                 launchException =
                     new RuntimeException("Application launch error", err);
             } finally {
-System.err.println("[JVDBG] LI, launchappA4 finally");
+System.err.println("[LauncherImpl], launchappA4 finally");
                 launchLatch.countDown();
             }
         // });
@@ -696,9 +692,8 @@ System.err.println("Start toolkit 4");
     private static void launchApplication1(final Class<? extends Application> appClass,
             final Class<? extends Preloader> preloaderClass,
             final String[] args) throws Exception {
-System.err.println("launchApp1 - 1");
+System.err.println("launchApplication1");
         startToolkit();
-System.err.println("launchApp1 - 2");
 
         if (savedMainCcl != null) {
             /*
@@ -716,7 +711,6 @@ System.err.println("launchApp1 - 2");
             }
         }
 
-System.err.println("launchApp1 - 2");
         final AtomicBoolean pStartCalled = new AtomicBoolean(false);
         final AtomicBoolean startCalled = new AtomicBoolean(false);
         final AtomicBoolean exitCalled = new AtomicBoolean(false);
@@ -724,7 +718,6 @@ System.err.println("launchApp1 - 2");
         final CountDownLatch shutdownLatch = new CountDownLatch(1);
         final CountDownLatch pShutdownLatch = new CountDownLatch(1);
 
-System.err.println("launchApp1 - 3");
         final PlatformImpl.FinishListener listener = new PlatformImpl.FinishListener() {
             @Override public void idle(boolean implicitExit) {
                 if (!implicitExit) {
@@ -745,9 +738,7 @@ System.err.println("launchApp1 - 3");
                 shutdownLatch.countDown();
             }
         };
-System.err.println("launchApp1 - 4");
         PlatformImpl.addListener(listener);
-System.err.println("launchApp1 - 5");
 
         try {
             final AtomicReference<Preloader> pldr = new AtomicReference<>();
@@ -768,9 +759,7 @@ System.err.println("launchApp1 - 5");
                     }
                 });
             }
-System.err.println("launchApp1 - 6");
             currentPreloader = pldr.get();
-System.err.println("launchApp1 - 7");
 
             // Call init method unless exit called or error detected
             if (currentPreloader != null && !error && !exitCalled.get()) {
@@ -811,7 +800,6 @@ System.err.println("launchApp1 - 7");
             // Construct an instance of the application on the FX thread, then
             // call its init method on this (launcher) thread. Then call
             // the start method on the FX thread.
-System.err.println("launchApp1 - 8");
             final AtomicReference<Application> app = new AtomicReference<>();
             if (!error && !exitCalled.get()) {
                 if (currentPreloader != null) {
@@ -826,25 +814,15 @@ System.err.println("launchApp1 - 8");
                             StateChangeNotification.Type.BEFORE_LOAD, null);
                 }
 
-System.err.println("launchApp1 - 9");
                 // PlatformImpl.runAndWait(() -> {
                     // try {
-System.err.println("launchApp1 - 10a");
-System.err.println("launchApp1 - 10appclass = "+appClass);
                         Constructor<? extends Application> c = appClass.getConstructor();
-System.err.println("launchApp1 - 10b");
-System.err.println("launchApp1 - 10bcon = "+ c);
 Application abc = c.newInstance();
-System.err.println("launchApp1 - 10bc, abc = " + abc);
                         app.set(c.newInstance());
-System.err.println("launchApp1 - 10c");
 Application aaa = app.get();
-System.err.println("aaa = " + aaa);
                         // Set startup parameters
                         ParametersImpl.registerParameters(app.get(), new ParametersImpl(args));
-System.err.println("launchApp1 - 10d");
                         PlatformImpl.setApplicationName(appClass);
-System.err.println("launchApp1 - 10e");
 /*
                     } catch (Throwable t) {
 t.printStackTrace();
@@ -855,9 +833,7 @@ t.printStackTrace();
 */
                 // });
             }
-System.err.println("launchApp1 - 11");
             final Application theApp = app.get();
-System.err.println("launchApp1 - 12");
 
             // Call init method unless exit called or error detected
             if (!error && !exitCalled.get()) {
@@ -868,7 +844,6 @@ System.err.println("launchApp1 - 12");
 
                 try {
                     // Call the application init method (on the Launcher thread)
-System.err.println("launchApp1 - 13");
                     theApp.init();
                 } catch (Throwable t) {
                     System.err.println("Exception in Application init method");
@@ -876,11 +851,9 @@ System.err.println("launchApp1 - 13");
                     error = true;
                 }
             }
-System.err.println("launchApp1 - 14");
 
             // Call start method unless exit called or error detected
             if (!error && !exitCalled.get()) {
-System.err.println("launchApp1 - 15");
                 if (currentPreloader != null) {
                     notifyStateChange(currentPreloader,
                             StateChangeNotification.Type.BEFORE_START, theApp);
@@ -889,17 +862,12 @@ System.err.println("launchApp1 - 15");
 System.err.println("launchApp1 - 16");
                 PlatformImpl.runAndWait(() -> {
                     try {
-System.err.println("LI, start0");
                         startCalled.set(true);
-System.err.println("LI, start1");
 
                         // Create primary stage and call application start method
                         final Stage primaryStage = new Stage();
-System.err.println("LI, start2");
                         StageHelper.setPrimary(primaryStage, true);
-System.err.println("LI, start3");
                         theApp.start(primaryStage);
-System.err.println("LI, start4");
                     } catch (Throwable t) {
 t.printStackTrace();
 System.err.println("startError, t= " + t);

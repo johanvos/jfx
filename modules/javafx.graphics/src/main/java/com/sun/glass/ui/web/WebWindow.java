@@ -22,10 +22,15 @@ final class WebWindow extends Window {
         return 1L;
     }
 
+    @Override protected void _setBounds(long ptr, int x, int y, boolean xSet, boolean ySet, int w, int h, int cw, int ch, float xGravity, float yGravity) {
+        System.err.println("[WEBWINDOW] setBounds asked, w= " + w + " and h = " + h);
+        WebGLView.doResize(640, 480);
+        System.err.println("[WEBWINDOW] setBounds done, w= " + w + " and h = " + h);
+    }
+
     @Override native protected long _createChildWindow(long parent);
     @Override native protected boolean _close(long ptr);
     @Override native protected boolean _setView(long ptr, View view);
-    @Override native protected void _setBounds(long ptr, int x, int y, boolean xSet, boolean ySet, int w, int h, int cw, int ch, float xGravity, float yGravity);
     @Override native protected boolean _setMenubar(long ptr, long menubarPtr);
     @Override native protected boolean _minimize(long ptr, boolean minimize);
     @Override native protected boolean _maximize(long ptr, boolean maximize, boolean wasMaximized);
