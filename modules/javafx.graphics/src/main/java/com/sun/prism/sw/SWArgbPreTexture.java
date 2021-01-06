@@ -56,6 +56,10 @@ class SWArgbPreTexture extends SWTexture {
         this.hasAlpha = sharedTex.hasAlpha;
     }
 
+    public void jvdbg() {
+System.out.println("SWTEXTURE-jvdbg, beforedatanoclone data has " + nz(data)+" non-zero elements and this = " + this);
+    }
+
     int[] getDataNoClone() {
 System.err.println("SWTEXTURE, beforedatanoclone data has " + nz(data)+" non-zero elements and this = " + this);
         return data;

@@ -1951,6 +1951,8 @@ public abstract class NGNode {
      */
     public final void render(Graphics g) {
 System.out.println("NGNode.render START for " + this);
+System.out.println("render on graphics " + g);
+g.jvdbg();
         if (PULSE_LOGGING_ENABLED) {
             PulseLogger.incrementCounter("Nodes visited during render");
         }
@@ -1964,6 +1966,8 @@ System.out.println("NGNode.render START for " + this);
         // rendering work.
         doRender(g);
 System.out.println("NGNode.render DONE for " + this);
+System.out.println("render DONE on graphics " + g);
+g.jvdbg();
     }
 
     /**

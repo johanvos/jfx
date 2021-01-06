@@ -108,6 +108,10 @@ final class SWGraphics implements ReadbackGraphics {
         return renderRoot;
     }
 
+public void jvdbg() {
+target.jvdbg();
+}
+
     public SWGraphics(SWRTTexture target, SWContext context, PiscesRenderer pr) {
         this.target = target;
         this.context = context;
@@ -363,12 +367,20 @@ final class SWGraphics implements ReadbackGraphics {
      * prior to calling {@code clear()}.
      */
     public void clear(Color color) {
+System.out.println("clear TARGET: ");
+target.jvdbg();
         if (PrismSettings.debug) {
             System.out.println("+ PR.clear: " + color);
         }
         this.swPaint.setColor(color, 1f);
+System.out.println("clear TARGET2: ");
+target.jvdbg();
         pr.clearRect(0, 0, target.getPhysicalWidth(), target.getPhysicalHeight());
+System.out.println("clear TARGET3: ");
+target.jvdbg();
         getRenderTarget().setOpaque(color.isOpaque());
+System.out.println("clear TARGET4: ");
+target.jvdbg();
     }
 
     /**
@@ -714,6 +726,10 @@ final class SWGraphics implements ReadbackGraphics {
         }
 
         final SWArgbPreTexture swTex = (SWArgbPreTexture) tex;
+System.out.println("SWTEX: ");
+swTex.jvdbg();
+System.out.println("TARGET: ");
+target.jvdbg();
         int data[] = swTex.getDataNoClone();
 
         final RectBounds srcBBox = new RectBounds(Math.min(dx1, dx2), Math.min(dy1, dy2),
@@ -737,6 +753,8 @@ final class SWGraphics implements ReadbackGraphics {
         final int tyMin = Math.max(0, SWUtils.fastFloor(Math.min(sy1, sy2)));
         final int txMax = Math.min(tex.getContentWidth() - 1, SWUtils.fastCeil(Math.max(sx1, sx2)) - 1);
         final int tyMax = Math.min(tex.getContentHeight() - 1, SWUtils.fastCeil(Math.max(sy1, sy2)) - 1);
+System.out.println("TARGET2: ");
+target.jvdbg();
 
         this.pr.drawImage(RendererBase.TYPE_INT_ARGB_PRE, imageMode,
                 data, tex.getContentWidth(), tex.getContentHeight(),
@@ -749,6 +767,8 @@ final class SWGraphics implements ReadbackGraphics {
                 lEdge, rEdge, tEdge, bEdge,
                 txMin, tyMin, txMax, tyMax,
                 swTex.hasAlpha());
+System.out.println("TARGET3: ");
+target.jvdbg();
 
         if (PrismSettings.debug) {
             System.out.println("* drawTexture, DONE");

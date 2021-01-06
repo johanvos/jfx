@@ -71,6 +71,7 @@ final class SWPaint {
 
     void setColor(Color c, float compositeAlpha) {
         if (PrismSettings.debug) {
+Thread.dumpStack();
             System.out.println("PR.setColor: " + c);
         }
         this.pr.setColor((int) (c.getRed() * 255),

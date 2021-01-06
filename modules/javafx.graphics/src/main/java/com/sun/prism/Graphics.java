@@ -215,4 +215,6 @@ public interface Graphics {
     public void setPixelScaleFactors(float pixelScaleX, float pixelScaleY);
     public float getPixelScaleFactorX();
     public float getPixelScaleFactorY();
+
+default void jvdbg() {}
 }
