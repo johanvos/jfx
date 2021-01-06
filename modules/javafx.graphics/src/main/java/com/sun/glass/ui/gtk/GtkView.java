@@ -83,9 +83,22 @@ final class GtkView extends View {
     @Override
     protected void _end(long ptr) {}
 
+void printData(Buffer data) {
+System.err.println("[Direct?] " + data.isDirect());
+if (data.hasArray()) {
+System.err.println("[PRINTDATA] array for " + data);
+
+} else {
+System.err.println("[PRINTDATA] no array for " + data);
+}
+}
+
     @Override
     protected void _uploadPixels(long ptr, Pixels pixels) {
         Buffer data = pixels.getPixels();
+System.err.println("[GTKVIEW] upload pixels of class " + pixels.getClass()+" and buffer = " + data);
+printData(data);
+Thread.dumpStack();
         if (data.isDirect() == true) {
             _uploadPixelsDirect(ptr, data, pixels.getWidth(), pixels.getHeight());
         } else if (data.hasArray() == true) {

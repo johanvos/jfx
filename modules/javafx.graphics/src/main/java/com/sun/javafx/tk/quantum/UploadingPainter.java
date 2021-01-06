@@ -161,8 +161,14 @@ System.err.println("[UPLOADINGPAINTER] so far so good");
             IntBuffer bits = (IntBuffer) pix.getPixels();
 
             int rawbits[] = rtt.getPixels();
+System.err.println("[UPLOADINGPAINTER] rtt = " + rtt+", IntBuffer = " + bits);
 
             if (rawbits != null) {
+int nz = 0;
+for (int i = 0; i < rawbits.length; i++) {
+if(rawbits[i]!=0) nz++;
+}
+System.err.println("[UPLOADINGPAINTER] rawbitslenght = " + rawbits.length+" and " + nz+" are non-zero");
                 bits.put(rawbits, 0, outWidth * outHeight);
             } else {
                 if (!rtt.readPixels(bits)) {
@@ -178,6 +184,7 @@ System.err.println("[UPLOADINGPAINTER] so far so good");
             }
 System.err.println("[UPLOADINGPAINTER] ready to upload");
 
+System.err.println("[UPLOADINGPAINTER] ready to upload, pixelSource = "+ pixelSource);
             if (pix != null) {
                 /* transparent pixels created and ready for upload */
                 // Copy references, which are volatile, used by upload. Thus

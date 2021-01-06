@@ -120,8 +120,10 @@ class SceneState extends PresentableState {
      */
     @Override
     public void uploadPixels(PixelSource source) {
+System.err.println("[SCENESTATE] uploadPixels requested of class " + source.getClass()+" and thead = " + Thread.currentThread());
         Application.invokeLater(() -> {
             if (isValid()) {
+System.err.println("[SCENESTATE] uploadPixels will be executed of class " + source.getClass()+" and thead = " + Thread.currentThread());
                 SceneState.super.uploadPixels(source);
             } else {
                 source.skipLatestPixels();

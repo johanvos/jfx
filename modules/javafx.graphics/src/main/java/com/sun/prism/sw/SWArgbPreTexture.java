@@ -57,6 +57,7 @@ class SWArgbPreTexture extends SWTexture {
     }
 
     int[] getDataNoClone() {
+System.err.println("SWTEXTURE, beforedatanoclone data has " + nz(data)+" non-zero elements and this = " + this);
         return data;
     }
 
@@ -115,7 +116,16 @@ class SWArgbPreTexture extends SWTexture {
         buffer.position(0);
         converter.convert(buffer, (srcy * srcscan) + srcx, srcscan,
                           IntBuffer.wrap(this.data), (dsty * physicalWidth) + dstx, physicalWidth, srcw, srch);
+System.err.println("SWTEXTURE, after update, data has " + nz(data)+" non-zero elements and this = "+this);
     }
+
+int nz(int[] data) {
+int nz = 0;
+for (int i = 0; i < data.length;i++) {
+if (data[i] != 0)  nz++;
+}
+return nz;
+}
 
     @Override
     public void update(MediaFrame frame, boolean skipFlush) {
@@ -139,6 +149,7 @@ class SWArgbPreTexture extends SWTexture {
             this.offset = 0;
             this.physicalWidth = stride;
             this.data = ib.array();
+System.err.println("SWTEXTURE updated! data has " + nz(data)+" non-zero elements and this = " + this);
         } else {
             this.allocate();
             for (int i = 0; i < contentHeight; i++) {
@@ -173,6 +184,7 @@ class SWArgbPreTexture extends SWTexture {
                 finalAlpha = ((int)((this.data[i] >> 24) * alpha + 0.5f)) & 0xFF;
                 this.data[i] = (finalAlpha << 24) | (this.data[i] & 0xFFFFFF);
             }
+System.err.println("SWTEXTURE applyca with alpha = " + alpha+" ! data has " + nz(data)+" non-zero elements and this = " + this);
         } else {
             throw new IllegalStateException("Cannot apply composite alpha to texture with non-allocated data");
         }
@@ -180,6 +192,7 @@ class SWArgbPreTexture extends SWTexture {
 
     void allocateBuffer() {
         this.data = new int[physicalWidth * physicalHeight];
+System.err.println("SWTEXTURE allocateBuffer called and this = " + this);
     }
 
     Texture createSharedLockedTexture(WrapMode altMode) {
