@@ -106,7 +106,7 @@ public abstract class Parent extends Node {
 
             @Override
             public void doUpdatePeer(Node node) {
-                ((Parent) node).doUpdatePeer();
+                ((Parent) node).parentdoUpdatePeer();
             }
 
             @Override
@@ -117,7 +117,7 @@ public abstract class Parent extends Node {
 
             @Override
             public boolean doComputeContains(Node node, double localX, double localY) {
-                return ((Parent) node).doComputeContains(localX, localY);
+                return ((Parent) node).parentdoComputeContains(localX, localY);
             }
 
             @Override
@@ -158,8 +158,9 @@ System.err.println("[PARENTACC] doProcessCSS DONE for " + node);
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private void doUpdatePeer() {
+    private void parentdoUpdatePeer() {
         final NGGroup peer = getPeer();
+System.out.println("[PARENT] doUpdatePeer for " + this+" and peer = " + peer);
 
         if (Utils.assertionEnabled()) {
             List<NGNode> pgnodes = peer.getChildren();
@@ -176,6 +177,7 @@ System.err.println("[PARENTACC] doProcessCSS DONE for " + node);
             // sides, so we only need to update the remaining portion.
             peer.clearFrom(startIdx);
             for (int idx = startIdx; idx < children.size(); idx++) {
+System.out.println("[PARENT] doUpdatePeer for " + this+" and peer = " + peer);
                 peer.add(idx, children.get(idx).getPeer());
             }
             if (removedChildrenOptimizationDisabled) {
@@ -201,6 +203,7 @@ System.err.println("[PARENTACC] doProcessCSS DONE for " + node);
         }
 
         if (Utils.assertionEnabled()) validatePG();
+System.out.println("[PARENT] DONE doUpdatePeer for " + this+" and peer = " + peer);
     }
 
 
@@ -1898,7 +1901,7 @@ System.err.println("[PARENT] doprocessCSS DONE on " + this);
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private boolean doComputeContains(double localX, double localY) {
+    private boolean parentdoComputeContains(double localX, double localY) {
         final Point2D tempPt = TempState.getInstance().point;
         for (int i=0, max=children.size(); i<max; i++) {
             final Node node = children.get(i);

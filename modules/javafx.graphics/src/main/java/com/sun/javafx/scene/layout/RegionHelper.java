@@ -70,8 +70,10 @@ System.err.println("[REGIONHELPER] superComputeGeomBounds");
 
     @Override
     protected void updatePeerImpl(Node node) {
+System.out.println("[REGIONHELPER] updatePeerImpl START for " + node);
         super.updatePeerImpl(node);
         regionAccessor.doUpdatePeer(node);
+System.out.println("[REGIONHELPER] updatePeerImpl DONE for " + node);
     }
 
    BaseBounds regionsuperComputeGeomBoundsImpl(Node node, BaseBounds bounds,

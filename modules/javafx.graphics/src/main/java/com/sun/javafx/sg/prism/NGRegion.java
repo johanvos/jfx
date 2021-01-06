@@ -544,6 +544,7 @@ public class NGRegion extends NGGroup {
      *************************************************************************/
 
     @Override protected void renderContent(Graphics g) {
+System.out.println("NGRegion.renderContent START for " + this);
         // Use Effect to render a 3D transformed Region that does not contain 3D
         // transformed children. This is done in order to render the Region's
         // content and children into an image in local coordinates using the identity
@@ -577,6 +578,7 @@ public class NGRegion extends NGGroup {
 
         // Paint the children
         super.renderContent(g);
+System.out.println("NGRegion.renderContent DONE for " + this);
     }
 
     /**************************************************************************

@@ -708,6 +708,7 @@ System.err.println("[NODEACCESSOR] doProcessCSS END called on this = " + this+" 
      * clear dirtybits of this node in the PG graph
      */
     final void syncPeer() {
+System.out.println("[NODE] syncPeer asked for " + this);
         // Do not synchronize invisible nodes unless their visibility has changed
         // or they have requested a forced synchronization
         if (!isDirtyEmpty() && (treeVisible
@@ -717,6 +718,7 @@ System.err.println("[NODEACCESSOR] doProcessCSS END called on this = " + this+" 
             NodeHelper.updatePeer(this);
             clearDirty();
         }
+System.out.println("[NODE] syncPeer DONE for " + this);
     }
 
     /**
