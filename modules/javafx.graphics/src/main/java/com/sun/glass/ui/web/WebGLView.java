@@ -89,8 +89,14 @@ System.err.println("[WEBGLVIEW] data has BYTES! ");
                 ByteBuffer bytes = (ByteBuffer)data;
                 _uploadPixelsByteArray(ptr, bytes.array(), bytes.arrayOffset(), pixels.getWidth(), pixels.getHeight());
             } else {
-System.err.println("[WEBGLVIEW] data has ints! ");
                 IntBuffer ints = (IntBuffer)data;
+System.err.println("[WEBGLVIEW] data has ints! ");
+int[] raw = ints.array();
+int nz = 0;
+for (int i = 0; i < raw.length; i++) {
+if (raw[i] != 0) nz++;
+}
+System.out.println("[WEBGLVIEW] has " + nz+" non-zero values in total " + raw.length);
                 try {
                     WebApplication.uploadPixelMethod.invoke(null, ptr, ints.array(), ints.arrayOffset(), pixels.getWidth(), pixels.getHeight());
                 } catch (Throwable t) {
