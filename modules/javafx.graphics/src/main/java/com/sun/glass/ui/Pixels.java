@@ -174,6 +174,7 @@ public abstract class Pixels {
      * mark discarded
      */
     public final Buffer getPixels() {
+System.err.println("GETPIXELS!");
         if (this.bytes != null) {
             this.bytes.rewind();
             return this.bytes;
@@ -191,6 +192,7 @@ public abstract class Pixels {
      * @return the original pixels buffer, unmodified
      */
     public final Buffer getBuffer() {
+System.err.println("GETPIXELSbuffer!");
         if (this.bytes != null) {
             return this.bytes;
         } else if (this.ints != null) {
@@ -204,6 +206,7 @@ public abstract class Pixels {
      * Return a copy of pixels as bytes.
      */
     public final ByteBuffer asByteBuffer() {
+System.err.println("GETPIXELSasBB!");
         Application.checkEventThread();
         ByteBuffer bb = ByteBuffer.allocateDirect(getWidth()*getHeight()*4);
         bb.order(ByteOrder.nativeOrder());
@@ -217,6 +220,7 @@ public abstract class Pixels {
      * The ByteBuffer must be direct.
      */
     public final void asByteBuffer(ByteBuffer bb) {
+System.err.println("GETPIXELSasBB2!");
         Application.checkEventThread();
         if (!bb.isDirect()) {
             throw new RuntimeException("Expected direct buffer.");
