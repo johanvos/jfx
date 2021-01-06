@@ -74,6 +74,7 @@ final class UploadingPainter extends ViewPainter implements Runnable {
     }
 
     @Override public void run() {
+System.err.println("[UPLOADINGPAINTER] RUN");
         renderLock.lock();
 
         boolean errored = false;
@@ -157,8 +158,14 @@ final class UploadingPainter extends ViewPainter implements Runnable {
             IntBuffer bits = (IntBuffer) pix.getPixels();
 
             int rawbits[] = rtt.getPixels();
+System.err.println("[UPLOADINGPAINTER] rtt = " + rtt+", IntBuffer = " + bits);
 
             if (rawbits != null) {
+int nz = 0;
+for (int i = 0; i < rawbits.length; i++) {
+if(rawbits[i]!=0) nz++;
+}
+System.err.println("[UPLOADINGPAINTER] rawbitslenght = " + rawbits.length+" and " + nz+" are non-zero");
                 bits.put(rawbits, 0, outWidth * outHeight);
             } else {
                 if (!rtt.readPixels(bits)) {
@@ -173,6 +180,7 @@ final class UploadingPainter extends ViewPainter implements Runnable {
                 rttexture.unlock();
             }
 
+System.err.println("[UPLOADINGPAINTER] ready to upload, pixelSource = "+ pixelSource);
             if (pix != null) {
                 /* transparent pixels created and ready for upload */
                 // Copy references, which are volatile, used by upload. Thus
@@ -202,6 +210,7 @@ final class UploadingPainter extends ViewPainter implements Runnable {
 
             renderLock.unlock();
         }
+System.err.println("[UPLOADINGPAINTER] RUN done");
     }
 
     private RTTexture resolveRenderTarget(Graphics g, int width, int height) {

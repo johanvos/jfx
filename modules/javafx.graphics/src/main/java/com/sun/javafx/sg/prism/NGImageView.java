@@ -96,12 +96,14 @@ public class NGImageView extends NGNode {
 
     @Override
     protected void doRender(Graphics g) {
+System.out.println("NGImageView.doRender START for " + this);
         if (!coordsOK) {
             calculatePositionAndClipping();
         }
         if (renderable) {
             super.doRender(g);
         }
+System.out.println("NGImageView.doRender DONE for " + this);
     }
 
     // method for testing reasons
@@ -112,6 +114,7 @@ public class NGImageView extends NGNode {
 
     @Override
     protected void renderContent(Graphics g) {
+System.out.println("NGImageView.renderContent START for " + this);
         int imgW = image.getWidth();
         int imgH = image.getHeight();
 
@@ -133,6 +136,7 @@ public class NGImageView extends NGNode {
             if (compoundCoords == null) compoundCoords = new CompoundCoords(compoundImage, coords);
             compoundCoords.draw(g, compoundImage, x, y);
         }
+System.out.println("NGImageView.renderContent DONE for " + this);
     }
 
     @Override
