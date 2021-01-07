@@ -27,7 +27,7 @@ ext.LINUX = [:]
 
 // Declare whether this particular target file applies to the current system
 LINUX.canBuild = IS_LINUX;
-LINUX.includeMonocle = true;
+LINUX.includeMonocle = false;
 if (!LINUX.canBuild) return;
 
 // All desktop related packages should be built

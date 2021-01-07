@@ -182,7 +182,6 @@ System.err.println("[GPL] GetFontFactory, created = " + fontFactory);
     public static GraphicsPipeline createPipeline() {
 System.err.println("[JVDBG] GP createPipeline 00");
         if (PrismSettings.tryOrder.isEmpty()) {
-System.err.println("[JVDBG] GP createPipeline 01");
             // if no pipelines specified just return null
             if (PrismSettings.verbose) {
                 System.out.println("No Prism pipelines specified");
@@ -190,13 +189,11 @@ System.err.println("[JVDBG] GP createPipeline 01");
             return null;
         }
 
-System.err.println("[JVDBG] GP createPipeline 02");
         if (installedPipeline != null) {
             throw new IllegalStateException("pipeline already created:"+
                                             installedPipeline);
         }
         for (String prefix : PrismSettings.tryOrder) {
-System.err.println("[JVDBG] GP createPipeline 03");
             // Warn if j2d pipeline is specified
             if ("j2d".equals(prefix)) {
                 System.err.println(
@@ -214,7 +211,6 @@ System.err.println("[JVDBG] GP createPipeline 03");
                     System.err.println("*** Fallback to Prism SW pipeline");
                 }
             }
-System.err.println("[JVDBG] GP createPipeline 04");
 
             String className =
                 "com.sun.prism."+prefix+"."+prefix.toUpperCase()+"Pipeline";

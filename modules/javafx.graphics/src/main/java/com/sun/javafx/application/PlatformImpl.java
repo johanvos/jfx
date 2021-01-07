@@ -160,9 +160,7 @@ System.err.println("Need to set Appname, later...");
      * @param r
      */
     public static void startup(final Runnable r) {
-System.err.println("PI, startup 1");
         startup(r, false);
-System.err.println("PI, startup 2");
     }
 
     /**
@@ -176,7 +174,6 @@ System.err.println("PI, startup 2");
      * @param preventDuplicateCalls
      */
     public static void startup(final Runnable r, boolean preventDuplicateCalls) {
-System.err.println("PI, startup2 1");
 
         // NOTE: if we ever support re-launching an application and/or
         // launching a second application in the same VM/classloader
@@ -184,7 +181,6 @@ System.err.println("PI, startup2 1");
         if (platformExit.get()) {
             throw new IllegalStateException("Platform.exit has been called");
         }
-System.err.println("PI, startup2 2");
 
         if (initialized.getAndSet(true)) {
             if (preventDuplicateCalls) {
@@ -195,7 +191,6 @@ System.err.println("PI, startup2 2");
             runLater(r);
             return;
         }
-System.err.println("PI, startup2 3");
 
         AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
             applicationType = System.getProperty("com.sun.javafx.application.type");
@@ -260,7 +255,6 @@ System.err.println("PI, startup2 3");
 
         // Create Toolkit listener and register it with the Toolkit.
         // Call notifyFinishListeners when we get notified.
-System.err.println("PI, startup2 4");
         toolkitListener = new TKListener() {
             @Override public void changedTopLevelWindows(List<TKStage> windows) {
                 numWindows.set(windows.size());
@@ -275,8 +269,6 @@ System.err.println("PI, startup2 4");
                 checkIdle();
             }
         };
-System.err.println("PI, startup2 5");
-System.err.println("PI, startup2 5a0, tkl = "+toolkitListener);
 Toolkit mt = Toolkit.getToolkit();
 System.err.println("PI, startup2 5a, tk = "+mt);
         Toolkit.getToolkit().addTkListener(toolkitListener);

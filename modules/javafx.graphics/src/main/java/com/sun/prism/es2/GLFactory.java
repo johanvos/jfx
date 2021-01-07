@@ -33,11 +33,11 @@ import java.util.HashMap;
 
 abstract class GLFactory {
 
-    private static native boolean
+    static native boolean
             nIsGLExtensionSupported(long nativeContextObject, String glExtStr);
-    private static native String nGetGLVendor(long nativeCtxInfo);
-    private static native String nGetGLRenderer(long nativeCtxInfo);
-    private static native String nGetGLVersion(long nativeCtxInfo);
+    static native String nGetGLVendor(long nativeCtxInfo);
+    static native String nGetGLRenderer(long nativeCtxInfo);
+    static native String nGetGLVersion(long nativeCtxInfo);
 
     private static final GLFactory platformFactory;
 
@@ -87,8 +87,8 @@ abstract class GLFactory {
                 System.err.println("GLFactory.static - Only eglfb supported for Android!");
             }
         } else {
-            factoryClassName = null;
-            System.err.println("GLFactory.static - No Platform Factory for: " + System.getProperty("os.name"));
+            factoryClassName = "com.sun.prism.es2.WebGLFactory";
+            // System.err.println("GLFactory.static - No Platform Factory for: " + System.getProperty("os.name"));
         }
         if (PrismSettings.verbose) {
             System.out.println("GLFactory using " + factoryClassName);
@@ -230,8 +230,10 @@ abstract class GLFactory {
 
     void printDriverInformation(int adapter) {
         /* We are assuming a system with a single or homogeneous GPUs. */
+/*
         System.out.println("Graphics Vendor: " + nGetGLVendor(nativeCtxInfo));
         System.out.println("       Renderer: " + nGetGLRenderer(nativeCtxInfo));
         System.out.println("        Version: " + nGetGLVersion(nativeCtxInfo));
+*/
     }
 }

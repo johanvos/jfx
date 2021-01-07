@@ -114,11 +114,10 @@ public final class PrismSettings {
     }
 
     static {
-System.err.println("[PS] clinit 0");
+System.err.println("[PrismSettings] clinit 0");
         final Properties systemProperties =
                 (Properties) AccessController.doPrivileged(
                         (PrivilegedAction) () -> System.getProperties());
-System.err.println("[PS] clinit 1");
 
         /* Vsync */
         isVsyncEnabled  = getBoolean(systemProperties, "prism.vsync", true)
@@ -134,7 +133,6 @@ System.err.println("[PS] clinit 1");
                                                "prism.occlusion.culling",
                                                true);
 
-System.err.println("[PS] clinit 2");
         // The maximum number of dirty regions to use. The absolute max that we can
         // support at present is 15.
         dirtyRegionCount = Utils.clamp(0, getInt(systemProperties, "prism.dirtyregioncount", 6, null), 15);
@@ -158,7 +156,6 @@ System.err.println("[PS] clinit 2");
         /* Prints out the render graph, annotated with dirty opts information */
         printRenderGraph = getBoolean(systemProperties, "prism.printrendergraph", false);
 
-System.err.println("[PS] clinit 3");
         /* Force scene repaint on every frame */
         forceRepaint = getBoolean(systemProperties, "prism.forcerepaint", false);
 
@@ -178,7 +175,6 @@ System.err.println("[PS] clinit 3");
             cacheSimpleShapes = false;
             cacheComplexShapes = false;
         }
-System.err.println("[PS] clinit 4");
 
         /* New javafx-iio image loader */
         useNewImageLoader = getBoolean(systemProperties, "prism.newiio", true);
@@ -188,7 +184,6 @@ System.err.println("[PS] clinit 4");
         verbose = true;
 
         /* Prism statistics print frequency, <=0 means "do not print" */
-System.err.println("[PS] clinit 5");
         prismStatFrequency =
                 getInt(systemProperties, "prism.printStats",
                        0, 1, "Try -Dprism.printStats=<true or number>");
@@ -235,7 +230,7 @@ System.err.println("tryorder6 = " + tryOrderArr);
                 tryOrderArr = new String[] { "es2", "sw" };
 System.err.println("tryorder7 = " + tryOrderArr);
             } else {
-                tryOrderArr = new String[] { "sw" };
+                tryOrderArr = new String[] { "es2" };
 System.err.println("tryorder8 = " + tryOrderArr);
             }
         }
@@ -248,12 +243,9 @@ tryOrder.add(oo);
         }
 // List.of(tryOrderArr);
 System.err.println("[PS] tryOrder = " + tryOrder);
-System.err.println("[PS] clinit 7a");
 
         RasterizerType rSpec = null;
-System.err.println("[PS] clinit 7b");
         String rOrder = systemProperties.getProperty("prism.rasterizerorder");
-System.err.println("[PS] clinit 7c");
         if (rOrder != null) {
 System.err.println("[PS] clinit 7d");
 System.err.println("rOrder = " + rOrder);
