@@ -54,9 +54,9 @@ public final class WebApplication extends Application {
     @Override
     protected void runLoop(final Runnable launchable) {
         // launchable.run();
-System.err.println ("[JVDBG] WEB runloop, schedule launchable now...");
+System.out.println ("[JVDBG] WEB runloop, schedule launchable now...");
         invokeLater(launchable);
-System.err.println ("[JVDBG] WEB runloop, scheduled launchable ...");
+System.out.println ("[JVDBG] WEB runloop, scheduled launchable ...");
         // ClassLoader ccl = WebApplication.class.getClassLoader();
         // _runLoop(launchable, ccl);
     }
@@ -116,34 +116,34 @@ System.err.println ("[JVDBG] WEB runloop, scheduled launchable ...");
 
     @Override
     protected void _invokeLater(Runnable runnable) {
-System.err.println("[WEB] invokelater asked, invoke " + scheduleMethod);
+System.out.println("[WEB] invokelater asked, invoke " + scheduleMethod);
         try {
             scheduleMethod.invoke(null, runnable);
         } catch (Exception e) {
             e.printStackTrace();
         }
-System.err.println("[WEB] invokelater asked, invoked " + scheduleMethod);
-System.err.println("[WEB] runnable is scheduled: " + runnable);
+System.out.println("[WEB] invokelater asked, invoked " + scheduleMethod);
+System.out.println("[WEB] runnable is scheduled: " + runnable);
     }
 
     public static void invokeOtherJob(Runnable runnable) {
-System.err.println("[WEB] invokeOtherJob will schedule " +runnable);
+System.out.println("[WEB] invokeOtherJob will schedule " +runnable);
         try {
             scheduleMethod.invoke(null, runnable);
         } catch (Exception e) {
             e.printStackTrace();
         }
-System.err.println("[WEB] invokeOtherJob did schedule " + runnable);
+System.out.println("[WEB] invokeOtherJob did schedule " + runnable);
     }
 
     public static void invokeOtherIntervalJob(Runnable runnable) {
-System.err.println("[WEB] invokeOtherJob will intervalschedule " +runnable);
+System.out.println("[WEB] invokeOtherJob will intervalschedule " +runnable);
         try {
             intervalMethod.invoke(null, runnable);
         } catch (Exception e) {
             e.printStackTrace();
         }
-System.err.println("[WEB] invokeOtherJob did sintervalchedule " + runnable);
+System.out.println("[WEB] invokeOtherJob did sintervalchedule " + runnable);
     }
 
     @Override
@@ -210,14 +210,14 @@ System.err.println("[WEB] invokeOtherJob did sintervalchedule " + runnable);
     @Override
     public Pixels createPixels(int width, int height, IntBuffer data) { 
         Pixels answer = new WebPixels(width, height, data);
-System.err.println("[WEBAPP] createPixels1 called, return " + answer);
+System.out.println("[WEBAPP] createPixels1 called, return " + answer);
         return answer;
     }
 
     @Override
     public Pixels createPixels(int width, int height, IntBuffer data, float scalex, float scaley) {
         Pixels answer = new WebPixels(width, height, data);
-System.err.println("[WEBAPP] createPixels called, return " + answer);
+System.out.println("[WEBAPP] createPixels called, return " + answer);
         return answer;
     }
 
@@ -233,7 +233,7 @@ System.err.println("[WEBAPP] createPixels called, return " + answer);
 
     @Override
     protected double staticScreen_getVideoRefreshPeriod() {
-System.err.println("[JVDBG] getVideoRefreshPeriod asked, return 0.0");
+System.out.println("[JVDBG] getVideoRefreshPeriod asked, return 0.0");
         return 0.0;
     }
 
@@ -246,7 +246,8 @@ System.err.println("[JVDBG] getVideoRefreshPeriod asked, return 0.0");
                                1f,1f,1f,1f);
         Screen[] answer = new Screen[1];
         answer[0] = s;
-System.err.println("WebApp.staticScreen_getScreens asked, return array with " + s);
+// System.out.println("WebApp.staticScreen_getScreens asked, return array with " + s);
+System.out.println("WebApp.staticScreen_getScreens asked, return array with " + s);
         return answer;
     }
 

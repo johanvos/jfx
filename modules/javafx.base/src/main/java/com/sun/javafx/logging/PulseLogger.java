@@ -117,6 +117,7 @@ public class PulseLogger {
         } catch (NoClassDefFoundError | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             // Ignore
         }
+System.err.println("[PULSELOGGER] failed loadLoffer for class " + className);
         return null;
     }
 }
