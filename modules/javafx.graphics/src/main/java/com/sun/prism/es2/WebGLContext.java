@@ -3,12 +3,12 @@ package com.sun.prism.es2;
 
 class WebGLContext extends GLContext {
 
-    private static long nInitialize(long nativeDInfo, long nativePFInfo,
-            long nativeshareCtxHandle, boolean vSyncRequest) {
-System.err.println("[WEBGLCONTEXT] nInitialize");
-return 1;
-    }
+    private static native long nInitialize(long nativeDInfo, long nativePFInfo,
+            long nativeshareCtxHandle, boolean vSyncRequest);
 
+    native int getIntParam(int param);
+
+/*
     @Override
     int getIntParam(int param) {
 if (param == GL_MAX_TEXTURE_SIZE) {
@@ -18,15 +18,11 @@ System.out.println("[WEBGLCONTEXT] getIntParam asked for param = " + param+", re
 System.out.println("[WEBGLCONTEXT] getIntParam asked for param = " + param+", return 0 by default.");
         return 0;
     }
+*/
 
-    private static long nGetNativeHandle(long nativeCtxInfo) {
-System.err.println("[WEBGLCONTEXT] nGetNativeHandle");
-return 1;
-    }
+    private static native long nGetNativeHandle(long nativeCtxInfo);
 
-    private static void nMakeCurrent(long nativeCtxInfo, long nativeDInfo) {
-System.err.println("[WEBGLCONTEXT] nMakeCurrent");
-    }
+    private static native void nMakeCurrent(long nativeCtxInfo, long nativeDInfo);
 
     WebGLContext(long nativeCtxInfo) {
         this.nativeCtxInfo = nativeCtxInfo;

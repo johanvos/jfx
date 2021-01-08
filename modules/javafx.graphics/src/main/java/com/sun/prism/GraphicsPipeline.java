@@ -272,7 +272,6 @@ System.err.println("[GP] 09 np will return " + installedPipeline);
     }
 
     public static GraphicsPipeline getPipeline() {
-System.err.println("[GPL] getPipeline asked, return " + installedPipeline);
         return installedPipeline;
     }
 
