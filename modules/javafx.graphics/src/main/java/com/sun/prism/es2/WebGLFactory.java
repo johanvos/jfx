@@ -35,8 +35,8 @@ return 1;
     }
 
     private static boolean nGetIsGL2(long nativeCtxInfo) {
-System.err.println("[WEBGLFACTORY] getisGL2 will return false for now");
-return false;
+System.err.println("[WEBGLFACTORY] getisGL2 will return true for now");
+return true;
     }
 
     // Entries must be in lowercase and null string is a wild card
