@@ -302,13 +302,13 @@ public abstract class PresentableState {
      * @param source - the source for the Pixels object to be uploaded
      */
     public void uploadPixels(PixelSource source) {
-System.err.println("[PRESENTABLESTATE] upload pixels");
+System.out.println("[PRESENTABLESTATE] upload pixels");
         Pixels pixels = source.getLatestPixels();
         if (pixels != null) {
             try {
-System.err.println("[PRESENTABLESTATE] upload pixels to view " + view);
+System.out.println("[PRESENTABLESTATE] upload pixels to view ");
                 view.uploadPixels(pixels);
-System.err.println("[PRESENTABLESTATE] upload pixels DONE to view " + view);
+System.out.println("[PRESENTABLESTATE] upload pixels DONE to view ");
             } finally {
                 source.doneWithPixels(pixels);
             }
@@ -325,7 +325,7 @@ System.err.println("[PRESENTABLESTATE] upload pixels DONE to view " + view);
                           float renderScaleX, float renderScaleY,
                           float outputScaleX, float outputScaleY)
     {
-System.err.println("[PRESENTABLESTATE] update to " + viewScaleX+", " + viewScaleY+", "+renderScaleX+", "+renderScaleY+", "+ outputScaleX+", " + outputScaleY);
+System.out.println("[PRESENTABLESTATE] update to " + viewScaleX+", " + viewScaleY+", "+renderScaleX+", "+renderScaleY+", "+ outputScaleX+", " + outputScaleY);
         this.renderScaleX = renderScaleX;
         this.renderScaleY = renderScaleY;
         this.outputScaleX = outputScaleX;
@@ -356,7 +356,7 @@ System.err.println("[PRESENTABLESTATE] update to " + viewScaleX+", " + viewScale
      */
     public void update() {
         // should only be called on the event thread
-System.err.println("[PRESENTABLESTATE] update");
+System.out.println("[PRESENTABLESTATE] update");
         if (view != null) {
             viewWidth = view.getWidth();
             viewHeight = view.getHeight();
@@ -365,7 +365,7 @@ System.err.println("[PRESENTABLESTATE] update");
             viewWidth = viewHeight = -1;
             window = null;
         }
-System.err.println("vw = " + viewWidth+", vh = " +viewHeight+", window = " + window);
+System.out.println("vw = " + viewWidth+", vh = " +viewHeight+", window = " + window);
         if (window != null) {
             windowX = window.getX();
             windowY = window.getY();

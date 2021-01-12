@@ -84,7 +84,6 @@ class SceneState extends PresentableState {
      */
     public boolean isValid() {
         boolean answer = getWindow() != null && getView() != null && !isViewClosed() && getWidth() > 0 && getHeight() > 0;
-        System.err.println("SceneState, isvalid asked, return " + answer);
         return answer;
     }
 
@@ -120,10 +119,9 @@ class SceneState extends PresentableState {
      */
     @Override
     public void uploadPixels(PixelSource source) {
-System.err.println("[SCENESTATE] uploadPixels requested of class " + source.getClass()+" and thead = " + Thread.currentThread());
         Application.invokeLater(() -> {
             if (isValid()) {
-System.err.println("[SCENESTATE] uploadPixels will be executed of class " + source.getClass()+" and thead = " + Thread.currentThread());
+System.out.println("[SCENESTATE] uploadPixels will be executed of class " + source.getClass()+" and thead = " + Thread.currentThread());
                 SceneState.super.uploadPixels(source);
             } else {
                 source.skipLatestPixels();

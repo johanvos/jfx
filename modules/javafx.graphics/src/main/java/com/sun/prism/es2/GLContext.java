@@ -575,6 +575,7 @@ abstract class GLContext {
     boolean texImage2D(int target, int level, int internalFormat,
             int width, int height, int border, int format, int type,
             java.nio.Buffer pixels, boolean useMipmap) {
+System.out.println("[GLCONTEXT] texImage2D, target = " + target+", internalFormat = " + internalFormat+", format = " + format+", type = " + type);
         boolean result;
         boolean direct = BufferFactory.isDirect(pixels);
         if (direct) {
