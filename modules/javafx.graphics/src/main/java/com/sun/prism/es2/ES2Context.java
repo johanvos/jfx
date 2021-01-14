@@ -509,6 +509,18 @@ class ES2Context extends BaseShaderContext {
 
     @Override
     protected void renderQuads(float coordArray[], byte colorArray[], int numVertices) {
+Thread.dumpStack();
+System.err.println("[RENDERQUADS] numVertices = " + numVertices+" cal = " + coordArray.length+", ca = " + colorArray.length);
+/*
+for (float f: coordArray) {
+System.err.print(f+"   ");
+}
+System.err.println("");
+for (byte b: colorArray) {
+System.err.print(b+"   ");
+}
+System.err.println("");
+*/
         glContext.drawIndexedQuads(coordArray, colorArray, numVertices);
     }
 
