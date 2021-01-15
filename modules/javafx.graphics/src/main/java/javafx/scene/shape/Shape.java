@@ -128,23 +128,23 @@ public abstract class Shape extends Node {
         ShapeHelper.setShapeAccessor(new ShapeHelper.ShapeAccessor() {
             @Override
             public void doUpdatePeer(Node node) {
-                ((Shape) node).doUpdatePeer();
+                ((Shape) node).mydoUpdatePeer();
             }
 
             @Override
             public void doMarkDirty(Node node, DirtyBits dirtyBit) {
-                ((Shape) node).doMarkDirty(dirtyBit);
+                ((Shape) node).mydoMarkDirty(dirtyBit);
             }
 
             @Override
             public BaseBounds doComputeGeomBounds(Node node,
                     BaseBounds bounds, BaseTransform tx) {
-                return ((Shape) node).doComputeGeomBounds(bounds, tx);
+                return ((Shape) node).mydoComputeGeomBounds(bounds, tx);
             }
 
             @Override
             public boolean doComputeContains(Node node, double localX, double localY) {
-                return ((Shape) node).doComputeContains(localX, localY);
+                return ((Shape) node).mydoComputeContains(localX, localY);
             }
 
             @Override
@@ -916,7 +916,7 @@ public abstract class Shape extends Node {
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private BaseBounds doComputeGeomBounds(BaseBounds bounds,
+    private BaseBounds mydoComputeGeomBounds(BaseBounds bounds,
                                              BaseTransform tx) {
         return computeShapeBounds(bounds, tx, ShapeHelper.configShape(this));
     }
@@ -924,7 +924,7 @@ public abstract class Shape extends Node {
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private boolean doComputeContains(double localX, double localY) {
+    private boolean mydoComputeContains(double localX, double localY) {
         return computeShapeContains(localX, localY, ShapeHelper.configShape(this));
     }
 
@@ -977,7 +977,7 @@ public abstract class Shape extends Node {
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private void doMarkDirty(DirtyBits dirtyBits) {
+    private void mydoMarkDirty(DirtyBits dirtyBits) {
         final Runnable listener = shapeChangeListener != null ? shapeChangeListener.get() : null;
         if (listener != null && NodeHelper.isDirtyEmpty(this)) {
             listener.run();
@@ -994,7 +994,7 @@ public abstract class Shape extends Node {
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private void doUpdatePeer() {
+    private void mydoUpdatePeer() {
         updatePGShape();
     }
 
