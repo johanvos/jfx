@@ -58,6 +58,9 @@ import javafx.scene.Scene;
 // import javafx.util.FXPermission;
 
 public class PlatformImpl {
+ // private static final boolean isWeb = System.getProperty("glass.platform", "none").equalsIgnoreCase("web");
+private static final boolean isWeb = System.getProperty("java.vendor", "none").equalsIgnoreCase("bck2brwsr");
+
 
     private static AtomicBoolean initialized = new AtomicBoolean(false);
     private static AtomicBoolean platformExit = new AtomicBoolean(false);
@@ -472,7 +475,7 @@ System.err.println("[RUNANDWAIT], on appthread, did run " + r);
              }
         } else {
             final CountDownLatch doneLatch = new CountDownLatch(1);
-System.err.println("[RUNANDWAIT], now on appthread, will runlater " + r);
+System.err.println("[RUNANDWAIT], NOT on appthread, will runlater " + r);
             runLater(() -> {
                 try {
 System.err.println("[RUNANDWAIT], now on appthread, will run " + r);
@@ -488,16 +491,17 @@ System.err.println("[JVDBG] PI, I should wait internally on doneLatch but ignore
                 throw new IllegalStateException("Toolkit has exited");
             }
 
+if (isWeb) {
 System.err.println("[JVDBG] PI, I should wait on doneLatch but ignore");
-/*
+} else {
             try {
-                // doneLatch.await();
+                doneLatch.await();
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
-*/
         }
     }
+}
 
     public static void setImplicitExit(boolean implicitExit) {
         PlatformImpl.implicitExit = implicitExit;

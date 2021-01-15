@@ -41,6 +41,8 @@ import com.sun.javafx.tk.TKStageListener;
 import com.sun.javafx.tk.Toolkit;
 
 abstract class GlassStage implements TKStage {
+static final boolean isWeb = System.getProperty("java.vendor", "none").equalsIgnoreCase("bck2brwsr");
+
 
     // A list of all GlassStage objects regardless of visibility.
     private static final List<GlassStage> windows = new ArrayList<>();
@@ -106,25 +108,33 @@ abstract class GlassStage implements TKStage {
     static AccessControlContext doIntersectionPrivilege(PrivilegedAction<AccessControlContext> action,
                                                        AccessControlContext stack,
                                                        AccessControlContext context) {
+        if (isWeb) {
                 return AccessController.getContext();
-/*
+        } else {
         return AccessController.doPrivileged((PrivilegedAction<AccessControlContext>) () -> {
             return AccessController.doPrivilegedWithCombiner((PrivilegedAction<AccessControlContext>) () -> {
                 return AccessController.getContext();
             }, stack);
         },  context);
-*/
+        }
     }
 
     public final void setSecurityContext(AccessControlContext ctx) {
+System.err.println("[GLASSSTAGE] setSC!");
         if (accessCtrlCtx != null) {
             throw new RuntimeException("Stage security context has been already set!");
         }
         AccessControlContext acc = AccessController.getContext();
         // JDK doesn't provide public APIs to get ACC intersection,
         // so using this ugly workaround
-        // accessCtrlCtx = doIntersectionPrivilege(
-                // () -> AccessController.getContext(), acc, ctx);
+if (!isWeb) {
+System.err.println("We are not web!");
+        accessCtrlCtx = doIntersectionPrivilege(
+                () -> AccessController.getContext(), acc, ctx);
+System.err.println("[GLASSSTAGE] setSC done to "+ accessCtrlCtx);
+} else {
+System.err.println("We are web!");
+}
     }
 
     @Override public void requestFocus() {

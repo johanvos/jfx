@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -1657,6 +1658,7 @@ JNIEXPORT void JNICALL Java_com_sun_prism_es2_GLContext_nDrawIndexedQuads
     float *pFloat;
     char *pByte;
     int numQuads = numVertices / 4;
+fprintf(stderr, "[GLC] nDrawIndexedQuads, numVertices = %d\n", numVertices);
 
     ContextInfo *ctxInfo = (ContextInfo *) jlong_to_ptr(nativeCtxInfo);
     if ((ctxInfo == NULL) || (ctxInfo->glVertexAttribPointer == NULL)) {
@@ -1698,8 +1700,12 @@ JNIEXPORT jint JNICALL Java_com_sun_prism_es2_GLContext_nCreateIndexBuffer16
         if (id) {
             ctxInfo->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
             ctxInfo->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(short) * n, pData, GL_STATIC_DRAW);
+fprintf(stderr, "[GLC] createIndexBuffer16, n = %d, p[0] = %d\n", n, (short)pData);
         }
     }
+// int res;
+// ctxInfo->glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &res);
+// fprintf(stderr, "[GLC] createIndexBuffer16, size = %d\n",res);
     if (pData) (*env)->ReleasePrimitiveArrayCritical(env, array, pData, JNI_ABORT);
     return id;
 }

@@ -60,6 +60,7 @@ import java.util.HashMap;
  * Quantum Renderer
  */
 final class QuantumRenderer extends AbstractExecutorService {
+    private static final boolean isWeb = System.getProperty("glass.platform", "none").equalsIgnoreCase("web");
     private static boolean usePurgatory = // TODO - deprecate
         AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> Boolean.getBoolean("decora.purgatory"));
 
@@ -180,8 +181,11 @@ System.err.println("[QR] create newThread, inited pipeline = " + pipeline);
 
         final RenderJob job = new RenderJob(factoryCreator, createDone);
 
-        // submit(job);
-        com.sun.glass.ui.web.WebApplication.invokeOtherJob(job);
+        if (isWeb) {
+            com.sun.glass.ui.web.WebApplication.invokeOtherJob(job);
+        } else {
+        submit(job);
+        }
 
 System.err.println("[QR] createResourceFactory should wait, but we ignore that.");
 /*

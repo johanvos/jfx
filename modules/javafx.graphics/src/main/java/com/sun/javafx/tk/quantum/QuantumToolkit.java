@@ -631,9 +631,12 @@ System.err.println("[PULSE] 9");
     }
 
     @Override public TKStage createTKStage(Window peerWindow, boolean securityDialog, StageStyle stageStyle, boolean primary, Modality modality, TKStage owner, boolean rtl, AccessControlContext acc) {
+System.err.println("[TK] createTKStage 1");
         assertToolkitRunning();
         WindowStage stage = new WindowStage(peerWindow, securityDialog, stageStyle, modality, owner);
+System.err.println("[TK] createTKStage 2");
         stage.setSecurityContext(acc);
+System.err.println("[TK] createTKStage 3");
         if (primary) {
             stage.setIsPrimary();
         }

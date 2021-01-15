@@ -180,6 +180,7 @@ public class Stage extends Window {
 System.err.println("[STAGE] clinit start");
         StageHelper.setStageAccessor(new StageHelper.StageAccessor() {
             @Override public void doVisibleChanging(Window window, boolean visible) {
+System.err.println("[STAGE] doVisibleChaning called");
                 ((Stage) window).doVisibleChanging(visible);
             }
 
@@ -1137,8 +1138,10 @@ System.err.println("[STAGE] init 4");
      * Note: This method MUST only be called via its accessor method.
      */
     private void doVisibleChanging(boolean value) {
+System.err.println("[STAGE] private doVisibleChaging to " + value);
         Toolkit toolkit = Toolkit.getToolkit();
         if (value && (getPeer() == null)) {
+System.err.println("[STAGE] private doVisibleChaging setup peer");
             // Setup the peer
             Window window = getOwner();
             TKStage tkStage = (window == null ? null : window.getPeer());
@@ -1157,6 +1160,7 @@ System.err.println("[STAGE] init 4");
                     }
                 }
             }
+System.err.println("[STAGE] createTKStage!");
             setPeer(toolkit.createTKStage(this, isSecurityDialog(),
                     stageStyle, isPrimary(), getModality(), tkStage, rtl, acc));
             getPeer().setMinimumSize((int) Math.ceil(getMinWidth()),

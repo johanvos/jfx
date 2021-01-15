@@ -171,7 +171,6 @@ System.err.println("[GTKApp] init 0");
         }
 
 System.err.println("[GTKApp] init 1");
-/*
         int libraryToLoad = _queryLibrary(gtkVersion, gtkVersionVerbose);
 System.err.println("[GTKApp] init 2");
 
@@ -203,7 +202,6 @@ System.err.println("[GTKApp] init 2");
         if (version == -1) {
             throw new RuntimeException("Error loading GTK libraries");
         }
-*/
 
 System.err.println("[GTKApp] init 3");
         // Embedded in SWT, with shared event thread

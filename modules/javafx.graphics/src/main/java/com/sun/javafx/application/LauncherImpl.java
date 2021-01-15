@@ -468,6 +468,7 @@ System.err.println("[JVDBG] LI, launchapp DONE");
 
         Exception theEx = null;
         try {
+System.err.println("tempAppClass = " + tempAppClass);
             Method mainMethod = tempAppClass.getMethod("main",
                     new Class[] { (new String[0]).getClass() });
             if (verbose) {
