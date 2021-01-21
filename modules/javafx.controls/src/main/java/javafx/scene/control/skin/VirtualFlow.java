@@ -257,6 +257,8 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
     private boolean needLengthBar;
     private boolean tempVisibility = false;
 
+    private ArrayList<Double> lengths = new ArrayList<>();
+    private double totalLength = 1d;
 
 
     /***************************************************************************
@@ -327,6 +329,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         */
         setOnScroll(new EventHandler<ScrollEvent>() {
             @Override public void handle(ScrollEvent event) {
+System.err.println("[VF] setOnScroll, EVENT = " + event);
                 if (Properties.IS_TOUCH_SUPPORTED) {
                     if (touchDetected == false &&  mouseDown == false ) {
                         startSBReleasedAnimation();
@@ -340,21 +343,28 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                     switch(event.getTextDeltaYUnits()) {
                         case PAGES:
                             virtualDelta = event.getTextDeltaY() * lastHeight;
+                            System.err.println("[VF] PAGES, vd = "+virtualDelta);
                             break;
                         case LINES:
                             double lineSize;
                             if (fixedCellSizeEnabled) {
                                 lineSize = getFixedCellSize();
+                                System.err.println("[VF] fixedCellSze, ls = "+lineSize);
                             } else {
                                 // For the scrolling to be reasonably consistent
                                 // we set the lineSize to the average size
                                 // of all currently loaded lines.
                                 T lastCell = cells.getLast();
+                                System.err.println("[VF] gcpl = "+getCellPosition(lastCell)
+                                + ", gcl = "+ getCellLength(lastCell)
+                                +", gcp = "+ getCellPosition(cells.getFirst())
+                                +", cz = "+cells.size());
                                 lineSize =
                                         (getCellPosition(lastCell)
                                             + getCellLength(lastCell)
                                             - getCellPosition(cells.getFirst()))
                                         / cells.size();
+                                System.err.println("[VF] lineSize = "+lineSize);
                             }
 
                             if (lastHeight / lineSize < MIN_SCROLLING_LINES_PER_PAGE) {
@@ -362,6 +372,8 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                             }
 
                             virtualDelta = event.getTextDeltaY() * lineSize;
+                            System.err.println("[VF] LINEX, vd = "+virtualDelta);
+
                             break;
                         case NONE:
                             virtualDelta = event.getDeltaY();
@@ -846,7 +858,9 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         }
     };
     public final int getCellCount() { return cellCount.get(); }
-    public final void setCellCount(int value) { cellCount.set(value);  }
+    public final void setCellCount(int value) { 
+        System.err.println("[VF] setCellCount to "+value);
+        cellCount.set(value);  }
     public final IntegerProperty cellCountProperty() { return cellCount; }
 
 
@@ -866,7 +880,11 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         }
     };
     public final double getPosition() { return position.get(); }
-    public final void setPosition(double value) { position.set(value); }
+    public final void setPosition(double value) {
+        System.err.println("[VF] SetPosition, value = " + value);
+        Thread.dumpStack();
+        position.set(value); 
+    }
     public final DoubleProperty positionProperty() { return position; }
 
     // --- fixed cell size
@@ -968,7 +986,9 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
 
     /** {@inheritDoc} */
     @Override protected void layoutChildren() {
+        System.err.println("[VF] layoutChildren asked, cellcount= "+ getCellCount());
         if (needsRecreateCells) {
+            System.err.println("[VF] needsRecreateCells");
             lastWidth = -1;
             lastHeight = -1;
             releaseCell(accumCell);
@@ -982,6 +1002,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             pile.clear();
             releaseAllPrivateCells();
         } else if (needsRebuildCells) {
+            System.err.println("[VF] needsRebuildCells");
             lastWidth = -1;
             lastHeight = -1;
             releaseCell(accumCell);
@@ -991,12 +1012,15 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             addAllToPile();
             releaseAllPrivateCells();
         } else if (needsReconfigureCells) {
+            System.err.println("[VF] needsreconfigureCells");
             setMaxPrefBreadth(-1);
             lastWidth = -1;
             lastHeight = -1;
         }
 
         if (! dirtyCells.isEmpty()) {
+            System.err.println("[VF] nthere are dirtyCells");
+
             int index;
             final int cellsSize = cells.size();
             while ((index = dirtyCells.nextSetBit(0)) != -1 && index < cellsSize) {
@@ -1250,7 +1274,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         }
 
         computeBarVisiblity();
-
+recalculateTotalLength();
         recreatedOrRebuilt = recreatedOrRebuilt || rebuild;
         updateScrollBarsAndCells(recreatedOrRebuilt);
 
@@ -1334,6 +1358,28 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         }
     }
 
+    double updateCellHeight(int idx) {
+        System.err.println("uch, idx = "+idx+", length = "+lengths.size() + " and celsssize = "+cells.size());
+        if (cells.size() <= idx) {
+            System.err.println("[VF] updateCellHeight asked for "+idx+" but we have no value yet");
+            lengths.add(idx, null);
+            return 0d;
+        }
+        T cell = cells.get(idx);
+        if (idx >= lengths.size() ) {
+            System.err.println("Add this element to lengthlist");
+             lengths.add(idx, null);
+        }
+        if (lengths.get(idx) == null) {
+            System.err.println("not yet in lenghts (null)");
+            if (cell != null) {
+                double h = cell.getHeight();
+                System.err.println("cell is not null! h = "+h);
+                lengths.set(idx, h);
+            }
+        }
+        return lengths.get(idx);
+    }
     /**
      * Gets a cell for the given index if the cell has been created and laid out.
      * "Visible" is a bit of a misnomer, the cell might not be visible in the
@@ -1344,22 +1390,41 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * @return the visible cell
      */
     public T getVisibleCell(int index) {
+        System.err.println("[VF] getVisibleCell asked for index "+ index);
+    //    Thread.dumpStack();
+        System.err.println("height = "+this.getHeight());
+        if (lengths.size() < index + 1) lengths.add(index, null);
         if (cells.isEmpty()) return null;
 
         // check the last index
         T lastCell = cells.getLast();
         int lastIndex = getCellIndex(lastCell);
-        if (index == lastIndex) return lastCell;
+        if (index == lastIndex) {
+            if (lengths.get(index) == null) {
+                lengths.set(index, lastCell.getHeight());
+            }
+            return lastCell;
+        }
 
         // check the first index
         T firstCell = cells.getFirst();
         int firstIndex = getCellIndex(firstCell);
-        if (index == firstIndex) return firstCell;
+        if (index == firstIndex) {
+            if (lengths.get(index) == null) {
+                lengths.set(index, firstCell.getHeight());
+            }
+            return firstCell;
+        }
 
         // if index is > firstIndex and < lastIndex then we can get the index
         if (index > firstIndex && index < lastIndex) {
             T cell = cells.get(index - firstIndex);
-            if (getCellIndex(cell) == index) return cell;
+            if (getCellIndex(cell) == index) {
+                if (lengths.get(index) == null) {
+                    lengths.set(index, cell.getHeight());
+                }
+                return cell;
+            }
         }
 
         // there is no visible cell for the specified index
@@ -1532,6 +1597,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * @return the number of pixels actually moved
      */
     public double scrollPixels(final double delta) {
+        System.err.println("[VF] scrollPixels called, delta = "+delta);
         // Short cut this method for cases where nothing should be done
         if (delta == 0) return 0;
 
@@ -1841,6 +1907,8 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * to use a cell as a helper for computing cell size in some cases.
      */
     double getCellLength(int index) {
+                System.err.println("[VF] getCellLength asked for index "+index);
+
         if (fixedCellSizeEnabled) return getFixedCellSize();
 
         T cell = getCell(index);
@@ -1862,12 +1930,16 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * Gets the length of a specific cell
      */
     double getCellLength(T cell) {
+        System.err.println("[VF] getCellLength asked for "+cell);
+     //   Thread.dumpStack();
         if (cell == null) return 0;
         if (fixedCellSizeEnabled) return getFixedCellSize();
 
-        return isVertical() ?
+        double answer = isVertical() ?
                 cell.getLayoutBounds().getHeight()
                 : cell.getLayoutBounds().getWidth();
+        System.err.println("[VF] answer = "+answer);
+        return answer;
     }
 
     /**
@@ -1884,13 +1956,17 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      */
     double getCellPosition(T cell) {
         if (cell == null) return 0;
-
+        System.err.println("getCellposition asked for cell " + cell+", return "+cell.getLayoutY());
         return isVertical() ?
                 cell.getLayoutY()
                 : cell.getLayoutX();
     }
 
     private void positionCell(T cell, double position) {
+        System.err.println("Need to position cell " + cell+" with position "+ position);
+        if((position > 4) && (position < 4.1) )
+        {Thread.dumpStack();
+    }
         if (isVertical()) {
             cell.setLayoutX(0);
             cell.setLayoutY(snapSpaceY(position));
@@ -1995,6 +2071,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * the leading edge (top) of the currentIndex.
      */
     void addLeadingCells(int currentIndex, double startOffset) {
+        System.err.println("[VF] addLeadingCells called, ci = "+ currentIndex+", startOffset = " + startOffset);
         // The offset will keep track of the distance from the top of the
         // viewport to the top of the current index. We will increment it
         // as we lay out leading cells.
@@ -2012,7 +2089,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         // cells. If the offset is ever < 0, except in the case of the very
         // first cell, then we must quit.
         T cell = null;
-
+        System.err.println("[VF] vpl = "+ getViewportLength());
         // special case for the position == 1.0, skip adding last invisible cell
         if (index == getCellCount() && offset == getViewportLength()) {
             index--;
@@ -2051,6 +2128,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             cell = cells.getFirst();
             int firstIndex = getCellIndex(cell);
             double firstCellPos = getCellPosition(cell);
+            System.err.println("[VF] firstIndex = "+ firstIndex+" and fcp = "+firstCellPos);
             if (firstIndex == 0 && firstCellPos > 0) {
                 setPosition(0.0f);
                 offset = 0;
@@ -2399,7 +2477,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 final T cell = cells.get(i);
 
                 offset -= getCellLength(cell);
-
+updateCellHeight(i);
                 positionCell(cell, offset);
             }
 
@@ -2410,6 +2488,8 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 positionCell(cell, offset);
 
                 offset += getCellLength(cell);
+updateCellHeight(i);
+
             }
         }
 
@@ -2488,8 +2568,12 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 // only a single row and it is bigger than the viewport
                 lengthBar.setVisibleAmount(flowLength / sumCellLength);
             } else {
-                lengthBar.setVisibleAmount(numCellsVisibleOnScreen / (float) cellCount);
+                lengthBar.setVisibleAmount(getHeight() / totalLength);
+     //           lengthBar.setVisibleAmount(numCellsVisibleOnScreen / (float) cellCount);
             }
+            System.err.println("[VF] lengthbar, va = " + lengthBar.getVisibleAmount()+
+                    ", ncvos = "+numCellsVisibleOnScreen+" and cc = "+cellCount+
+                    " and pos = "+getPosition());
         }
 
         if (lengthBar.isVisible()) {
@@ -2751,16 +2835,27 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * item would end up positioned correctly.
      */
     private double computeViewportOffset(double position) {
+        System.err.println("[VF] computeViewportOffset, position = "+ position);
         double p = com.sun.javafx.util.Utils.clamp(0, position, 1);
         double fractionalPosition = p * getCellCount();
         int cellIndex = (int) fractionalPosition;
         double fraction = fractionalPosition - cellIndex;
         double cellSize = getCellLength(cellIndex);
         double pixelOffset = cellSize * fraction;
+//double pixelOffset = getCellOffsetAtLength(p * totalLength);
         double viewportOffset = getViewportLength() * p;
         return pixelOffset - viewportOffset;
     }
 
+    private double getCellOffsetAtLength(double l) {
+    double pos = 0d;
+    for (int i = 0; i < getCellCount(); i++) {
+        double h = updateCellHeight(i);
+        if (pos + h > l) return l - pos;
+        pos +=h;
+    }
+    return 0d;
+    }
     private void adjustPositionToIndex(int index) {
         int cellCount = getCellCount();
         if (cellCount <= 0) {
@@ -2779,6 +2874,15 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      */
     private void adjustByPixelAmount(double numPixels) {
         if (numPixels == 0) return;
+        double p1 = getPosition();
+        double p1tot = p1 * totalLength;
+        double p2tot = p1tot + numPixels;
+        double p2 = p2tot/totalLength;
+        if (p2> 1d) p2 = 1d;
+        System.err.println("AdjustP with num = "+ numPixels+", p2 = "+ p2);
+        setPosition(p2);
+        if ( 1 < 2) return;
+        
         // Starting from the current cell, we move in the direction indicated
         // by numPixels one cell at a team. For each cell, we discover how many
         // pixels the "position" line would move within that cell, and adjust
@@ -2790,7 +2894,11 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         // get some basic info about the list and the current cell
         boolean forward = numPixels > 0;
         int cellCount = getCellCount();
+        System.err.println("[VF] abpa, cellcount = "+cellCount);
+        
         double fractionalPosition = getPosition() * cellCount;
+        System.err.println("[VF] fracpos = "+ fractionalPosition);
+        
         int cellIndex = (int) fractionalPosition;
         if (forward && cellIndex == cellCount) return;
         double cellSize = getCellLength(cellIndex);
@@ -2810,7 +2918,9 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         // We need to discover the distance that the fictional "position line"
         // would travel within this cell, from its current position to the end.
         double remaining = end - start;
-
+        System.err.println("cellIndex = "+cellIndex+", cellSize = "+cellSize+", fraction = "
+        + fraction+", pixelOffset = " + pixelOffset+", cellPercent = " + cellPercent+
+                ", start = " + start+", end = " + end);
         // Keep track of the number of pixels left to travel
         double n = forward ?
               numPixels + pixelOffset - (getViewportLength() * getPosition()) - start
@@ -2837,13 +2947,18 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         // if remaining is < n, then we must have hit an end, so as a
         // fast path, we can just set position to 1.0 or 0.0 and return
         // because we know we hit the end
+        System.err.println("ready to set position");
         if (n > remaining) {
             setPosition(forward ? 1.0f : 0.0f);
         } else if (forward) {
             double rate = cellPercent / Math.abs(end - start);
+                        System.err.println("set pos to p = "+p + " rate = "+rate+", n = "+n);
+
             setPosition(p + (rate * n));
         } else {
             double rate = cellPercent / Math.abs(end - start);
+                        System.err.println("set pos to p = "+p +", cp = " + cellPercent + " rate = "+rate+", n = "+n);
+
             setPosition((p + cellPercent) - (rate * n));
         }
     }
@@ -3087,5 +3202,25 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 return cell;
             }
         }
+    }
+    
+    void recalculateTotalLength() {
+        int cnt = 0;
+        double tot = 0d;
+        int cc = getCellCount();
+        int lc = lengths.size();
+        System.err.println("recalcTL, cc = "+cc+", lc = "+lc);
+        for (int i = 0; (i < cc && i < lc); i++) {
+            Double lg = lengths.get(i);
+            System.err.println("height for "+i+" = +lg = "+lg);
+            if (lg != null) {
+                cnt++;
+                tot = tot + lg;
+            }
+        }
+        this.totalLength = cnt == 0? 1d: tot * cc/cnt;
+        System.err.println("totalLength estimation = "+this.totalLength);
+     //   System.err.println("ACPH = "+ accumCellParent.getHeight());
+     //   System.err.println("CVH = "+ clipView.getHeight());
     }
 }

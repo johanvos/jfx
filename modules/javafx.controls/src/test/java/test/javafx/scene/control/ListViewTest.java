@@ -63,6 +63,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
@@ -81,7 +82,6 @@ import org.junit.Before;
 import org.junit.Test;
 import static test.com.sun.javafx.scene.control.infrastructure.ControlTestUtils.assertStyleClassContains;
 import static javafx.collections.FXCollections.*;
-
 import test.com.sun.javafx.scene.control.infrastructure.ControlSkinFactory;
 import test.com.sun.javafx.scene.control.infrastructure.KeyEventFirer;
 import test.com.sun.javafx.scene.control.infrastructure.KeyModifier;
@@ -2169,5 +2169,38 @@ public class ListViewTest {
                 fail("InterruptedException occurred during Thread.sleep()");
             }
         }
+    }
+    
+     @Test
+    public void test_JDK8089589() {
+        ListView<Rectangle> listView = new ListView<>();
+        for (int i = 0; i < 4; i++) {
+            listView.getItems().add(new Rectangle(100, 200, Color.RED));
+            listView.getItems().add(new Rectangle(100, 10, Color.BLUE));
+        }
+
+        StageLoader sl = new StageLoader(listView);
+
+        Platform.runLater(() -> {
+            Toolkit.getToolkit().firePulse();
+            VirtualFlow<?> vf = VirtualFlowTestUtils.getVirtualFlow(listView);
+
+            double oldPos = 0, firstDif = 0;
+            int inc = 0;
+            while (vf.getPosition() < 1.0) {
+                vf.scrollPixels(1);
+                inc += 1;
+                double pos = vf.getPosition();
+                double dif = pos - oldPos;
+                if (oldPos > 0) {
+                    assertEquals(firstDif, dif, 0.00001);
+                } else {
+                    firstDif = dif;
+                }
+                vf.layout();
+                oldPos = pos;
+            }
+            sl.dispose();
+        });
     }
 }
