@@ -1197,7 +1197,7 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
                 cellCount != lastCellCount ||
                 hasSizeChange ||
                 (isVertical && height < lastHeight) || (! isVertical && width < lastWidth);
-
+        System.err.println("[VF] in LayoutChildren, rebuild = "+ rebuild);
         if (!rebuild) {
             // Check if maxPrefBreadth didn't change
             double maxPrefBreadth = getMaxPrefBreadth();
@@ -1261,7 +1261,7 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
             // The distance from the top of the viewport to the top of the
             // cell for the current index.
             double offset = -computeViewportOffset(getPosition());
-
+            System.err.println("[VF] layoutChildrem rebuild with ci = " + currentIndex+" and offset = "+ offset);
             // Add all the leading and trailing cells (the call to add leading
             // cells will add the current cell as well -- that is, the one that
             // represents the current position on the mapper).
@@ -1360,9 +1360,14 @@ recalculateTotalLength();
 
     double updateCellHeight(int idx) {
         System.err.println("uch, idx = "+idx+", length = "+lengths.size() + " and celsssize = "+cells.size());
-        if (cells.size() <= idx) {
-            System.err.println("[VF] updateCellHeight asked for "+idx+" but we have no value yet");
-            lengths.add(idx, null);
+        if ((lengths.size() > idx) && (lengths.get(idx) != null)) {
+            double answer = lengths.get(idx);
+            System.err.println("Cached: " + answer);
+            return answer;
+        }
+        if (cells.isEmpty()) {
+            System.err.println("[VF] updateCellHeight asked for "+idx+" but we have no cell yet");
+         //   lengths.add(idx, null);
             return 0d;
         }
         T cell = cells.get(idx);
@@ -1376,6 +1381,8 @@ recalculateTotalLength();
                 double h = cell.getHeight();
                 System.err.println("cell is not null! h = "+h);
                 lengths.set(idx, h);
+            } else {
+                return -1;
             }
         }
         return lengths.get(idx);
@@ -1964,7 +1971,7 @@ recalculateTotalLength();
 
     private void positionCell(T cell, double position) {
         System.err.println("Need to position cell " + cell+" with position "+ position);
-        if((position > 4) && (position < 4.1) )
+        if( (position < 4.1) )
         {Thread.dumpStack();
     }
         if (isVertical()) {
@@ -2165,7 +2172,8 @@ recalculateTotalLength();
         boolean filledWithNonEmpty = index <= cellCount;
 
         final double viewportLength = getViewportLength();
-
+        System.err.println("AddTrailingcells, startCell = "+startCell+", offset = "+offset+", "
+                + "index = "+ index+", cc = "+cellCount+", vpl = "+viewportLength);
         // Fix for RT-37421, which was a regression caused by RT-36556
         if (offset < 0 && !fillEmptyCells) {
             return false;
@@ -2202,6 +2210,7 @@ recalculateTotalLength();
             setMaxPrefBreadth(Math.max(getMaxPrefBreadth(), getCellBreadth(cell)));
 
             offset += getCellLength(cell);
+            System.err.println("Trailing: added cell "+cell+" and offset is now "+offset+" and index = "+index);
             cell.setVisible(true);
             ++index;
         }
@@ -2216,6 +2225,7 @@ recalculateTotalLength();
         T firstCell = cells.getFirst();
         index = getCellIndex(firstCell);
         T lastNonEmptyCell = getLastVisibleCell();
+        System.err.println("lastNonEmptyCell = "+lastNonEmptyCell+" with idx = "+getCellIndex(lastNonEmptyCell));
         double start = getCellPosition(firstCell);
         double end = getCellPosition(lastNonEmptyCell) + getCellLength(lastNonEmptyCell);
         if ((index != 0 || (index == 0 && start < 0)) && fillEmptyCells &&
@@ -2568,7 +2578,8 @@ updateCellHeight(i);
                 // only a single row and it is bigger than the viewport
                 lengthBar.setVisibleAmount(flowLength / sumCellLength);
             } else {
-                lengthBar.setVisibleAmount(getHeight() / totalLength);
+                System.err.println("[VF] h = " + getHeight()+" and vpl = " + viewportLength);
+                lengthBar.setVisibleAmount(viewportLength / totalLength);
      //           lengthBar.setVisibleAmount(numCellsVisibleOnScreen / (float) cellCount);
             }
             System.err.println("[VF] lengthbar, va = " + lengthBar.getVisibleAmount()+
@@ -2834,28 +2845,45 @@ updateCellHeight(i);
      * factor for a sheet that contained all the items, then the current
      * item would end up positioned correctly.
      */
+    boolean old = false;
     private double computeViewportOffset(double position) {
-        System.err.println("[VF] computeViewportOffset, position = "+ position);
+        System.err.println("[VF] computeViewportOffset, position = " + position);
         double p = com.sun.javafx.util.Utils.clamp(0, position, 1);
-        double fractionalPosition = p * getCellCount();
-        int cellIndex = (int) fractionalPosition;
-        double fraction = fractionalPosition - cellIndex;
-        double cellSize = getCellLength(cellIndex);
-        double pixelOffset = cellSize * fraction;
-//double pixelOffset = getCellOffsetAtLength(p * totalLength);
-        double viewportOffset = getViewportLength() * p;
-        return pixelOffset - viewportOffset;
+        if (old) {
+            System.err.println("OLD approach");
+            double fractionalPosition = p * getCellCount();
+            int cellIndex = (int) fractionalPosition;
+            double fraction = fractionalPosition - cellIndex;
+            double cellSize = getCellLength(cellIndex);
+            double pixelOffset = cellSize * fraction;
+            double viewportOffset = getViewportLength() * p;
+            return pixelOffset - viewportOffset;
+        } else {
+            double pixelOffset = getCellOffsetAtLength(p * totalLength);
+            double viewportOffset = getViewportLength() * p;
+            System.err.println("PixelOffset = "+ pixelOffset+" and vpo = "+viewportOffset);
+            return pixelOffset - viewportOffset;
+        }
     }
 
+    /**
+     * return the difference between the position l and the start of the cell
+     * that contains the position l. This value will always be positive
+     * @param l
+     * @return 
+     */
     private double getCellOffsetAtLength(double l) {
-    double pos = 0d;
-    for (int i = 0; i < getCellCount(); i++) {
-        double h = updateCellHeight(i);
-        if (pos + h > l) return l - pos;
-        pos +=h;
+        double pos = 0d;
+        for (int i = 0; i < getCellCount(); i++) {
+            double h = updateCellHeight(i);
+            if (pos + h > l) {
+                return l - pos;
+            }
+            pos += h;
+        }
+        return 0d;
     }
-    return 0d;
-    }
+
     private void adjustPositionToIndex(int index) {
         int cellCount = getCellCount();
         if (cellCount <= 0) {
@@ -2964,7 +2992,34 @@ updateCellHeight(i);
     }
 
     private int computeCurrentIndex() {
-        return (int) (getPosition() * getCellCount());
+        int answer = getIndexAtPosition(getPosition());
+        System.err.println("ComputeCurrentIndex, pos = " + getPosition()+", answer = "+answer);
+        return answer;
+//         return (int) (getPosition() * totalLength);
+    }
+    
+    /**
+     * Get the index of the cell at the given position
+     * @param pos position in pixels starting from the start of the viewport
+     * @return 
+     */
+    private int getIndexAtPosition(double pos) {
+        if (pos == 0) return 0;
+        double total = 0;
+        double abspos = pos * viewportLength;
+        System.out.println("getIndexAtPos, abspos = "+abspos+", vpl = "+ viewportLength);
+        for (int i = 0; i < getCellCount(); i++) {
+//            total = total + lengths.get(i);
+            double nextLength = updateCellHeight(i);
+            if (nextLength < 0) {
+                System.err.println("We have no info about the next cells, assume equal height");
+                nextLength = 40;
+            }
+            total = total + nextLength;
+            System.err.println("getindexatpos, nextLen = " + nextLength+", total = "+total+", i = "+i);
+            if (abspos > total) return i;
+        }
+        return getCellCount();
     }
 
     /**
