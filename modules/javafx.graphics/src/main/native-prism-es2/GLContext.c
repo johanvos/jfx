@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
 
 #include "PrismES2Defs.h"
 
@@ -264,7 +265,7 @@ fprintf(stderr, "nBindFBO to %d\n", fboId);
  */
 JNIEXPORT void JNICALL Java_com_sun_prism_es2_GLContext_nBindTexture
 (JNIEnv *env, jclass class, jlong nativeCtxInfo, jint texID) {
-fprintf(stderr, "nBindTexture to texID = %d\n", texID);
+fprintf(stderr, "BindTexture to texID = %d\n", texID);
     glBindTexture(GL_TEXTURE_2D, texID);
 }
 
@@ -1605,6 +1606,9 @@ fprintf(stderr, "nUniformMatrix4fv0, location = %d\n", location);
             fprintf(stderr, "nUniformMatrix4fv: GetPrimitiveArrayCritical returns NULL: out of memory\n");
             return;
         }
+for (int i =0; i < 16; i++) {
+fprintf(stderr, "mat[%d] = %f\n",i,_ptr[i]);
+}
     }
     ctxInfo->glUniformMatrix4fv((GLint) location, 1, (GLboolean) transpose, _ptr);
 
@@ -1701,34 +1705,43 @@ fprintf(stderr, "nEnableVertexAttributes\n");
 #define coordStride (sizeof(float) * FLOATS_PER_VERT)
 #define colorStride 4
 
+int mround = 0;
+
 /* NOTE: the ctx->vbFloatData and ctx->vbByteData pointers must be updated
  * whenever calling glVertexAttribPointer. Failing to do this could leave
  * the pointers in an inconsistent state.
  */
 
 static void setVertexAttributePointers(ContextInfo *ctx, float *pFloat, char *pByte) {
-fprintf(stderr, "[SETVAP]\n");
+fprintf(stderr, "SVAP, round %d\n", mround);
+fprintf(stderr, "NEW APPROACH");
+    GLuint floatBuffer;
+    GLuint byteBuffer;
+    ctx->glGenBuffers(1, &floatBuffer);
+    ctx->glGenBuffers(1, &byteBuffer);
+    ctx->glBindBuffer(GL_ARRAY_BUFFER, floatBuffer);
+    ctx->glBufferData(GL_ARRAY_BUFFER, 11200, pFloat, GL_STATIC_DRAW);
+    ctx->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, coordStride, (void *)0);
+    ctx->glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, coordStride, (void *)12);
+    ctx->glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, coordStride, (void *)20);
+    ctx->glBindBuffer(GL_ARRAY_BUFFER, byteBuffer);
+    ctx->glBufferData(GL_ARRAY_BUFFER, 6400, pByte, GL_STATIC_DRAW);
+    ctx->glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, colorStride, (void *)0);
+/*
     if (pFloat != ctx->vbFloatData) {
-fprintf(stderr, "[SETVAP] 2\n");
-// GLuint id;
-        // ctx->glGenBuffers(1, &id);
-// ctx->glBindBuffer(GL_ARRAY_BUFFER, id);
-// ctx->glBufferData(GL_ARRAY_BUFFER, 200, pFloat, GL_STATIC_DRAW);
         ctx->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, coordStride, pFloat);
         ctx->glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, coordStride,
             pFloat + FLOATS_PER_VC);
         ctx->glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, coordStride,
             pFloat + FLOATS_PER_VC + FLOATS_PER_TC);
         ctx->vbFloatData = pFloat;
-// ctx->glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     if (pByte != ctx->vbByteData) {
-fprintf(stderr, "[SETVAP] 3\n");
         ctx->glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, colorStride, pByte);
         ctx->vbByteData = pByte;
     }
-fprintf(stderr, "[SETVAP] 4\n");
+*/
 }
 
 /*
@@ -1755,23 +1768,15 @@ fprintf(stderr, "nDrawIndexedQuads, numVertices = %d\n", numVertices);
 
 fprintf(stderr, "pf = %p and pb = %p\n", pFloat, pByte);
     if (pFloat && pByte) {
-int bb;
-glGetIntegerv(GL_ARRAY_BUFFER, &bb);
-fprintf(stderr, "BOUNDED TO::: %d\n", bb);
-ctxInfo->glBindBuffer(GL_ARRAY_BUFFER, 0);
-glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &bb);
-fprintf(stderr, "BOUNDED TOeea::: %d\n", bb);
         setVertexAttributePointers(ctxInfo, pFloat, pByte);
-glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &bb);
-fprintf(stderr, "BOUNDED TO2::: %d\n", bb);
         glDrawElements(GL_TRIANGLES, numQuads * 2 * 3, GL_UNSIGNED_SHORT, 0);
-ctxInfo->glBindBuffer(GL_ARRAY_BUFFER, 0);
-glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &bb);
-fprintf(stderr, "BOUNDED TO3::: %d\n", bb);
     }
 
     if (pByte)  (*env)->ReleasePrimitiveArrayCritical(env, datab, pByte, JNI_ABORT);
     if (pFloat) (*env)->ReleasePrimitiveArrayCritical(env, dataf, pFloat, JNI_ABORT);
+fprintf(stderr, "sleep 1s\n");
+sleep(1);
+fprintf(stderr, "sleep 1s DONE\n");
 }
 
 /*

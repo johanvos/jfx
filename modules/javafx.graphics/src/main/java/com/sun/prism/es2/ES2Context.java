@@ -44,6 +44,7 @@ import com.sun.prism.impl.PrismSettings;
 import com.sun.prism.impl.ps.BaseShaderContext;
 import com.sun.prism.ps.Shader;
 import com.sun.prism.ps.ShaderFactory;
+import java.util.Arrays;
 
 class ES2Context extends BaseShaderContext {
 
@@ -508,6 +509,9 @@ class ES2Context extends BaseShaderContext {
 
     @Override
     protected void renderQuads(float coordArray[], byte colorArray[], int numVertices) {
+System.err.println("[GLContext.java] renderQuads, numVertices = " + numVertices);
+System.err.println("-> coordArray = " + Arrays.toString(coordArray));
+System.err.println("-> colorArray = " + Arrays.toString(colorArray));
         glContext.drawIndexedQuads(coordArray, colorArray, numVertices);
     }
 
