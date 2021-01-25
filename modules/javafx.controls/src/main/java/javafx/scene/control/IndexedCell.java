@@ -141,4 +141,7 @@ public class IndexedCell<T> extends Cell<T> {
     private static final PseudoClass PSEUDO_CLASS_ODD = PseudoClass.getPseudoClass("odd");
     private static final PseudoClass PSEUDO_CLASS_EVEN = PseudoClass.getPseudoClass("even");
 
+    @Override public String toString() {
+        return super.toString()+" with index "+index.get();
+    }
 }

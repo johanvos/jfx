@@ -2157,6 +2157,7 @@ recalculateTotalLength();
      * the cells ObservableList.
      */
     boolean addTrailingCells(boolean fillEmptyCells) {
+        System.err.println("[VF] ATC we will add Trailing cells now, fec = "+fillEmptyCells);
         // If cells is empty then addLeadingCells bailed for some reason and
         // we're hosed, so just punt
         if (cells.isEmpty()) return false;
@@ -2166,7 +2167,10 @@ recalculateTotalLength();
         // offset becomes greater than the width/height of the flow, then we
         // know we cannot add any more cells.
         T startCell = cells.getLast();
+        System.err.println("[VF] ATC currently, cells = "+cells);
+        System.err.println("[VF] ATC startCell = "+ startCell);
         double offset = getCellPosition(startCell) + getCellLength(startCell);
+        System.err.println("[VF] ATC offset = "+ offset);
         int index = getCellIndex(startCell) + 1;
         final int cellCount = getCellCount();
         boolean filledWithNonEmpty = index <= cellCount;
@@ -2490,7 +2494,8 @@ recalculateTotalLength();
 updateCellHeight(i);
                 positionCell(cell, offset);
             }
-
+            System.err.println("[VF] updateScrollbarsAndCells, currOffset = "+ currOffset
+            +" and currIndex = "+currIndex);
             // position trailing cells
             offset = currOffset;
             for (int i = currIndex; i >= 0 && i < size; i++) {
@@ -2498,7 +2503,9 @@ updateCellHeight(i);
                 positionCell(cell, offset);
 
                 offset += getCellLength(cell);
-updateCellHeight(i);
+                System.err.println("[VF] bumped offset to "+offset+", and i = "+i);
+                System.err.println("");
+                updateCellHeight(i);
 
             }
         }
@@ -2847,7 +2854,7 @@ updateCellHeight(i);
      */
     boolean old = false;
     private double computeViewportOffset(double position) {
-        System.err.println("[VF] computeViewportOffset, position = " + position);
+        System.err.println("[VF] computeViewportOffset, position = " + position+", totalLength = "+totalLength);
         double p = com.sun.javafx.util.Utils.clamp(0, position, 1);
         if (old) {
             System.err.println("OLD approach");
@@ -2861,7 +2868,8 @@ updateCellHeight(i);
         } else {
             double pixelOffset = getCellOffsetAtLength(p * totalLength);
             double viewportOffset = getViewportLength() * p;
-            System.err.println("PixelOffset = "+ pixelOffset+" and vpo = "+viewportOffset);
+            System.err.println("PixelOffset = "+ pixelOffset+" and vpo = "+viewportOffset
+            + " and totalLength = "+totalLength);
             return pixelOffset - viewportOffset;
         }
     }
@@ -2877,6 +2885,8 @@ updateCellHeight(i);
         for (int i = 0; i < getCellCount(); i++) {
             double h = updateCellHeight(i);
             if (pos + h > l) {
+                System.err.println("[VF] getCellOffsetAtLength for pos "+l+" has base at"
+                + pos+" and matching cellindex = "+i);
                 return l - pos;
             }
             pos += h;
@@ -3006,8 +3016,9 @@ updateCellHeight(i);
     private int getIndexAtPosition(double pos) {
         if (pos == 0) return 0;
         double total = 0;
-        double abspos = pos * viewportLength;
-        System.out.println("getIndexAtPos, abspos = "+abspos+", vpl = "+ viewportLength);
+        double abspos = pos * totalLength;
+        System.out.println("getIndexAtPos, abspos = "+abspos+
+                ", tl est = "+totalLength+", vpl = "+ viewportLength);
         for (int i = 0; i < getCellCount(); i++) {
 //            total = total + lengths.get(i);
             double nextLength = updateCellHeight(i);
@@ -3017,8 +3028,9 @@ updateCellHeight(i);
             }
             total = total + nextLength;
             System.err.println("getindexatpos, nextLen = " + nextLength+", total = "+total+", i = "+i);
-            if (abspos > total) return i;
+            if (total > abspos) return i;
         }
+        System.err.println("[VF] getIndexAtPosition, not in range, return last cell");
         return getCellCount();
     }
 
