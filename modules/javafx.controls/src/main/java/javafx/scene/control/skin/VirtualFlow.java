@@ -259,6 +259,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
 
     private ArrayList<Double> lengths = new ArrayList<>();
     private double totalLength = 1d;
+    private double absoluteOffset = 0d;
 
 
     /***************************************************************************
@@ -813,7 +814,7 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
      * the cells change, but the count has not changed, you must call the
      * reconfigureCells() function to update the visuals.
      */
-    private IntegerProperty cellCount = new SimpleIntegerProperty(this, "cellCount", 0) {
+    private IntegerProperty itemCount = new SimpleIntegerProperty(this, "cellCount", 0) {
         private int oldCount = 0;
 
         @Override protected void invalidated() {
@@ -857,11 +858,16 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
             // the view remains "stable".
         }
     };
-    public final int getCellCount() { return cellCount.get(); }
-    public final void setCellCount(int value) { 
+    public final int getCellCount() {return getItemCount();}
+    public final void setCellCount(int v) {setItemCount(v);}
+    public final int getItemCount() { return itemCount.get(); }
+    public final void setItemCount(int value) {
         System.err.println("[VF] setCellCount to "+value);
-        cellCount.set(value);  }
-    public final IntegerProperty cellCountProperty() { return cellCount; }
+        itemCount.set(value); 
+        lengths = new ArrayList(value);
+        System.err.println("[VF] lengths created with size = "+lengths.size()+" and l = "+lengths);
+    }
+    public final IntegerProperty cellCountProperty() { return itemCount; }
 
 
     // --- position
@@ -881,7 +887,7 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
     };
     public final double getPosition() { return position.get(); }
     public final void setPosition(double value) {
-        System.err.println("[VF] SetPosition, value = " + value);
+        System.err.println("[VF] SetPosition, Value = " + value);
         Thread.dumpStack();
         position.set(value); 
     }
@@ -986,7 +992,11 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
 
     /** {@inheritDoc} */
     @Override protected void layoutChildren() {
-        System.err.println("[VF] layoutChildren asked, cellcount= "+ getCellCount());
+        System.err.println("[VF] layoutChildren asked, cellcount= "+ getItemCount());
+        if (totalLength == 1d) {
+            recalculateTotalLength();
+        }
+
         if (needsRecreateCells) {
             System.err.println("[VF] needsRecreateCells");
             lastWidth = -1;
@@ -1101,7 +1111,7 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
             }
         }
 
-        final int cellCount = getCellCount();
+        final int cellCount = getItemCount();
         final T firstCell = getFirstVisibleCell();
 
         // If no cells need layout, we check other criteria to see if this
@@ -1272,15 +1282,17 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
         } else if (needTrailingCells) {
             addTrailingCells(true);
         }
-
+if (totalLength == 1d) {
+    recalculateTotalLength();
+}
         computeBarVisiblity();
-recalculateTotalLength();
+      //  recalculateTotalLength();
         recreatedOrRebuilt = recreatedOrRebuilt || rebuild;
         updateScrollBarsAndCells(recreatedOrRebuilt);
 
         lastWidth = getWidth();
         lastHeight = getHeight();
-        lastCellCount = getCellCount();
+        lastCellCount = getItemCount();
         lastVertical = isVertical();
         lastPosition = getPosition();
 
@@ -1370,10 +1382,10 @@ recalculateTotalLength();
          //   lengths.add(idx, null);
             return 0d;
         }
-        T cell = cells.get(idx);
-        if (idx >= lengths.size() ) {
+        T cell = getVisibleCell(idx);// cells.get(idx);
+        while (idx >= lengths.size() ) {
             System.err.println("Add this element to lengthlist");
-             lengths.add(idx, null);
+             lengths.add(lengths.size(), null);
         }
         if (lengths.get(idx) == null) {
             System.err.println("not yet in lenghts (null)");
@@ -1400,16 +1412,17 @@ recalculateTotalLength();
         System.err.println("[VF] getVisibleCell asked for index "+ index);
     //    Thread.dumpStack();
         System.err.println("height = "+this.getHeight());
-        if (lengths.size() < index + 1) lengths.add(index, null);
+    //    if (lengths.size() < index + 1) lengths.add(index, null);
         if (cells.isEmpty()) return null;
 
         // check the last index
         T lastCell = cells.getLast();
         int lastIndex = getCellIndex(lastCell);
+       // updateCellHeight(index);
         if (index == lastIndex) {
-            if (lengths.get(index) == null) {
-                lengths.set(index, lastCell.getHeight());
-            }
+//            if (lengths.get(index) == null) {
+//                lengths.set(index, lastCell.getHeight());
+//            }
             return lastCell;
         }
 
@@ -1417,9 +1430,9 @@ recalculateTotalLength();
         T firstCell = cells.getFirst();
         int firstIndex = getCellIndex(firstCell);
         if (index == firstIndex) {
-            if (lengths.get(index) == null) {
-                lengths.set(index, firstCell.getHeight());
-            }
+//            if (lengths.get(index) == null) {
+//                lengths.set(index, firstCell.getHeight());
+//            }
             return firstCell;
         }
 
@@ -1427,9 +1440,9 @@ recalculateTotalLength();
         if (index > firstIndex && index < lastIndex) {
             T cell = cells.get(index - firstIndex);
             if (getCellIndex(cell) == index) {
-                if (lengths.get(index) == null) {
-                    lengths.set(index, cell.getHeight());
-                }
+//                if (lengths.get(index) == null) {
+//                    lengths.set(index, cell.getHeight());
+//                }
                 return cell;
             }
         }
@@ -1572,7 +1585,7 @@ recalculateTotalLength();
     public void scrollToTop(int index) {
         boolean posSet = false;
 
-        if (index >= getCellCount() - 1) {
+        if (index >= getItemCount() - 1) {
             setPosition(1);
             posSet = true;
         } else if (index < 0) {
@@ -1615,6 +1628,7 @@ recalculateTotalLength();
         double pos = getPosition();
         if (pos == 0.0f && delta < 0) return 0;
         if (pos == 1.0f && delta > 0) return 0;
+        recalculateTotalLength();
 
         adjustByPixelAmount(delta);
         if (pos == getPosition()) {
@@ -2098,7 +2112,7 @@ recalculateTotalLength();
         T cell = null;
         System.err.println("[VF] vpl = "+ getViewportLength());
         // special case for the position == 1.0, skip adding last invisible cell
-        if (index == getCellCount() && offset == getViewportLength()) {
+        if (index == getItemCount() && offset == getViewportLength()) {
             index--;
             first = false;
         }
@@ -2172,7 +2186,7 @@ recalculateTotalLength();
         double offset = getCellPosition(startCell) + getCellLength(startCell);
         System.err.println("[VF] ATC offset = "+ offset);
         int index = getCellIndex(startCell) + 1;
-        final int cellCount = getCellCount();
+        final int cellCount = getItemCount();
         boolean filledWithNonEmpty = index <= cellCount;
 
         final double viewportLength = getViewportLength();
@@ -2214,6 +2228,7 @@ recalculateTotalLength();
             setMaxPrefBreadth(Math.max(getMaxPrefBreadth(), getCellBreadth(cell)));
 
             offset += getCellLength(cell);
+            updateCellHeight(index);
             System.err.println("Trailing: added cell "+cell+" and offset is now "+offset+" and index = "+index);
             cell.setVisible(true);
             ++index;
@@ -2392,7 +2407,7 @@ recalculateTotalLength();
         final double viewportBreadth = getViewportBreadth();
 
         final int cellsSize = cells.size();
-        final int cellCount = getCellCount();
+        final int cellCount = getItemCount();
         for (int i = 0; i < 2; i++) {
             final boolean lengthBarVisible = getPosition() > 0
                     || cellCount > cellsSize
@@ -2483,7 +2498,8 @@ recalculateTotalLength();
             final double currOffset = -computeViewportOffset(getPosition());
             final int currIndex = computeCurrentIndex() - cells.getFirst().getIndex();
             final int size = cells.size();
-
+            System.err.println("[VF] updateScrollBarsetc, currOffset = "+currOffset+
+                    " and currIndex = "+currIndex);
             // position leading cells
             double offset = currOffset;
 
@@ -2492,6 +2508,7 @@ recalculateTotalLength();
 
                 offset -= getCellLength(cell);
 updateCellHeight(i);
+                System.err.println("in updateScrollBarloop, i = " +i+" and cell = " +cell+" and offset = "+offset);
                 positionCell(cell, offset);
             }
             System.err.println("[VF] updateScrollbarsAndCells, currOffset = "+ currOffset
@@ -2565,7 +2582,7 @@ updateCellHeight(i);
         // determine how many cells there are on screen so that the scrollbar
         // thumb can be appropriately sized
         if (recreate && (lengthBar.isVisible() || Properties.IS_TOUCH_SUPPORTED)) {
-            final int cellCount = getCellCount();
+            final int cellCount = getItemCount();
             int numCellsVisibleOnScreen = 0;
             for (int i = 0, max = cells.size(); i < max; i++) {
                 T cell = cells.get(i);
@@ -2826,7 +2843,7 @@ updateCellHeight(i);
 
     private double getPrefLength() {
         double sum = 0.0;
-        int rows = Math.min(10, getCellCount());
+        int rows = Math.min(10, getItemCount());
         for (int i = 0; i < rows; i++) {
             sum += getCellLength(i);
         }
@@ -2837,7 +2854,7 @@ updateCellHeight(i);
         double max = 0.0;
 
         // we always measure at least one row
-        int rows = Math.max(1, rowsToCount == -1 ? getCellCount() : rowsToCount);
+        int rows = Math.max(1, rowsToCount == -1 ? getItemCount() : rowsToCount);
         for (int i = 0; i < rows; i++) {
             max = Math.max(max, getCellBreadth(i));
         }
@@ -2858,7 +2875,7 @@ updateCellHeight(i);
         double p = com.sun.javafx.util.Utils.clamp(0, position, 1);
         if (old) {
             System.err.println("OLD approach");
-            double fractionalPosition = p * getCellCount();
+            double fractionalPosition = p * getItemCount();
             int cellIndex = (int) fractionalPosition;
             double fraction = fractionalPosition - cellIndex;
             double cellSize = getCellLength(cellIndex);
@@ -2870,7 +2887,7 @@ updateCellHeight(i);
             double viewportOffset = getViewportLength() * p;
             System.err.println("PixelOffset = "+ pixelOffset+" and vpo = "+viewportOffset
             + " and totalLength = "+totalLength);
-            return pixelOffset - viewportOffset;
+            return pixelOffset;
         }
     }
 
@@ -2880,9 +2897,10 @@ updateCellHeight(i);
      * @param l
      * @return 
      */
-    private double getCellOffsetAtLength(double l) {
+    private double getCellOffsetAtLength(double nol) {
+        double l = absoluteOffset;
         double pos = 0d;
-        for (int i = 0; i < getCellCount(); i++) {
+        for (int i = 0; i < getItemCount(); i++) {
             double h = updateCellHeight(i);
             if (pos + h > l) {
                 System.err.println("[VF] getCellOffsetAtLength for pos "+l+" has base at"
@@ -2895,7 +2913,7 @@ updateCellHeight(i);
     }
 
     private void adjustPositionToIndex(int index) {
-        int cellCount = getCellCount();
+        int cellCount = getItemCount();
         if (cellCount <= 0) {
             setPosition(0.0f);
         } else {
@@ -2911,14 +2929,22 @@ updateCellHeight(i);
      * strictly between 0 and 1
      */
     private void adjustByPixelAmount(double numPixels) {
+        System.err.println("ABPA called, numPixels = "+numPixels+", absof = "+absoluteOffset+", pos = "+getPosition());
         if (numPixels == 0) return;
+        if ((absoluteOffset <= 0) && (numPixels < 0)) {
+        return;
+    }
+        absoluteOffset = absoluteOffset + numPixels;
         double p1 = getPosition();
         double p1tot = p1 * totalLength;
         double p2tot = p1tot + numPixels;
         double p2 = p2tot/totalLength;
         if (p2> 1d) p2 = 1d;
-        System.err.println("AdjustP with num = "+ numPixels+", p2 = "+ p2);
-        setPosition(p2);
+        System.err.println("AdjustP with num = "+ numPixels+", p1 = " + p1+", p2 = "+ p2);
+        System.err.println("tl = "+totalLength+", p1tot = "+p1tot+" and p2tot = "+p2tot);
+      //  setPosition(p2);
+                System.err.println("I will call setposition with absoff = "+absoluteOffset);
+        setPosition(absoluteOffset/totalLength);
         if ( 1 < 2) return;
         
         // Starting from the current cell, we move in the direction indicated
@@ -2931,7 +2957,7 @@ updateCellHeight(i);
 
         // get some basic info about the list and the current cell
         boolean forward = numPixels > 0;
-        int cellCount = getCellCount();
+        int cellCount = getItemCount();
         System.err.println("[VF] abpa, cellcount = "+cellCount);
         
         double fractionalPosition = getPosition() * cellCount;
@@ -2988,24 +3014,36 @@ updateCellHeight(i);
         System.err.println("ready to set position");
         if (n > remaining) {
             setPosition(forward ? 1.0f : 0.0f);
-        } else if (forward) {
-            double rate = cellPercent / Math.abs(end - start);
-                        System.err.println("set pos to p = "+p + " rate = "+rate+", n = "+n);
+        } 
 
-            setPosition(p + (rate * n));
-        } else {
-            double rate = cellPercent / Math.abs(end - start);
-                        System.err.println("set pos to p = "+p +", cp = " + cellPercent + " rate = "+rate+", n = "+n);
-
-            setPosition((p + cellPercent) - (rate * n));
-        }
+//        else if (forward) {
+//            double rate = cellPercent / Math.abs(end - start);
+//                        System.err.println("set pos to p = "+p + " rate = "+rate+", n = "+n);
+//
+//            setPosition(p + (rate * n));
+//        } else {
+//            double rate = cellPercent / Math.abs(end - start);
+//                        System.err.println("set pos to p = "+p +", cp = " + cellPercent + " rate = "+rate+", n = "+n);
+//
+//            setPosition((p + cellPercent) - (rate * n));
+//        }
     }
 
     private int computeCurrentIndex() {
-        int answer = getIndexAtPosition(getPosition());
-        System.err.println("ComputeCurrentIndex, pos = " + getPosition()+", answer = "+answer);
-        return answer;
-//         return (int) (getPosition() * totalLength);
+        System.err.println("[VF] computeCurrentIndex asked for absoff = "+absoluteOffset);
+        double total = 0;
+         for (int i = 0; i < getItemCount(); i++) {
+            double nextLength = updateCellHeight(i);
+            if (nextLength < 0) {
+                System.err.println("We have no info about the next cells, assume equal height");
+                nextLength = 40;
+            }
+            total = total + nextLength;
+            System.err.println("getindexatpos, nextLen = " + nextLength+", total = "+total+", i = "+i);
+            if (total >= absoluteOffset) return i;
+        }
+        System.err.println("[VF] computeCurrentIndex: last element!");
+         return getItemCount()-1;
     }
     
     /**
@@ -3013,13 +3051,13 @@ updateCellHeight(i);
      * @param pos position in pixels starting from the start of the viewport
      * @return 
      */
-    private int getIndexAtPosition(double pos) {
+    private int DONTgetIndexAtPosition(double pos) {
         if (pos == 0) return 0;
         double total = 0;
         double abspos = pos * totalLength;
         System.out.println("getIndexAtPos, abspos = "+abspos+
                 ", tl est = "+totalLength+", vpl = "+ viewportLength);
-        for (int i = 0; i < getCellCount(); i++) {
+        for (int i = 0; i < getItemCount(); i++) {
 //            total = total + lengths.get(i);
             double nextLength = updateCellHeight(i);
             if (nextLength < 0) {
@@ -3031,7 +3069,7 @@ updateCellHeight(i);
             if (total > abspos) return i;
         }
         System.err.println("[VF] getIndexAtPosition, not in range, return last cell");
-        return getCellCount();
+        return getItemCount();
     }
 
     /**
@@ -3042,7 +3080,7 @@ updateCellHeight(i);
      * calculation.
      */
     private double computeOffsetForCell(int itemIndex) {
-        double cellCount = getCellCount();
+        double cellCount = getItemCount();
         double p = com.sun.javafx.util.Utils.clamp(0, itemIndex, cellCount) / cellCount;
         return -(getViewportLength() * p);
     }
@@ -3272,9 +3310,10 @@ updateCellHeight(i);
     }
     
     void recalculateTotalLength() {
+        Thread.dumpStack();
         int cnt = 0;
         double tot = 0d;
-        int cc = getCellCount();
+        int cc = getItemCount();
         int lc = lengths.size();
         System.err.println("recalcTL, cc = "+cc+", lc = "+lc);
         for (int i = 0; (i < cc && i < lc); i++) {
