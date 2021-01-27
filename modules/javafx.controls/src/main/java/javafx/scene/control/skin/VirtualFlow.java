@@ -993,6 +993,17 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
     /** {@inheritDoc} */
     @Override protected void layoutChildren() {
         System.err.println("[VF] layoutChildren asked, cellcount= "+ getItemCount());
+        System.err.println("[VF] absOffset = "+absoluteOffset+" and pos = "+getPosition());
+        double myPos = getPosition();
+        if (totalLength > 2d) {
+            if (myPos == 1d) {
+                absoluteOffset = totalLength -viewportLength;
+            } else {
+            absoluteOffset = totalLength* getPosition();
+            }
+            System.err.println("[VF] absOffset == "+absoluteOffset);
+            
+        }
         if (totalLength == 1d) {
             recalculateTotalLength();
         }
