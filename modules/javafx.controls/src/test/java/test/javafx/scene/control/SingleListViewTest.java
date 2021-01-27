@@ -49,6 +49,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.FocusModel;
 import javafx.scene.control.IndexedCell;
@@ -68,6 +69,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 import static org.junit.Assert.assertArrayEquals;
@@ -101,9 +103,40 @@ public class SingleListViewTest {
         fm = listView.getFocusModel();
     }
 
+@Test
+    public void test_JDK8088400() {
+        ListView<Node> listView = new ListView<>();
+        listView.getItems().addAll(new Circle(10), new Circle(20), new Circle(100),
+                new Circle(30), new Circle(50),new Circle(200), new Circle(60));
 
+
+        StageLoader sl = new StageLoader(listView);
+
+        Platform.runLater(() -> {
+            Toolkit.getToolkit().firePulse();
+            VirtualFlow<?> vf = VirtualFlowTestUtils.getVirtualFlow(listView);
+
+            double oldPos = 0, firstDif = 0;
+            int inc = 0;
+            while (vf.getPosition() < 1.0) {
+                vf.scrollPixels(1);
+                inc += 1;
+                double pos = vf.getPosition();
+                double dif = pos - oldPos;
+                System.err.println("inc = "+inc+", pos = "+pos);
+                if (oldPos > 0) {
+                    assertEquals(firstDif, dif, 0.00001);
+                } else {
+                    firstDif = dif;
+                }
+                vf.layout();
+                oldPos = pos;
+            }
+            sl.dispose();
+        });
+    }
     
-     @Test
+   // @Test
     public void test_JDK8089589() {
         ListView<Rectangle> listView = new ListView<>();
         for (int i = 0; i < 4; i++) {
@@ -124,6 +157,7 @@ public class SingleListViewTest {
                 inc += 1;
                 double pos = vf.getPosition();
                 double dif = pos - oldPos;
+                System.err.println("inc = "+inc+", pos = "+pos);
                 if (oldPos > 0) {
                     assertEquals(firstDif, dif, 0.00001);
                 } else {
