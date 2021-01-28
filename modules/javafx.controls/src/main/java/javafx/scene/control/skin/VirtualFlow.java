@@ -1435,7 +1435,8 @@ dbg("[lc] updateScrollBarsAndCells done");
         if (lengths.get(idx) == null) {
             System.err.println("not yet in lenghts (null)");
             if (cell != null) {
-                double h = cell.getHeight();
+                double h = cell.getLayoutBounds().getHeight();
+//                double h = cell.getHeight();
                 System.err.println("cell is not null! h = "+h);
                 lengths.set(idx, h);
             } else {
@@ -2054,6 +2055,13 @@ dbg("[sp] DONE scrollPixels");
 
     private void positionCell(T cell, double position) {
         dbg("Need to position cell " + cell+" with position "+ position);
+        int cellIndex = cell.getIndex();
+        if (lengths.size() > cellIndex) {
+            double exh = lengths.get(cellIndex);
+            double newh = cell.getLayoutBounds().getHeight();
+            System.err.println("EXH = "+ exh+" and newh = "+newh+" for idx "+cellIndex);
+            lengths.set(cellIndex, newh);
+        }
 //        if( (position < 4.1) )
 //        {Thread.dumpStack();
 //    }
@@ -3021,8 +3029,10 @@ updateCellHeight(i);
         if (p2> 1d) p2 = 1d;
         System.err.println("AdjustP with num = "+ numPixels+", p1 = " + p1+", p2 = "+ p2);
         System.err.println("tl = "+totalLength+", p1tot = "+p1tot+" and p2tot = "+p2tot);
+        System.err.println("ao = "+absoluteOffset+", vpl = "+viewportLength);
         double np = Math.min(1.0d, absoluteOffset/(totalLength-viewportLength));
         if ((numPixels > 0) && (np < p1)) {
+            dbg("[ABPA] need to correct since np = "+np);
             np = p1*1.01;
             dbg("[ABPA] moving forward but position would move back. Adjust position from "+p1+" to "+np);
         }

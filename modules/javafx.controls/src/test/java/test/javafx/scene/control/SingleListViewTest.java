@@ -106,8 +106,9 @@ public class SingleListViewTest {
 @Test
     public void test_JDK8088400() {
         ListView<Node> listView = new ListView<>();
+        listView.setPrefWidth(700);
         listView.getItems().addAll(new Circle(10), new Circle(20), new Circle(100),
-                new Circle(30), new Circle(50),new Circle(200), new Circle(60));
+                new Circle(30), new Circle(50),new Circle(150), new Circle(60));
 
 
         StageLoader sl = new StageLoader(listView);
@@ -124,7 +125,7 @@ public class SingleListViewTest {
                 double pos = vf.getPosition();
                 double dif = pos - oldPos;
                 System.err.println("inc = "+inc+", pos = "+pos);
-                if (oldPos > 0) {
+                if ((oldPos > 0) && (pos < 1.)){
                     assertEquals(firstDif, dif, 0.00001);
                 } else {
                     firstDif = dif;
