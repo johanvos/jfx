@@ -1404,6 +1404,14 @@ dbg("[lc] updateScrollBarsAndCells done");
         }
     }
 
+    /**
+     * Returns the height in pixels of a cell that would represent the data at
+     * the provided index in the list of data
+     * @param idx the index of the item in the datalist (not in the cell list)
+     * @return in case this data item is already visualised, its height will be returned
+     * If there are no visual cells created at all, this method returns -1.
+     * If there is no visual cell for the requested index, one will be created
+     */
     double updateCellHeight(int idx) {
         System.err.println("uch, idx = "+idx+", length = "+lengths.size() + " and celsssize = "+cells.size());
         if ((lengths.size() > idx) && (lengths.get(idx) != null)) {
@@ -1413,7 +1421,7 @@ dbg("[lc] updateScrollBarsAndCells done");
         }
         if (cells.isEmpty()) {
             System.err.println("[VF] updateCellHeight asked for "+idx+" but we have no cell yet");
-            return 0d;
+            return 1d;
         }
         T cell = getVisibleCell(idx);
         if (cell == null) {
@@ -1655,6 +1663,7 @@ dbg("[lc] updateScrollBarsAndCells done");
      */
     public double scrollPixels(double delta) {
         dbg("[sp] scrollPixels START, delta = "+delta);
+        Thread.dumpStack();
         // Short cut this method for cases where nothing should be done
         if (delta == 0) return 0;
 
@@ -3012,8 +3021,11 @@ updateCellHeight(i);
         if (p2> 1d) p2 = 1d;
         System.err.println("AdjustP with num = "+ numPixels+", p1 = " + p1+", p2 = "+ p2);
         System.err.println("tl = "+totalLength+", p1tot = "+p1tot+" and p2tot = "+p2tot);
-      //  setPosition(p2);
         double np = Math.min(1.0d, absoluteOffset/(totalLength-viewportLength));
+        if ((numPixels > 0) && (np < p1)) {
+            np = p1*1.01;
+            dbg("[ABPA] moving forward but position would move back. Adjust position from "+p1+" to "+np);
+        }
         if (np > .95) {
             int ci = computeCurrentIndex();
             System.err.println("[ABPA] almost at the end, calc remaining cell heights, ci = "+ci+", itemCount = "+getItemCount());
@@ -3125,11 +3137,14 @@ updateCellHeight(i);
                 nextLength = 40;
             }
             total = total + nextLength;
-            System.err.println("getindexatpos, nextLen = " + nextLength+", total = "+total+", i = "+i);
-            if (total >= absoluteOffset) return i;
+            System.err.println("computeCurrentIndex, getindexatpos, nextLen = " + nextLength+", total = "+total+", i = "+i);
+            if (total > absoluteOffset) {
+                dbg("[cci] CurrentIndex = "+i);
+                return i;
+            }
         }
-        System.err.println("[VF] computeCurrentIndex: last element!");
-         return getItemCount()-1;
+        dbg("[cci] CurrentIndex = last element: "+(getItemCount() -1)) ;
+        return getItemCount()-1;
     }
     
     /**
@@ -3288,7 +3303,7 @@ updateCellHeight(i);
         }
 
         public void addFirst(T cell) {
-                        Thread.dumpStack();
+                //        Thread.dumpStack();
 
             // if firstIndex == -1 then that means this is the first item in the
             // list and we need to initialize firstIndex and lastIndex
@@ -3308,7 +3323,7 @@ updateCellHeight(i);
         }
 
         public void addLast(T cell) {
-            Thread.dumpStack();
+          //  Thread.dumpStack();
             // if lastIndex == -1 then that means this is the first item in the
             // list and we need to initialize the firstIndex and lastIndex
             if (firstIndex == -1) {
@@ -3404,6 +3419,11 @@ updateCellHeight(i);
         double tot = 0d;
         int cc = getItemCount();
         int lc = lengths.size();
+        if (cc > lc) {
+            // we don't have all data items in our calculation. Add one.
+            updateCellHeight(lc);
+        }
+        lc = lengths.size();
         System.err.println("recalcTL, itemCount = "+cc+", lc = "+lc);
         for (int i = 0; (i < cc && i < lc); i++) {
             Double lg = lengths.get(i);
