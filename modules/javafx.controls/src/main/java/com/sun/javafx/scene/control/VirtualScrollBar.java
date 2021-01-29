@@ -68,9 +68,7 @@ public class VirtualScrollBar extends ScrollBar {
                 if (adjusting) {
                     // no-op
                 } else {
-                    System.err.println("[VSB] start set position");
                     flow.setPosition(getValue());
-                    System.err.println("[VSB] done set position");
                 }
             }
         });
