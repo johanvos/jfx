@@ -854,6 +854,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
     public final int getItemCount() { return itemCount.get(); }
     public final void setItemCount(int value) {
         itemCount.set(value); 
+        totalLength = 1d;
         lengths = new ArrayList(value);
     }
     public final IntegerProperty cellCountProperty() { return itemCount; }
