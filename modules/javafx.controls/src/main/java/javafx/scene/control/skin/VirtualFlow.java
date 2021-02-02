@@ -867,6 +867,7 @@ System.err.println("[VF] setOnScroll, EVENT = " + event);
     public final int getItemCount() { return itemCount.get(); }
     public final void setItemCount(int value) {
         System.err.println("[VF] setCellCount to "+value);
+        totalLength = 1d;
         itemCount.set(value); 
         lengths = new ArrayList(value);
         System.err.println("[VF] lengths created with size = "+lengths.size()+" and l = "+lengths);
@@ -1424,8 +1425,10 @@ dbg("[lc] updateScrollBarsAndCells done");
             return 1d;
         }
         T cell = getVisibleCell(idx);
+        boolean doRelease = false;
         if (cell == null) {
             cell = getCell(idx);
+            doRelease = true;
             dbg("[uch] didn't have a cell at "+idx+" but now we do: "+cell);
         }
         while (idx >= lengths.size() ) {
@@ -1442,6 +1445,10 @@ dbg("[lc] updateScrollBarsAndCells done");
             } else {
                 return -1;
             }
+        }
+        if (doRelease) {
+            System.err.println("[VF] release cell "+cell);
+            releaseCell(cell);
         }
         return lengths.get(idx);
     }
