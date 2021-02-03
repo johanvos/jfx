@@ -593,7 +593,9 @@ public class ListViewSkin<T> extends VirtualContainerBase<ListView<T>, ListCell<
      * if this is a horizontal container, then the scrolling will be to the right.
      */
     private int onScrollPageDown(boolean isFocusDriven) {
+System.err.println("SKIN: ONSCROLLPAGEDOWN with focus = "+isFocusDriven);
         ListCell<T> lastVisibleCell = flow.getLastVisibleCellWithinViewport();
+System.err.println("[SKIN] lvc = " + lastVisibleCell);
         if (lastVisibleCell == null) return -1;
 
         final SelectionModel<T> sm = getSkinnable().getSelectionModel();
@@ -601,6 +603,7 @@ public class ListViewSkin<T> extends VirtualContainerBase<ListView<T>, ListCell<
         if (sm == null || fm == null) return -1;
 
         int lastVisibleCellIndex = lastVisibleCell.getIndex();
+System.err.println("[SKIN] lvcidx = " + lastVisibleCellIndex);
 
 //        boolean isSelected = sm.isSelected(lastVisibleCellIndex) || fm.isFocused(lastVisibleCellIndex) || lastVisibleCellIndex == anchor;
         // isSelected represents focus OR selection
@@ -610,10 +613,12 @@ public class ListViewSkin<T> extends VirtualContainerBase<ListView<T>, ListCell<
         } else {
             isSelected = lastVisibleCell.isSelected() || sm.isSelected(lastVisibleCellIndex);
         }
+System.err.println("[SKIN] isSelected = " + isSelected);
 
         if (isSelected) {
             boolean isLeadIndex = (isFocusDriven && fm.getFocusedIndex() == lastVisibleCellIndex)
                                || (! isFocusDriven && sm.getSelectedIndex() == lastVisibleCellIndex);
+System.err.println("[SKIN] isLeadIndex = " + isLeadIndex);
 
             if (isLeadIndex) {
                 // if the last visible cell is selected, we want to shift that cell up
@@ -621,6 +626,7 @@ public class ListViewSkin<T> extends VirtualContainerBase<ListView<T>, ListCell<
                 flow.scrollToTop(lastVisibleCell);
 
                 ListCell<T> newLastVisibleCell = flow.getLastVisibleCellWithinViewport();
+System.err.println("[SKIN] leadIndex newlvc= " + newLastVisibleCell);
                 lastVisibleCell = newLastVisibleCell == null ? lastVisibleCell : newLastVisibleCell;
             }
         } else {

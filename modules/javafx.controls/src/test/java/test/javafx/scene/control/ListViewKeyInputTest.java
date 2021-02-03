@@ -1005,6 +1005,7 @@ public class ListViewKeyInputTest {
      * Tests for specific bug reports
      **************************************************************************/
 
+/*
     @Test public void test_rt18642() {
         sm.clearAndSelect(1);                          // select 1
         keyboard.doDownArrowPress(KeyModifier.getShortcutKey());   // shift focus to 2
@@ -1817,11 +1818,13 @@ public class ListViewKeyInputTest {
         keyboard.doKeyPress(KeyCode.PAGE_DOWN, KeyModifier.SHIFT);
         final int leadSelectedIndex = sm.getSelectedIndex();
         final int selectedIndicesCount = sm.getSelectedIndices().size();
+System.err.println("SELECTED index = " + leadSelectedIndex);
         assertEquals(6, leadSelectedIndex);
         assertEquals(6, fm.getFocusedIndex());
         assertEquals(7, selectedIndicesCount);
 
         keyboard.doKeyPress(KeyCode.PAGE_DOWN, KeyModifier.SHIFT);
+System.err.println("SELECTED index2 = " + sm.getSelectedIndex());
         assertEquals(leadSelectedIndex * 2, sm.getSelectedIndex());
         assertEquals(leadSelectedIndex * 2, fm.getFocusedIndex());
         assertEquals(selectedIndicesCount * 2 - 1, sm.getSelectedIndices().size());
@@ -1833,9 +1836,11 @@ public class ListViewKeyInputTest {
 
         sl.dispose();
     }
+*/
 
     @Test public void test_rt34407_up_up_down() {
         final int items = 100;
+System.err.println("[TESTING] START");
         listView.getItems().clear();
         for (int i = 0; i < items; i++) {
             listView.getItems().add("Row " + i);
@@ -1846,8 +1851,11 @@ public class ListViewKeyInputTest {
 
         sm.clearAndSelect(99);
         fm.focus(99);
+System.err.println("[TESTING] SCROLLTO");
         listView.scrollTo(99);
+System.err.println("[TESTING] SCROLLTO done, firepulse now");
         Toolkit.getToolkit().firePulse();
+System.err.println("[TESTING] firepulse done");
 
         assertEquals(99, getAnchor());
         assertTrue(fm.isFocused(99));
@@ -1855,10 +1863,14 @@ public class ListViewKeyInputTest {
         assertFalse(sm.isSelected(98));
 
         // we expect the final Page-down to return us back to this selected index and with the same number of selected indices
+System.err.println("[TESTING] doKeyPress");
         keyboard.doKeyPress(KeyCode.PAGE_UP, KeyModifier.SHIFT);
+System.err.println("[TESTING] doKeyPress done");
         final int leadSelectedIndex = sm.getSelectedIndex();
         final int selectedIndicesCount = sm.getSelectedIndices().size();
         final int diff = 99 - leadSelectedIndex;
+System.err.println("[TESTING] leadSelectedIndex = " + leadSelectedIndex);
+System.err.println("[TESTING] selic = " + selectedIndicesCount);
         assertEquals(99 - diff, leadSelectedIndex);
         assertEquals(99 - diff, fm.getFocusedIndex());
         assertEquals(7, selectedIndicesCount);
@@ -1871,6 +1883,7 @@ public class ListViewKeyInputTest {
         assertEquals(leadSelectedIndex, sm.getSelectedIndex());
         assertEquals(selectedIndicesCount, sm.getSelectedIndices().size());
     }
+/*
 
     @Test public void test_rt34768() {
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -2326,6 +2339,7 @@ public class ListViewKeyInputTest {
         // index (44) should now be true
         keyboard.doKeyPress(KeyCode.PAGE_UP, KeyModifier.getShortcutKey(), KeyModifier.SHIFT);
         final int selectedRowCount = indices.size();
+System.err.println("SELECTEDROWCOUNT = "+selectedRowCount);
         for (int i = 0; i < selectedRowCount; i++) {
             assertTrue(isSelected(50 - i));
         }
@@ -2334,7 +2348,9 @@ public class ListViewKeyInputTest {
 
         keyboard.doUpArrowPress(KeyModifier.SHIFT);
         int newSelectedRowCount = selectedRowCount + 1;
+System.err.println("NEWSELECTEDROWCOUNT = "+selectedRowCount);
         for (int i = 0; i < newSelectedRowCount; i++) {
+System.err.println("try i = "+i);
             assertTrue(isSelected(50 - i));
         }
         assertTrue(fm.isFocused(50 - newSelectedRowCount + 1));
@@ -2374,4 +2390,5 @@ public class ListViewKeyInputTest {
         assertEquals(1, sm.getSelectedIndex());
         assertEquals(1, fm.getFocusedIndex());
     }
+*/
 }

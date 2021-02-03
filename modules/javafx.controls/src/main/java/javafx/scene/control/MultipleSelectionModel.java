@@ -163,6 +163,7 @@ public abstract class MultipleSelectionModel<T> extends SelectionModel<T> {
      * @param end The last index of the selection - this index will not be selected.
      */
     public void selectRange(final int start, final int end) {
+System.err.println("[MULTISEL] selectRange, start = " + start+", end = " + end);
         if (start == end) return;
 
         final boolean asc = start < end;

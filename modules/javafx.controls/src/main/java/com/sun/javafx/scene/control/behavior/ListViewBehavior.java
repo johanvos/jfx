@@ -631,12 +631,15 @@ public class ListViewBehavior<T> extends BehaviorBase<ListView<T>> {
         if (fm == null) return;
 
         int leadIndex = fm.getFocusedIndex();
+System.err.println("LISTVIEWBEHAVIOR, leadindex = "+leadIndex);
         if (isShiftDown) {
             leadIndex = getAnchor() == -1 ? leadIndex : getAnchor();
             setAnchor(leadIndex);
         }
+System.err.println("LISTVIEWBEHAVIOR, leadindex2 = "+leadIndex);
 
         int leadSelectedIndex = onScrollPageDown.call(false);
+System.err.println("LISTVIEWBEHAVIOR, leadSelecteindex = "+leadSelectedIndex);
 
         // fix for RT-34407
         int adjust = leadIndex < leadSelectedIndex ? 1 : -1;

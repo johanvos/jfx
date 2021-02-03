@@ -487,6 +487,10 @@ abstract class MultipleSelectionModelBase<T> extends MultipleSelectionModel<T> {
                 }
             }
         } else {
+System.err.println("MULTISELECT!!! row = "+ row+", rows size = " + rows.length);
+for (int i = 0; i < rows.length; i++) {
+System.err.println("row["+i+"]: "+ rows[i]);
+}
             selectedIndices.set(row, rows);
 
             IntStream.concat(IntStream.of(row), IntStream.of(rows))
