@@ -61,4 +61,4 @@ $(TARGET_DIRS):
 	mkdir -p $(TARGET_DIRS)
 
 $(TARGET): $(OBJECTS)
-	$(AR) -static $(OBJECTS) -arch_only x86_64 -o $@
+	$(AR) -static $(OBJECTS) -arch_only arm64 -o $@
