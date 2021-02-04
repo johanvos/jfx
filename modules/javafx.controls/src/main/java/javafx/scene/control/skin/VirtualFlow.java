@@ -2825,7 +2825,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
 
         // start with applying the requested modification
         double origAbsoluteOffset = this.absoluteOffset;
-        this.absoluteOffset = this.absoluteOffset + numPixels;
+        this.absoluteOffset = Math.max(0.d, this.absoluteOffset + numPixels);
         double newPosition = Math.min(1.0d, absoluteOffset/(estimatedSize - viewportLength));
         // estimatedSize changes may result in opposite effect on position
         // in that case, modify current position 1% in the requested direction
