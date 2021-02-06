@@ -1242,7 +1242,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 needTrailingCells = true;
             }
         }
-
         initViewport();
 
         // Get the index of the "current" cell
@@ -1272,7 +1271,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             // Update the current index
             currentIndex = computeCurrentIndex();
         }
-
         if (rebuild) {
             setMaxPrefBreadth(-1);
             // Start by dumping all the cells into the pile
@@ -1303,7 +1301,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         lastCellCount = getCellCount();
         lastVertical = isVertical();
         lastPosition = getPosition();
-
+        recalculateEstimatedSize();
         cleanPile();
     }
 
@@ -1583,7 +1581,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 (! isVertical && (tempVisibility ? !needLengthBar : !hbar.isVisible())))) return 0;
 
         double pos = getPosition();
-        
         if (pos == 0.0f && delta < 0) return 0;
         if (pos == 1.0f && delta > 0) return 0;
         recalculateEstimatedSize();
@@ -1649,7 +1646,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 // represents the current position on the mapper).
                 addLeadingCells(currentIndex, offset);
             }
-
             // Starting at the tail of the list, loop adding cells until
             // all the space on the table is filled up. We want to make
             // sure that we DO NOT add empty trailing cells (since we are
@@ -1659,6 +1655,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 // Reached the end, but not enough cells to fill up to
                 // the end. So, remove the trailing empty space, and translate
                 // the cells down
+
                 final T lastCell = getLastVisibleCell();
                 final double lastCellSize = getCellLength(lastCell);
                 final double cellEnd = getCellPosition(lastCell) + lastCellSize;
@@ -1867,6 +1864,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
     private double viewportLength;
     void setViewportLength(double value) {
         this.viewportLength = value;
+        this.absoluteOffset = getPosition() * (estimatedSize -viewportLength);
     }
     double getViewportLength() {
         return viewportLength;
@@ -2060,6 +2058,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             first = false;
         }
         while (index >= 0 && (offset > 0 || first)) {
+
             cell = getAvailableCell(index);
             setCellIndex(cell, index);
             resizeCell(cell); // resize must be after config
@@ -2075,7 +2074,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             } else {
                 offset -= getCellLength(cell);
             }
-
             // Position the cell, and update the maxPrefBreadth variable as we go.
             positionCell(cell, offset);
             setMaxPrefBreadth(Math.max(getMaxPrefBreadth(), getCellBreadth(cell)));
@@ -2794,7 +2792,9 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         double bound = 0d;
         for (int i = 0; i < getCellCount(); i++) {
             double h = getOrCreateCellSize(i);
-            if (bound +h > absoluteOffset) return absoluteOffset-bound;
+            if (bound +h > absoluteOffset) {
+                return absoluteOffset-bound;
+            }
             bound += h;
         }
         return 0d;
@@ -2891,16 +2891,14 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 return itemSizeCache.get(idx); 
             }
         }
-        // If we have no cells yet, we don't compute anything and return 1d
-        if (cells.isEmpty()) return 1d;
         boolean doRelease = false;
+
         // Do we have a visible cell for this index?
         T cell = getVisibleCell(idx);
         if (cell == null) { // we might get the accumcell here
             cell = getCell(idx);
             doRelease = true;
         }
-        
         // Make sure we have enough space in the cache to store this index
         while (idx >= itemSizeCache.size()) {
             itemSizeCache.add(itemSizeCache.size(), null);
