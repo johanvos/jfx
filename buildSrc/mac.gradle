@@ -24,6 +24,12 @@
  */
 
 ext.MAC = [:]
+if (project.hasProperty("includeMonocle")) {
+    MAC.includeMonocle = true;
+} else {
+    MAC.includeMonocle = true;
+}
+
 
 MAC.canBuild = IS_MAC && IS_64
 if (!MAC.canBuild) return;
@@ -168,6 +174,13 @@ if (hasProperty('toolchainDir')) {
 
 def compiler = IS_COMPILE_PARFAIT ? "parfait-clang" : "${toolchainDir}clang";
 def linker = IS_STATIC_BUILD ? "libtool" : IS_COMPILE_PARFAIT ? "parfait-clang++" : "${toolchainDir}clang++";
+
+if (MAC.includeMonocle) {
+    MAC.javafxPlatformProperties = """
+    javafx.platform=monocle
+    monocle.glass.platform=Monocle
+    monocle.monocle.platform=Headless"""
+}
 
 MAC.glass = [:]
 MAC.glass.javahInclude = [

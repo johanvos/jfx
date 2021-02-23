@@ -24,6 +24,12 @@
  */
 
 ext.WIN = [:]
+if (project.hasProperty("includeMonocle")) {
+    WIN.includeMonocle = true;
+} else {
+    WIN.includeMonocle = true;
+}
+
 
 WIN.canBuild = IS_WINDOWS
 if (!WIN.canBuild) return;
@@ -300,6 +306,13 @@ def rcFlags = [
 ];
 
 def defaultRcSource = file("${project("graphics").projectDir}/src/main/resources/version.rc");
+
+if (WIN.includeMonocle) {
+    WIN.javafxPlatformProperties = """
+    javafx.platform=monocle
+    monocle.glass.platform=Monocle
+    monocle.monocle.platform=Headless"""
+}
 
 WIN.glass = [:]
 WIN.glass.javahInclude = [

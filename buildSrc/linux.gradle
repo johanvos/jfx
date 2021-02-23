@@ -24,6 +24,12 @@
  */
 
 ext.LINUX = [:]
+if (project.hasProperty("includeMonocle")) {
+    LINUX.includeMonocle = true;
+} else {
+    LINUX.includeMonocle = true;
+}
+
 
 // Declare whether this particular target file applies to the current system
 LINUX.canBuild = IS_LINUX;
@@ -210,6 +216,14 @@ setupTools("linux_freetype_tools",
 
 def compiler = IS_COMPILE_PARFAIT ? "parfait-gcc" : "${toolchainDir}gcc";
 def linker = IS_STATIC_BUILD ? "ar" : IS_COMPILE_PARFAIT ? "parfait-g++" : "${toolchainDir}g++";
+
+if (LINUX.includeMonocle) {
+    LINUX.javafxPlatformProperties = """
+    javafx.platform=monocle
+    monocle.glass.platform=Monocle
+    monocle.monocle.platform=Headless
+    monocle.prism.forceUploadingPainter=true"""
+}
 
 LINUX.glass = [:]
 LINUX.glass.variants = ["glass", "glassgtk2", "glassgtk3"]
