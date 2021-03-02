@@ -128,7 +128,7 @@ JNIEXPORT jint JNICALL Java_com_sun_glass_ui_monocle_EGLScreen_nGetNativeFormat
     return doGetNativeFormat(idx);
 }
 
-JNIEXPORT jint JNICALL Java_com_sun_glass_ui_monocle_EGLScreen_nGetScale
+JNIEXPORT jfloat JNICALL Java_com_sun_glass_ui_monocle_EGLScreen_nGetScale
 (JNIEnv *env, jclass clazz, jint idx)  {
     return doGetScale(idx);
 }
