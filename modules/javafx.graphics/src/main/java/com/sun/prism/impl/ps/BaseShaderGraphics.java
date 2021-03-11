@@ -136,7 +136,9 @@ public abstract class BaseShaderGraphics
         if (tex instanceof MultiTexture) {
             drawMultiTexture((MultiTexture)tex, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
         } else {
+System.err.println("[BaseShaderGraphics] drawTexture, tex = " + tex+", dx2 = " + dx2+" and sx2 = " + sx2);
             super.drawTexture(tex, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
+System.err.println("[BaseShaderGraphics] drawTexture DONE, tex = " + tex+", dx2 = " + dx2+" and sx2 = " + sx2);
         }
     }
 

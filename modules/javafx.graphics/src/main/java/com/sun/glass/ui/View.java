@@ -480,12 +480,12 @@ public abstract class View {
     }
 
     public int getWidth() {
-        Application.checkEventThread();
+        // Application.checkEventThread();
         return this.width;
     }
 
     public int getHeight() {
-        Application.checkEventThread();
+        // Application.checkEventThread();
         return this.height;
     }
 
@@ -871,6 +871,7 @@ public abstract class View {
     }
 
     protected void notifyResize(int width, int height) {
+Thread.dumpStack();
         if (this.width == width && this.height == height) {
             return;
         }

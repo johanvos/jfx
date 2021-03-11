@@ -1501,6 +1501,7 @@ public class Window implements EventTarget {
         }
 
         public void setWindowWidth(final double windowWidth) {
+Thread.dumpStack();
             this.windowWidth = windowWidth;
             setDirty();
         }
@@ -1535,6 +1536,7 @@ public class Window implements EventTarget {
                             final double windowHeight,
                             final double clientWidth,
                             final double clientHeight) {
+Thread.dumpStack();
             this.windowWidth = windowWidth;
             this.windowHeight = windowHeight;
             this.clientWidth = clientWidth;

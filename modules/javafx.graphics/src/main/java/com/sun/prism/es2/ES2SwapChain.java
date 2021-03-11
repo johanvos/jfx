@@ -27,6 +27,7 @@ package com.sun.prism.es2;
 
 import com.sun.glass.ui.Screen;
 import com.sun.javafx.geom.Rectangle;
+import com.sun.javafx.geom.transform.BaseTransform;
 import com.sun.prism.GraphicsResource;
 import com.sun.prism.Presentable;
 import com.sun.prism.PresentableState;
@@ -88,6 +89,7 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
     }
 
     ES2SwapChain(ES2Context context, PresentableState pState) {
+System.err.println("[ES2SwapChain] constructor, pState = " + pState);
         this.context = context;
         this.pState = pState;
         this.pixelScaleFactorX = pState.getRenderScaleX();
@@ -126,7 +128,10 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
     @Override
     public boolean prepare(Rectangle clip) {
         try {
+Thread.dumpStack();
+System.err.println("[ES2SC] prepare, pstate = "+pState);
             ES2Graphics g = ES2Graphics.create(context, this);
+System.err.println("[ES2SC] prepare, g = " + g+" and sbb = " + stableBackbuffer);
             if (stableBackbuffer != null) {
                 if (needsResize) {
                     g.forceRenderTarget();
@@ -141,17 +146,48 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
                 int dw = pState.getOutputWidth();
                 int dh = pState.getOutputHeight();
                 copyFullBuffer = false;
+System.err.println("[ES2SC] prepare, sw = " + sw+", sh = " + sh+", dw = " + dw+", dh = " + dh);
+System.err.println("[ES2SC] prepare, ismsaa = " + isMSAA());
                 if (isMSAA()) {
                     context.flushVertexBuffer();
                     // Note must flip the image vertically during blit
                     g.blit(stableBackbuffer, null,
                             0, 0, sw, sh, 0, dh, dw, 0);
                 } else {
+ // BaseTransform bt = BaseTransform.getRotateInstance(90, 100,100);
+String s0 = System.getenv("s0");
+if (s0 != null) {
+    if (s0.toLowerCase().equals("rl")) { // rotate left
+       BaseTransform bt = BaseTransform.getRotateInstance(-Math.PI/2, sw/2,sh/2);
+       g.transform(bt);
+    }
+    if (s0.toLowerCase().equals("rr")) { // rotate right
+       BaseTransform bt = BaseTransform.getRotateInstance(Math.PI/2, sw/2,sh/2);
+       g.transform(bt);
+    }
+    if (s0.toLowerCase().equals("fv")) { // flip vertical
+       BaseTransform bt = BaseTransform.getRotateInstance(Math.PI, sw/2,sh/2);
+       g.transform(bt);
+    }
+}
+/*
+                    drawTexture(g, stableBackbuffer,
+                                0, 0, dw/2, dh, 0, 0, sw/2, sh);
+BaseTransform bt = BaseTransform.getRotateInstance(Math.PI/6, 0,0);
+g.transform(bt);
+g.translate(0,100,0);
+                    drawTexture(g, stableBackbuffer,
+                                dw/2, 0, dw, dh, sw/2, 0, sw, sh);
+*/
+ // BaseTransform bt = BaseTransform.getRotateInstance(-Math.PI/6, 0,0);
+ // g.transform(bt);
+// g.translate(-200,0,0);
                     drawTexture(g, stableBackbuffer,
                                 0, 0, dw, dh, 0, 0, sw, sh);
                 }
                 stableBackbuffer.unlock();
             }
+System.err.println("[ES2SC] return, drawable = " + drawable);
             return drawable != null;
         } catch (Throwable th) {
             if (PrismSettings.verbose) {
