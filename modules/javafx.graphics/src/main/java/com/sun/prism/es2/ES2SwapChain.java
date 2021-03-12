@@ -163,10 +163,9 @@ if (w0 != null) {
 String w1 = System.getenv("w1"); // width second screen (after rotation)
 int width1 = sw -width0;
 System.err.println("Transform? w0 = " +w0);
-if (w0 != null) {
-    width0 = Integer.parseInt(w0);
+if (w1 != null) {
+    width1 = Integer.parseInt(w1);
 }
-
 
 if (width0 > 0) {
 System.err.println("DRAW a part at " + width0);
@@ -175,8 +174,14 @@ System.err.println("DRAW a part at " + width0);
 }
 String s0 = System.getenv("s0"); // rotation screen1
 String s1 = System.getenv("s1"); // pre-translate screen1
-String s2 = System.getenv("s2");
+String s2x = System.getenv("s2x");
 String s2y = System.getenv("s2y");
+int postTranslateX = width1;
+int postTranslateY = width1;
+if (s2x != null) postTranslateX = Integer.parseInt(s2x);
+if (s2y != null) postTranslateY = Integer.parseInt(s2y);
+
+
 String rp = System.getenv("rp");
 System.err.println("Transform? s0 = " +s0);
 int preTranslateScreen1 = 0;
@@ -186,7 +191,7 @@ if (s0 != null) {
 System.err.println("Transform? s1 = " +preTranslateScreen1);
         g.translate(preTranslateScreen1,0,0);
     }
-int rotpoint = (sw - width0)/2;
+int rotpoint = width0 + width1/2;
 if (rp != null) {
 rotpoint = Integer.parseInt(rp);
 }
@@ -202,16 +207,8 @@ rotpoint = Integer.parseInt(rp);
        BaseTransform bt = BaseTransform.getRotateInstance(Math.PI, (sw-width0)/2,sh/2);
        g.transform(bt);
     }
-    if (s2 != null) {
-        int s2n = Integer.parseInt(s2);
-System.err.println("Transform? s2 = " +s2n);
-        g.translate(s2n,0,0);
-    }
-    if (s2y != null) {
-        int s2yn = Integer.parseInt(s2y);
-System.err.println("Transform? s2 = " +s2yn);
-        g.translate(0, s2yn, 0);
-    }
+    g.translate(postTranslateX,0,0);
+    g.translate(0, postTranslateY, 0);
 }
 /*
                     drawTexture(g, stableBackbuffer,
