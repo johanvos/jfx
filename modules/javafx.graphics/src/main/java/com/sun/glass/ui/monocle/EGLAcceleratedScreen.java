@@ -73,7 +73,6 @@ public class EGLAcceleratedScreen extends AcceleratedScreen {
 
     @Override
     public boolean swapBuffers() {
-Thread.dumpStack();
         boolean result = false;
         synchronized (NativeScreen.framebufferSwapLock) {
             result = nEglSwapBuffers(eglDisplay, eglSurface);
