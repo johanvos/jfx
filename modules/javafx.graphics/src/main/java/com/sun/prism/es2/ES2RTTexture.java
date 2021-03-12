@@ -56,7 +56,6 @@ class ES2RTTexture extends ES2Texture<ES2RTTextureData>
                 contentWidth, contentHeight,
                 maxContentWidth, maxContentHeight, false);
 System.err.println("Created ES2RTT, pw = " + physicalWidth+" , ph = " + physicalHeight + ", cw = " + contentWidth+", ch = " + contentHeight+", wm = " + wrapMode);
-Thread.dumpStack();
         PrismTrace.rttCreated(resource.getResource().getFboID(),
                               physicalWidth, physicalHeight,
                               PixelFormat.BYTE_BGRA_PRE.getBytesPerPixelUnit());

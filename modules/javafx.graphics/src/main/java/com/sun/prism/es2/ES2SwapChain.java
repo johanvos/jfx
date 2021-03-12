@@ -89,7 +89,6 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
     }
 
     ES2SwapChain(ES2Context context, PresentableState pState) {
-System.err.println("[ES2SwapChain] constructor, pState = " + pState);
         this.context = context;
         this.pState = pState;
         this.pixelScaleFactorX = pState.getRenderScaleX();
@@ -128,7 +127,6 @@ System.err.println("[ES2SwapChain] constructor, pState = " + pState);
     @Override
     public boolean prepare(Rectangle clip) {
         try {
-System.err.println("[ES2SC] prepare, pstate = "+pState);
             ES2Graphics g = ES2Graphics.create(context, this);
 System.err.println("[ES2SC] prepare, g = " + g+" and sbb = " + stableBackbuffer);
             if (stableBackbuffer != null) {

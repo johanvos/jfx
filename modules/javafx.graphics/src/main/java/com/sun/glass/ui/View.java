@@ -871,7 +871,6 @@ public abstract class View {
     }
 
     protected void notifyResize(int width, int height) {
-Thread.dumpStack();
         if (this.width == width && this.height == height) {
             return;
         }
