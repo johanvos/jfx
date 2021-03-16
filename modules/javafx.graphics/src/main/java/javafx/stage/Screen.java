@@ -75,6 +75,7 @@ public final class Screen {
     }
 
     private Screen() {
+Thread.dumpStack();
     }
 
     private static void checkDirty() {
@@ -84,6 +85,8 @@ public final class Screen {
     }
 
     private static void updateConfiguration() {
+Thread.dumpStack();
+System.err.println("Toolkit = " + Toolkit.getToolkit());
         Object primaryScreen = Toolkit.getToolkit().getPrimaryScreen();
         Screen screenTmp = nativeToScreen(primaryScreen, Screen.primary);
         if (screenTmp != null) {
@@ -122,6 +125,7 @@ public final class Screen {
 
     // returns null if the new one is to be equal the old one
     private static Screen nativeToScreen(Object obj, Screen screen) {
+System.err.println("NativeToScreen, obj = " +obj+" of class " + obj.getClass()+" and screen = " + screen);
         int minX = accessor.getMinX(obj);
         int minY = accessor.getMinY(obj);
         int width = accessor.getWidth(obj);

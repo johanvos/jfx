@@ -747,6 +747,7 @@ public final class QuantumToolkit extends Toolkit {
     }
 
     @Override public Object getPrimaryScreen() {
+System.err.println("QT, getPrimaryScreen");
         return Screen.getMainScreen();
     }
 

@@ -226,15 +226,18 @@ public abstract class Toolkit {
         if (forcedToolkit == null) {
             forcedToolkit = tk;
         }
+System.err.println("GT, ft = " +forcedToolkit+", tk = " + tk);
         if (forcedToolkit == null) {
             userSpecifiedToolkit = false;
             forcedToolkit = getDefaultToolkit();
         }
+System.err.println("GT2, ft = " +forcedToolkit+", tk = " + tk);
 
         if (forcedToolkit.indexOf('.') == -1) {
             // Turn a short name into a fully qualified classname
             forcedToolkit = lookupToolkitClass(forcedToolkit);
         }
+System.err.println("GT3, ft = " +forcedToolkit+", tk = " + tk);
 
         boolean printToolkit = verbose
                 || (userSpecifiedToolkit && !forcedToolkit.endsWith("StubToolkit"));

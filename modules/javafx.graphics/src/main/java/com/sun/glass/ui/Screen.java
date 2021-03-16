@@ -58,6 +58,7 @@ public final class Screen {
      * @return the main screen
      */
     public static Screen getMainScreen() {
+System.err.println("Screens, getMainScreen, screens = " + screens);
         return getScreens().get(0);
     }
 
@@ -130,6 +131,7 @@ public final class Screen {
             float outputScaleX,
             float outputScaleY
             ) {
+Thread.dumpStack();
         this.ptr = nativePtr;
 
         this.depth = depth;
