@@ -163,7 +163,6 @@ abstract class ViewPainter implements Runnable {
     }
 
     protected void paintImpl(final Graphics backBufferGraphics) {
-System.err.println("[VIEWPAINTER] [PAINTIMPL] start, w = " + width+", h = " + height);
         // We should not be painting anything with a width / height
         // that is <= 0, so we might as well bail right off.
         if (width <= 0 || height <= 0 || backBufferGraphics == null) {
@@ -307,7 +306,6 @@ System.err.println("[VIEWPAINTER] [PAINTIMPL] start, w = " + width+", h = " + he
             // Paint each dirty region
             for (int i = 0; i < dirtyRegionSize; ++i) {
                 final RectBounds dirtyRegion = dirtyRegionContainer.getDirtyRegion(i);
-System.err.println("[ViewPAinter] paint dirty region: " + dirtyRegion);
                 // TODO it should be impossible to have ever created a dirty region that was empty...
                 // Make sure we are not trying to render in some invalid region
                 if (dirtyRegion.getWidth() > 0 && dirtyRegion.getHeight() > 0) {
@@ -325,7 +323,6 @@ System.err.println("[ViewPAinter] paint dirty region: " + dirtyRegion);
                 }
             }
         } else {
-System.err.println("[VP] no dirty regions, paint everything");
             // There are no dirty regions, so just paint everything
             g.setHasPreCullingBits(false);
             g.setClipRect(null);
@@ -391,7 +388,6 @@ System.err.println("[VP] no dirty regions, paint everything");
             }
             root.clearPainted();
         }
-System.err.println("[VIEWPAINTER] [PAINTIMPL] done");
     }
 
     /**
@@ -464,7 +460,6 @@ System.err.println("[VIEWPAINTER] [PAINTIMPL] done");
             PulseLogger.newPhase("Painting");
         }
         GlassScene scene = sceneState.getScene();
-System.err.println("[ViewPainter] doPaint called, glassscene = " + scene+" of class " + scene.getClass()+" width w = " + width+" and h = " + height);
         scene.clearEntireSceneDirty();
         g.setLights(scene.getLights());
         g.setDepthBuffer(scene.getDepthBuffer());

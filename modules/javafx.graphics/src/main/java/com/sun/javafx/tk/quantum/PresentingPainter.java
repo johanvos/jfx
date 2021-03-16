@@ -85,10 +85,8 @@ final class PresentingPainter extends ViewPainter {
 
             if (presentable != null) {
                 Graphics g = presentable.createGraphics();
-System.err.println("[PresentingPainter.run] Graphics = " + g);
 
                 ViewScene vs = (ViewScene) sceneState.getScene();
-System.err.println("[PresentingPainter.run] ViewScene = " + vs);
                 if (g != null) {
                     paintImpl(g);
                     freshBackBuffer = false;
@@ -97,13 +95,11 @@ System.err.println("[PresentingPainter.run] ViewScene = " + vs);
                 if (PULSE_LOGGING_ENABLED) {
                     PulseLogger.newPhase("Presenting");
                 }
-System.err.println("[JVDBG] VP, presentable = " + presentable+", prepare now");
                 if (!presentable.prepare(null)) {
                     disposePresentable();
                     sceneState.getScene().entireSceneNeedsRepaint();
                     return;
                 }
-System.err.println("[JVDBG] VP, presentable = " + presentable+", prepared ");
 
                 /* present for vsync buffer swap */
                 if (vs.getDoPresent()) {

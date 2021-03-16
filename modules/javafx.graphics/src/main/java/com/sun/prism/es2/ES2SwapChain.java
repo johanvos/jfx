@@ -70,6 +70,18 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
     private RTTexture stableBackbuffer;
     private boolean copyFullBuffer;
 
+    private int width0 = 0;
+    private final int fixedWidth1;
+    private final int fixedPostTranslateX;
+    private final int fixedPostTranslateY;
+    private final int fixedRotPoint;
+
+    private final String s0;
+    private final String s1;
+    private final String s2x;
+    private final String s2y;
+    private final String rp;
+
     @Override
     public boolean isOpaque() {
         if (stableBackbuffer != null) {
@@ -97,6 +109,36 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
         long nativeWindow = pState.getNativeWindow();
         drawable = ES2Pipeline.glFactory.createGLDrawable(
                 nativeWindow, context.getPixelFormat());
+        String w0 = System.getenv("w0"); // width first screen
+        if (w0 != null) {
+            width0 = Integer.parseInt(w0);
+        }
+        String w1 = System.getenv("w1"); // width second screen (after rotation)
+        if (w1 != null) {
+            fixedWidth1 = Integer.parseInt(w1);
+        } else {
+            fixedWidth1 = -1;
+        }
+        s0 = System.getenv("s0"); // rotation screen1
+        s1 = System.getenv("s1"); // pre-translate screen1
+        s2x = System.getenv("s2x");
+        s2y = System.getenv("s2y");
+        if (s2x != null) {
+            fixedPostTranslateX = Integer.parseInt(s2x);
+        } else {
+            fixedPostTranslateX = -1;
+        }
+        if (s2y != null) {
+            fixedPostTranslateY = Integer.parseInt(s2y);
+        } else {
+            fixedPostTranslateY = -1;
+        }
+        rp = System.getenv("rp");
+        if (rp != null) {
+            fixedRotPoint = Integer.parseInt(rp);
+        } else {
+            fixedRotPoint = -1;
+        }
     }
 
     @Override
@@ -128,7 +170,6 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
     public boolean prepare(Rectangle clip) {
         try {
             ES2Graphics g = ES2Graphics.create(context, this);
-System.err.println("[ES2SC] prepare, g = " + g+" and sbb = " + stableBackbuffer);
             if (stableBackbuffer != null) {
                 if (needsResize) {
                     g.forceRenderTarget();
@@ -142,91 +183,47 @@ System.err.println("[ES2SC] prepare, g = " + g+" and sbb = " + stableBackbuffer)
                 int sh = h;
                 int dw = pState.getOutputWidth();
                 int dh = pState.getOutputHeight();
+                // fixed width1 overrules width1
+                int width1 = (fixedWidth1 < 0) ? (sw - width0) : fixedWidth1;
                 copyFullBuffer = false;
-System.err.println("[ES2SC] prepare, sw = " + sw+", sh = " + sh+", dw = " + dw+", dh = " + dh);
-System.err.println("[ES2SC] prepare, ismsaa = " + isMSAA());
                 if (isMSAA()) {
                     context.flushVertexBuffer();
                     // Note must flip the image vertically during blit
                     g.blit(stableBackbuffer, null,
                             0, 0, sw, sh, 0, dh, dw, 0);
                 } else {
- // BaseTransform bt = BaseTransform.getRotateInstance(90, 100,100);
-String w0 = System.getenv("w0"); // width first screen
-int width0 = 0;
-System.err.println("Transform? w0 = " +w0);
-if (w0 != null) {
-    width0 = Integer.parseInt(w0);
-}
-String w1 = System.getenv("w1"); // width second screen (after rotation)
-int width1 = sw -width0;
-System.err.println("Transform? w0 = " +w0);
-if (w1 != null) {
-    width1 = Integer.parseInt(w1);
-}
+                    if (width0 > 0) {
+                        drawTexture(g, stableBackbuffer, 0, 0, width0, dh, 0, 0, width0, sh);
+                    }
+                    int postTranslateX = (fixedPostTranslateX < 0) ? width1 : fixedPostTranslateX;
+                    int postTranslateY = (fixedPostTranslateY < 0) ? width1 : fixedPostTranslateY;
 
-if (width0 > 0) {
-System.err.println("DRAW a part at " + width0);
-   drawTexture(g, stableBackbuffer, 0, 0, width0, dh, 0, 0, width0, sh);
-    
-}
-String s0 = System.getenv("s0"); // rotation screen1
-String s1 = System.getenv("s1"); // pre-translate screen1
-String s2x = System.getenv("s2x");
-String s2y = System.getenv("s2y");
-int postTranslateX = width1;
-int postTranslateY = width1;
-if (s2x != null) postTranslateX = Integer.parseInt(s2x);
-if (s2y != null) postTranslateY = Integer.parseInt(s2y);
-
-
-String rp = System.getenv("rp");
-System.err.println("Transform? s0 = " +s0);
-int preTranslateScreen1 = 0;
-if (s0 != null) {
-    if (s1 != null) {
-        preTranslateScreen1 = Integer.parseInt(s1);
-System.err.println("Transform? s1 = " +preTranslateScreen1);
-        g.translate(preTranslateScreen1,0,0);
-    }
-int rotpoint = width0 + width1/2;
-if (rp != null) {
-rotpoint = Integer.parseInt(rp);
-}
-    if (s0.toLowerCase().equals("rl")) { // rotate left
-       BaseTransform bt = BaseTransform.getRotateInstance(-Math.PI/2, rotpoint,sh/2);
-       g.transform(bt);
-    }
-    if (s0.toLowerCase().equals("rr")) { // rotate right
-       BaseTransform bt = BaseTransform.getRotateInstance(Math.PI/2, (sw-width0)/2,sh/2);
-       g.transform(bt);
-    }
-    if (s0.toLowerCase().equals("fv")) { // flip vertical
-       BaseTransform bt = BaseTransform.getRotateInstance(Math.PI, (sw-width0)/2,sh/2);
-       g.transform(bt);
-    }
-    g.translate(postTranslateX,0,0);
-    g.translate(0, postTranslateY, 0);
-}
-/*
-                    drawTexture(g, stableBackbuffer,
-                                0, 0, dw/2, dh, 0, 0, sw/2, sh);
-BaseTransform bt = BaseTransform.getRotateInstance(Math.PI/6, 0,0);
-g.transform(bt);
-g.translate(0,100,0);
-                    drawTexture(g, stableBackbuffer,
-                                dw/2, 0, dw, dh, sw/2, 0, sw, sh);
-*/
- // BaseTransform bt = BaseTransform.getRotateInstance(-Math.PI/6, 0,0);
- // g.transform(bt);
-// g.translate(-200,0,0);
-System.err.println("[ES2] maindrawtexture now: w0 = "+width0+", dw = " + dw+", sh = " + dh+", sw = " +sw+", sh = " + sh);
+                    int preTranslateScreen1 = 0;
+                    if (s0 != null) {
+                        if (s1 != null) {
+                            preTranslateScreen1 = Integer.parseInt(s1);
+                            g.translate(preTranslateScreen1,0,0);
+                        }
+                        int rotpoint = fixedRotPoint < 0 ? (width0 + width1/2): fixedRotPoint;
+                        if (s0.toLowerCase().equals("rl")) { // rotate left
+                           BaseTransform bt = BaseTransform.getRotateInstance(-Math.PI/2, rotpoint,sh/2);
+                           g.transform(bt);
+                        }
+                        if (s0.toLowerCase().equals("rr")) { // rotate right
+                           BaseTransform bt = BaseTransform.getRotateInstance(Math.PI/2, (sw-width0)/2,sh/2);
+                           g.transform(bt);
+                        }
+                        if (s0.toLowerCase().equals("fv")) { // flip vertical
+                           BaseTransform bt = BaseTransform.getRotateInstance(Math.PI, (sw-width0)/2,sh/2);
+                           g.transform(bt);
+                        }
+                        g.translate(postTranslateX,postTranslateY,0);
+                    }
                     drawTexture(g, stableBackbuffer,
                                 width0, 0, dw, dh, width0, 0, sw, sh);
                 }
                 stableBackbuffer.unlock();
             }
-System.err.println("[ES2SC] return, drawable = " + drawable);
             return drawable != null;
         } catch (Throwable th) {
             if (PrismSettings.verbose) {
