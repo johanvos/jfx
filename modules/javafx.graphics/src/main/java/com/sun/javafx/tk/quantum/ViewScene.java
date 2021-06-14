@@ -116,8 +116,11 @@ class ViewScene extends GlassScene {
 
     @Override
     public void setCursor(final Object cursor) {
+System.err.println("SET CURSOR ignored");
+/*
         super.setCursor(cursor);
         Application.invokeLater(() -> {
+System.err.println(Thread.currentThread()+" SETCURSOR start");
             final CursorFrame cursorFrame = (CursorFrame) cursor;
             final Cursor platformCursor =
                     CursorUtils.getPlatformCursor(cursorFrame);
@@ -128,7 +131,9 @@ class ViewScene extends GlassScene {
                     window.setCursor(platformCursor);
                 }
             }
+System.err.println(Thread.currentThread()+" SETCURSOR done");
         });
+*/
     }
 
     @Override void repaint() {

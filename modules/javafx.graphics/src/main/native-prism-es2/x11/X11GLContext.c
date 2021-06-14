@@ -41,6 +41,7 @@
 JNIEXPORT jlong JNICALL Java_com_sun_prism_es2_X11GLContext_nInitialize
 (JNIEnv *env, jclass class, jlong nativeDInfo, jlong nativePFInfo,
         jboolean vSyncRequested) {
+fprintf(stderr, "NITIT2\n");
     const char *glVersion;
     const char *glVendor;
     const char *glRenderer;

@@ -163,6 +163,7 @@ abstract class ViewPainter implements Runnable {
     }
 
     protected void paintImpl(final Graphics backBufferGraphics) {
+System.err.println(Thread.currentThread()+" ViewPainter, start paintImpl");
         // We should not be painting anything with a width / height
         // that is <= 0, so we might as well bail right off.
         if (width <= 0 || height <= 0 || backBufferGraphics == null) {
@@ -388,6 +389,7 @@ abstract class ViewPainter implements Runnable {
             }
             root.clearPainted();
         }
+System.err.println(Thread.currentThread()+" ViewPainter, painted");
     }
 
     /**

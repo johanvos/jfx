@@ -283,6 +283,15 @@ public final class WebPage {
     }
 
     private void updateDirty(WCRectangle clip) {
+System.err.println(Thread.currentThread()+" [WEBPAGE] updateDirty called, wait a bit.");
+/*
+try {
+Thread.sleep(5000);
+} catch (Exception e) {
+e.printStackTrace();
+}
+*/
+System.err.println("continue");
         if (paintLog.isLoggable(Level.FINEST)) {
             paintLog.finest("Entering, dirtyRects: {0}, currentFrame: {1}",
                     new Object[] {dirtyRects, currentFrame});
@@ -300,6 +309,8 @@ public final class WebPage {
         }
         List<WCRectangle> oldDirtyRects = dirtyRects;
         dirtyRects = new LinkedList<WCRectangle>();
+System.err.println("[WEBPAGE] twkPrePaint will now be called");
+Thread.dumpStack();
         twkPrePaint(getPage());
         while (!oldDirtyRects.isEmpty()) {
             WCRectangle r = oldDirtyRects.remove(0).intersection(clip);

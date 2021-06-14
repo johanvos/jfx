@@ -103,6 +103,7 @@ class X11GLFactory extends GLFactory {
 
     @Override
     GLContext createGLContext(long nativeCtxInfo) {
+Thread.dumpStack();
         return new X11GLContext(nativeCtxInfo);
     }
 
@@ -110,16 +111,19 @@ class X11GLFactory extends GLFactory {
     GLContext createGLContext(GLDrawable drawable, GLPixelFormat pixelFormat,
             GLContext shareCtx, boolean vSyncRequest) {
         // No need to pass down shareCtx as we don't use shared ctx on X11
+Thread.dumpStack();
         return new X11GLContext(drawable, pixelFormat, vSyncRequest);
     }
 
     @Override
     GLDrawable createDummyGLDrawable(GLPixelFormat pixelFormat) {
+Thread.dumpStack();
         return new X11GLDrawable(pixelFormat);
     }
 
     @Override
     GLDrawable createGLDrawable(long nativeWindow, GLPixelFormat pixelFormat) {
+Thread.dumpStack();
         return new X11GLDrawable(nativeWindow, pixelFormat);
     }
 
@@ -130,6 +134,7 @@ class X11GLFactory extends GLFactory {
 
     @Override
     boolean initialize(Class psClass, Attributes attrs) {
+Thread.dumpStack();
 
         // holds the list of attributes to be translated for native call
         int attrArr[] = new int[GLPixelFormat.Attributes.NUM_ITEMS];

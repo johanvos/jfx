@@ -380,6 +380,7 @@ void FrameViewLayoutContext::disableSetNeedsLayout()
 
 void FrameViewLayoutContext::scheduleLayout()
 {
+fprintf(stderr, "scheduleLayout called\n");
     // FIXME: We should assert the page is not in the back/forward cache, but that is causing
     // too many false assertions. See <rdar://problem/7218118>.
     ASSERT(frame().view() == &view());
@@ -406,11 +407,14 @@ void FrameViewLayoutContext::scheduleLayout()
         LOG(Layout, "FrameView %p layout timer scheduled at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
 #endif
 
-#if PLATFORM(JAVA)
+// #if PLATFORM(JAVA)
+#if 0
+fprintf(stderr, "[FVLC] startOneShot in 250ms!\n");
     // scheduleLayout will be called from prePaint in next updateContent cycle.
     const Seconds layoutScheduleThreshold = 250_ms;
     m_layoutTimer.startOneShot(layoutScheduleThreshold);
 #else
+fprintf(stderr, "[FVLC] startOneShot now!\n");
     m_layoutTimer.startOneShot(0_s);
 #endif
 }
@@ -487,6 +491,7 @@ void FrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoot)
 
 void FrameViewLayoutContext::layoutTimerFired()
 {
+        fprintf(stderr, "FrameView %p layout timer fired ", this);
 #if !LOG_DISABLED
     if (!frame().document()->ownerElement())
         LOG(Layout, "FrameView %p layout timer fired at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());

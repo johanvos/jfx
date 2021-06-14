@@ -411,12 +411,15 @@ public abstract class Toolkit {
         }
 
         AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+System.err.println("[RP] on listener " + listener);
             listener.pulse();
+System.err.println("[RP] done on listener " + listener);
             return null;
         }, acc);
     }
 
     public void firePulse() {
+System.err.println("[FIREPULSE] START");
         // Stages need to be notified of pulses before scenes so the Stage can resized
         // and those changes propogated to scene before it gets its pulse to update
 
@@ -446,6 +449,7 @@ public abstract class Toolkit {
         if (lastTkPulseListener != null) {
             runPulse(lastTkPulseListener, lastTkPulseAcc);
         }
+System.err.println("[FIREPULSE] DONE");
     }
     public void addStageTkPulseListener(TKPulseListener listener) {
         if (listener == null) {

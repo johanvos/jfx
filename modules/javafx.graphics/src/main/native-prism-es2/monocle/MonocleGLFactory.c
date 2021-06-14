@@ -65,6 +65,7 @@ fprintf(stderr, "In JNI_OnLoad_prism_es2\n");
 
 JNIEXPORT jlong JNICALL Java_com_sun_prism_es2_MonocleGLFactory_nPopulateNativeCtxInfo
 (JNIEnv *env, jclass clazz, jlong libraryHandle) {
+fprintf(stderr, "npopcont\n");
     ContextInfo *ctxInfo = NULL;
 
     /* Note: We are only storing the string information of a driver.

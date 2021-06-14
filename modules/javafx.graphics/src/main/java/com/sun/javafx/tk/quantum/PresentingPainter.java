@@ -42,6 +42,7 @@ final class PresentingPainter extends ViewPainter {
     }
 
     @Override public void run() {
+System.err.println(Thread.currentThread()+" [PP] run start");
         renderLock.lock();
 
         boolean locked = false;
@@ -49,6 +50,12 @@ final class PresentingPainter extends ViewPainter {
         boolean errored = false;
 
         try {
+System.err.println(Thread.currentThread()+" [PP] 1 run start");
+System.err.println("factory = " + factory);
+if (1 < 2) {
+System.err.println("return from rendering");
+return;
+}
             valid = validateStageGraphics();
             if (!valid) {
                 if (QuantumToolkit.verbose) {
@@ -68,15 +75,18 @@ final class PresentingPainter extends ViewPainter {
             if (factory == null) {
                 factory = GraphicsPipeline.getDefaultResourceFactory();
             }
+System.err.println("factory2 = " + factory);
             if (factory == null || !factory.isDeviceReady()) {
                 sceneState.getScene().entireSceneNeedsRepaint();
                 factory = null;
                 return;
             }
+System.err.println("factory3 = " + factory);
 
             if (presentable != null && presentable.lockResources(sceneState)) {
                 disposePresentable();
             }
+System.err.println(Thread.currentThread()+" [PP]2 run start");
             if (presentable == null) {
                 presentable = factory.createPresentable(sceneState);
                 penWidth  = viewWidth;
@@ -84,15 +94,21 @@ final class PresentingPainter extends ViewPainter {
                 freshBackBuffer = true;
             }
 
+System.err.println(Thread.currentThread()+" [PP]3 run start");
+System.err.println("factory3 = " + factory);
+System.err.println("Presentable = " + presentable);
             if (presentable != null) {
                 Graphics g = presentable.createGraphics();
+System.err.println("graphics = " + g);
 
+System.err.println(Thread.currentThread()+" [PP]4 run start");
                 ViewScene vs = (ViewScene) sceneState.getScene();
                 if (g != null) {
                     paintImpl(g);
                     freshBackBuffer = false;
                 }
 
+System.err.println(Thread.currentThread()+" [PP]5 run start");
                 if (PULSE_LOGGING_ENABLED) {
                     PulseLogger.newPhase("Presenting");
                 }
@@ -102,6 +118,7 @@ final class PresentingPainter extends ViewPainter {
                     return;
                 }
 
+System.err.println(Thread.currentThread()+" [PP]6 run start");
                 /* present for vsync buffer swap */
                 if (vs.getDoPresent()) {
                     if (!presentable.present()) {
@@ -109,6 +126,7 @@ final class PresentingPainter extends ViewPainter {
                         sceneState.getScene().entireSceneNeedsRepaint();
                     }
                 }
+System.err.println(Thread.currentThread()+" [PP]7 run start");
             }
         } catch (Throwable th) {
             errored = true;
@@ -129,5 +147,6 @@ final class PresentingPainter extends ViewPainter {
 
             renderLock.unlock();
         }
+System.err.println(Thread.currentThread()+" [PP] run done");
     }
 }

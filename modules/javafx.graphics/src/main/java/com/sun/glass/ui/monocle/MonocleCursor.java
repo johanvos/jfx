@@ -50,6 +50,8 @@ final class MonocleCursor extends Cursor {
 
     void applyCursor() {
         int type = getType();
+System.err.println("[MONOCLECursor] applyCursor for " + this);
+Thread.dumpStack();
         if (type == CURSOR_NONE) {
             // CURSOR_NONE is mapped to setVisible(false) and will be registered
             // in MonocleApplication as a preference to not show the cursor.
@@ -57,6 +59,7 @@ final class MonocleCursor extends Cursor {
                     .staticCursor_setVisible(false);
         } else {
             NativeCursor cursor = NativePlatformFactory.getNativePlatform().getCursor();
+System.err.println("[MONOCLECursor] nativeCursor = " + cursor);
             cursor.setImage(image);
             ((MonocleApplication) Application.GetApplication())
                     .staticCursor_setVisible(true);

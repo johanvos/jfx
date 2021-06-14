@@ -165,6 +165,7 @@ static int x11errorDetector (Display *dpy, XErrorEvent *error)
  */
 JNIEXPORT jlong JNICALL Java_com_sun_prism_es2_X11GLFactory_nInitialize
 (JNIEnv *env, jclass class, jintArray attrArr) {
+fprintf(stderr, "NINIT\n");
 
     int glxAttrs[MAX_GLX_ATTRS_LENGTH]; /* value, attr pair plus a None */
     jint *attrs;
