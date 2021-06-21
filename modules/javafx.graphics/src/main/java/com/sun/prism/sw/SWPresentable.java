@@ -70,6 +70,7 @@ final class SWPresentable extends SWRTTexture implements Presentable {
     }
 
     public boolean present() {
+System.err.println("SWPresentable: [PRESENT]");
         pixelSource.enqueuePixels(pixels);
         pState.uploadPixels(pixelSource);
         return true;

@@ -26,6 +26,7 @@
 package com.sun.prism.es2;
 
 import com.sun.javafx.PlatformUtil;
+import com.sun.javafx.image.impl.*;
 import com.sun.prism.Image;
 import com.sun.prism.Texture;
 import com.sun.prism.MediaFrame;
@@ -97,11 +98,13 @@ class ES2Texture<T extends ES2TextureData> extends BaseTexture<ES2TextureResourc
 
     static ES2Texture create(ES2Context context, PixelFormat format,
             WrapMode wrapMode, int w, int h, boolean useMipmap) {
+/*
         if (!context.getResourceFactory().isFormatSupported(format)) {
             throw new UnsupportedOperationException(
                     "Pixel format " + format
                     + " not supported on this device");
         }
+*/
 
         if (format == PixelFormat.MULTI_YCbCr_420) {
             throw new IllegalArgumentException("Format requires multitexturing: " + format);
@@ -199,19 +202,25 @@ class ES2Texture<T extends ES2TextureData> extends BaseTexture<ES2TextureResourc
         }
 
         // save current texture object for this texture unit
+// System.err.println("[ES2Texture] create new texture, save bound texture first");
         int savedTex = glCtx.getBoundTexture();
+// System.err.println("[ES2Texture] created texture was " + savedTex+", create data now");
         ES2TextureData texData =
             new ES2TextureData(context, glCtx.genAndBindTexture(),
                                texWidth, texHeight, size);
+// System.err.println("[ES2Texture] create textData done, create new texRes now");
         ES2TextureResource texRes = new ES2TextureResource(texData);
+// System.err.println("[ES2Texture] created texRes with data done, uploading pixels now");
 
         boolean result = uploadPixels(glCtx, GLContext.GL_TEXTURE_2D, null, format,
                                       texWidth, texHeight,
                                       contentX, contentY,
                                       0, 0, contentW, contentH, 0, true, useMipmap);
+// System.err.println("[ES2Texture] uploaded pixels, set mipmap to "+useMipmap);
         glCtx.texParamsMinMax(GLContext.GL_LINEAR, useMipmap);
 
         // restore previous texture objects
+// System.err.println("[ES2Texture] create new texture DONE, restore save bound texture now");
         glCtx.setBoundTexture(savedTex);
 
         if (!result) {
@@ -316,6 +325,20 @@ class ES2Texture<T extends ES2TextureData> extends BaseTexture<ES2TextureResourc
         return tex;
     }
 
+static private void printRelevantPixels(Buffer pixels) {
+if (pixels != null) {
+System.err.println("arr = " + pixels.array());
+byte[] bb = (byte[])pixels.array();
+System.err.println("length = " + bb.length);
+int fnd = 0;
+  for (int i = 0; i < bb.length; i++) {
+    if ((bb[i] != 0) && (fnd < 50))  {
+      System.err.println("bb["+i+"] = " + bb[i]);
+      fnd++;
+    }
+  }
+}
+}
     private static boolean uploadPixels(GLContext glCtx, int target,
             Buffer pixels, PixelFormat format, int texw, int texh,
             int dstx, int dsty, int srcx, int srcy, int srcw, int srch,
@@ -324,8 +347,12 @@ class ES2Texture<T extends ES2TextureData> extends BaseTexture<ES2TextureResourc
         int internalFormat;
         int pixelFormat;
         int pixelType;
-        boolean isGL2 = ES2Pipeline.glFactory.isGL2();
+        boolean isGL2 = false;//ES2Pipeline.glFactory.isGL2();
+// System.err.println("UPLOADPIXELS CALLED, srcscan = " + srcscan+", texw = " + texw+", texh = " + texh+", srcw = " + srcw);
+// System.err.println("BUFFER = " + pixels);
+// printRelevantPixels(pixels);
 
+// System.err.println("Switch on format, format = " + format+" and isWeb = " + PlatformUtil.isWeb());
         switch (format) {
             case BYTE_BGRA_PRE:
             case INT_ARGB_PRE:
@@ -334,7 +361,7 @@ class ES2Texture<T extends ES2TextureData> extends BaseTexture<ES2TextureResourc
                 // Note: GL_BGRA not supported in OpenGL ES; developers should
                 // call ResourceFactory.isFormatSupported() to check availability.
                 pixelFormat = GLContext.GL_BGRA;
-                if (!isGL2) {
+                if (!isGL2 || PlatformUtil.isWeb()) {
                     // BGRA supported on iOS
                     if (!PlatformUtil.isIOS()) {
                         // for OpenGLES, BGRA can be supported by extension - if
@@ -344,6 +371,22 @@ class ES2Texture<T extends ES2TextureData> extends BaseTexture<ES2TextureResourc
                             internalFormat = pixelFormat = GLContext.GL_BGRA;
                         } else {
                             pixelFormat = GLContext.GL_RGBA;
+// System.err.println("SWAP BYTES");
+ByteBuffer bb = (ByteBuffer)pixels;
+if (pixels != null) {
+for (int i = 0; i < texw * texh; i++) {
+byte byte_b = bb.get(i*4);
+byte byte_r = bb.get(i*4+1);
+byte byte_g = bb.get(i*4+2);
+byte byte_a = bb.get(i*4 + 3);
+bb.put(i*4,byte_g);
+bb.put(i*4+2,byte_b);
+}
+// printRelevantPixels(pixels);
+// System.err.println("done SWAP BYTES");
+}
+
+
                         }
                     }
                     pixelType = GLContext.GL_UNSIGNED_BYTE;
@@ -395,6 +438,7 @@ class ES2Texture<T extends ES2TextureData> extends BaseTexture<ES2TextureResourc
             default:
                 throw new InternalError("Image format not supported: " + format);
         }
+// System.out.println("UPLOADPIXELS, format = " + format+", internalFormat = " + internalFormat+", pixelFormat = " + pixelFormat+", pixelType = " + pixelType);
 
         if (!isGL2 && (internalFormat != pixelFormat) && !PlatformUtil.isIOS()) {
             throw new InternalError(

@@ -31,6 +31,7 @@ import com.sun.javafx.iio.bmp.BMPImageLoaderFactory;
 import com.sun.javafx.iio.common.ImageTools;
 import com.sun.javafx.iio.gif.GIFImageLoaderFactory;
 import com.sun.javafx.iio.ios.IosImageLoaderFactory;
+import com.sun.javafx.iio.web.WebImageLoaderFactory;
 import com.sun.javafx.iio.jpeg.JPEGImageLoaderFactory;
 import com.sun.javafx.iio.png.PNGImageLoaderFactory;
 import com.sun.javafx.util.DataURI;
@@ -120,6 +121,7 @@ public class ImageStorage {
     private static final HashMap<Signature, ImageLoaderFactory> loaderFactoriesBySignature;
     private static final ImageLoaderFactory[] loaderFactories;
     private static final boolean isIOS = PlatformUtil.isIOS();
+    private static final boolean isWEB = false; // we don't use the special webloader anymore (the defaults one are working now)
 
     private static int maxSignatureLength;
 
@@ -129,6 +131,10 @@ public class ImageStorage {
             //for all image formats
             loaderFactories = new ImageLoaderFactory[]{
                 IosImageLoaderFactory.getInstance()
+            };
+        } else if (isWEB) {
+            loaderFactories = new ImageLoaderFactory[]{
+                WebImageLoaderFactory.getInstance()
             };
         } else {
             loaderFactories = new ImageLoaderFactory[]{
@@ -261,7 +267,9 @@ public class ImageStorage {
         ImageFrame[] images = null;
 
         try {
-            if (isIOS) {
+            if (isWEB) {
+                loader = WebImageLoaderFactory.getInstance().createImageLoader(input);
+            } else if (isIOS) {
                 // no extension/signature recognition done here,
                 // we always want the iOS native loader
                 loader = IosImageLoaderFactory.getInstance().createImageLoader(input);

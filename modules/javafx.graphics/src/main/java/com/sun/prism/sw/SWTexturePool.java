@@ -36,7 +36,8 @@ class SWTexturePool extends BaseResourcePool<SWTexture>
     static final SWTexturePool instance = new SWTexturePool();
 
     private static long maxVram() {
-        long heapmax = Runtime.getRuntime().maxMemory();
+        // long heapmax = Runtime.getRuntime().maxMemory();
+        long heapmax = 1024 * 1024 * 1024;
         long setmax = PrismSettings.maxVram;
         return Math.min(heapmax / 4, setmax);
     }

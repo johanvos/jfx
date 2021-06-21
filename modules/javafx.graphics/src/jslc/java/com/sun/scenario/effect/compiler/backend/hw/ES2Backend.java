@@ -104,7 +104,7 @@ public class ES2Backend extends GLSLBackend {
         // that could live with mediump or lowp; should experiment with
         // using lower precision by default...
         sb.append("#ifdef GL_ES\n");
-        sb.append("#extension GL_OES_standard_derivatives : enable\n");
+        // sb.append("#extension GL_OES_standard_derivatives : enable\n");
         sb.append("#ifdef GL_FRAGMENT_PRECISION_HIGH\n");
         sb.append("precision highp float;\n");
         sb.append("precision highp int;\n");

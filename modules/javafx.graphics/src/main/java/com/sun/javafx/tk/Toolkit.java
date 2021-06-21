@@ -194,14 +194,17 @@ public abstract class Toolkit {
         } else if (PlatformUtil.isAndroid()) {
            return DEFAULT_TOOLKIT;
         }
+        return DEFAULT_TOOLKIT;
 
-        throw new UnsupportedOperationException(System.getProperty("os.name") + " is not supported");
+        // throw new UnsupportedOperationException(System.getProperty("os.name") + " is not supported");
     }
 
     public static synchronized Toolkit getToolkit() {
         if (TOOLKIT != null) {
             return TOOLKIT;
         }
+try {
+System.err.println("[TK] Toolkit.getToolkit() asked, didn't exist. Create it now.");
 
         @SuppressWarnings("removal")
         var dummy = AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
@@ -241,7 +244,7 @@ public abstract class Toolkit {
         boolean printToolkit = verbose
                 || (userSpecifiedToolkit && !forcedToolkit.endsWith("StubToolkit"));
 
-        try {
+        // try {
             Class clz = null;
 
             try {
@@ -260,13 +263,17 @@ public abstract class Toolkit {
                         + forcedToolkit);
             }
 
-            TOOLKIT = (Toolkit)clz.getDeclaredConstructor().newInstance();
+System.err.println("[TK] getToolkit() asked, instance from clz");
+            TOOLKIT = (Toolkit)clz.newInstance();
+System.err.println("[TK] getToolkit() asked, instance from clz done");
             if (TOOLKIT.init()) {
+System.err.println("[TK] getToolkit() asked, init from clz ok");
                 if (printToolkit) {
                     System.err.println("JavaFX: using " + forcedToolkit);
                 }
                 return TOOLKIT;
             }
+System.err.println("[TK] getToolkit() asked but failed, return NULL");
             TOOLKIT = null;
         } catch (Exception any) {
             TOOLKIT = null;

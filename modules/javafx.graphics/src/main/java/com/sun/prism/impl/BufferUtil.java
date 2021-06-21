@@ -119,8 +119,9 @@ public class BufferUtil {
      * the host platform's native byte order.
      */
     public static IntBuffer newIntBuffer(int numElements) {
-        ByteBuffer bb = newByteBuffer(numElements * SIZEOF_INT);
-        return bb.asIntBuffer();
+        return IntBuffer.allocate(numElements);
+        // ByteBuffer bb = newByteBuffer(numElements * SIZEOF_INT);
+        // return bb.asIntBuffer();
     }
 
     /**

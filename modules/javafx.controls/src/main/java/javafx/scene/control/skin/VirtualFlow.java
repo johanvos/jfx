@@ -385,6 +385,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 */
                 double virtualDelta = 0.0;
                 if (isVertical()) {
+                    System.err.println("SCROLL, units = " + event.getTextDeltaYUnits());
                     switch(event.getTextDeltaYUnits()) {
                         case PAGES:
                             virtualDelta = event.getTextDeltaY() * lastHeight;
@@ -1607,6 +1608,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * @return the number of pixels actually moved
      */
     public double scrollPixels(final double delta) {
+        System.err.println("[VF] scrollPixels asked for delta = "+delta);
         // Short cut this method for cases where nothing should be done
         if (delta == 0) return 0;
 
@@ -1624,6 +1626,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             // to occur when we hit either extremity
             return 0;
         }
+        System.err.println("[VF] newpos = "+getPosition());
 
         // Now move stuff around. Translating by pixels fundamentally means
         // moving the cells by the delta. However, after having
@@ -2557,10 +2560,11 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             if (numCellsVisibleOnScreen == 0 && cellCount == 1) {
                 // special case to help resolve RT-17701 and the case where we have
                 // only a single row and it is bigger than the viewport
-                lengthBar.setVisibleAmount(flowLength / sumCellLength);
+            //    lengthBar.setVisibleAmount(flowLength / sumCellLength);
             } else {
                 lengthBar.setVisibleAmount(viewportLength / estimatedSize);
             }
+            System.err.println("Changed SCrollbar visibleamount to "+lengthBar.getVisibleAmount());
         }
 
         if (lengthBar.isVisible()) {

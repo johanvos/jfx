@@ -60,7 +60,12 @@ public class ParentHelper extends NodeHelper {
     }
 
     public static void superProcessCSS(Node node) {
-        ((ParentHelper) getHelper(node)).superProcessCSSImpl(node);
+// System.err.println("[PARENTHELPER] superprocessCss START with node = " + node);
+ParentHelper ph = (ParentHelper) getHelper(node);
+// System.err.println("[PARENTHELPER] call super on ph = " + ph);
+        // ((ParentHelper) getHelper(node)).superProcessCSSImpl(node);
+        ph.parentsuperProcessCSSImpl(node);
+// System.err.println("[PARENTHELPER] superprocessCss DONE with node = " + node);
     }
 
     public static List<String> getAllParentStylesheets(Parent parent) {
@@ -81,7 +86,10 @@ public class ParentHelper extends NodeHelper {
     @Override
     protected BaseBounds computeGeomBoundsImpl(Node node, BaseBounds bounds,
             BaseTransform tx) {
-        return parentAccessor.doComputeGeomBounds(node, bounds, tx);
+// System.err.println("[PARENTHELPER] computeGeomBoundsImpl START with this = " + this+" and node = " + node+" and pa = " + parentAccessor);
+        BaseBounds answer = parentAccessor.doComputeGeomBounds(node, bounds, tx);
+// System.err.println("[PARENTHELPER] computeGeomBoundsImpl DONE with this = " + this+" and node = " + node);
+        return answer;
     }
 
     @Override
@@ -89,13 +97,17 @@ public class ParentHelper extends NodeHelper {
         return parentAccessor.doComputeContains(node, localX, localY);
     }
 
-    void superProcessCSSImpl(Node node) {
+    void parentsuperProcessCSSImpl(Node node) {
+// System.err.println("[PARENTHELPER] superprocessCssImpl START with this = " + this+" and node = " + node);
         super.processCSSImpl(node);
+// System.err.println("[PARENTHELPER] superprocessCssImpl DONE with this = " + this+" and node = " + node);
     }
 
     @Override
     protected void processCSSImpl(Node node) {
+// System.err.println("[PARENTHELPER] processCssImpl START with this = " + this+" and node = " + node);
         parentAccessor.doProcessCSS(node);
+// System.err.println("[PARENTHELPER] processCssImpl DONE with this = " + this+" and node = " + node);
     }
 
     protected List<String> getAllParentStylesheetsImpl(Parent parent) {

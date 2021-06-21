@@ -1492,6 +1492,7 @@ void addJSL(Project project, String name, String pkg, List<String> addExports, C
         destinationDir = project.file("$project.buildDir/classes/jsl-compilers/$lowerName")
 
         options.compilerArgs.addAll([
+            "-XDstringConcat=inline",
             "-implicit:none",
             "--module-path", modulePath,
             "--add-modules=javafx.graphics"
@@ -1874,6 +1875,7 @@ allprojects {
 
     if (JFX_DEPS_URL == "") {
         repositories {
+            mavenLocal()
             mavenCentral()
             ivy {
                 url "https://download.eclipse.org/eclipse/updates/4.6/R-4.6.3-201703010400/plugins/"
@@ -1940,6 +1942,7 @@ allprojects {
 
     apply plugin: "java"
     sourceCompatibility = 11
+    targetCompatibility = 11
 
     // By default all of our projects require junit for testing so we can just
     // setup this dependency here.
@@ -2204,6 +2207,7 @@ project(":graphics") {
         destinationDir = project.sourceSets.main.java.outputDir
         options.compilerArgs.addAll([
             '-h', "$buildDir/gensrc/headers/",  // Note: this creates the native headers
+            '-XDstringConcat=inline',
             '-implicit:none',
             '--module-source-path', defaultModuleSourcePath
             ] )
@@ -3884,7 +3888,7 @@ allprojects {
 
         compile.options.warnings = IS_LINT
 
-        compile.options.compilerArgs += ["-XDignore.symbol.file", "-encoding", "UTF-8"]
+        compile.options.compilerArgs += ["-XDstringConcat=inline", "-XDignore.symbol.file", "-encoding", "UTF-8"]
 
         // we use a custom javadoc command
         project.javadoc.enabled = false

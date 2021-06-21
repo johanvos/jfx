@@ -92,6 +92,7 @@ public class NGGroup extends NGNode {
      * @param node
      */
     public void add(int index, NGNode node) {
+// System.err.println("NGGroup, ADDCHILD asked for " + this+" to have " + node+" add " + index);
         // Validate the arguments
         if ((index < -1) || (index > children.size())) {
             throw new IndexOutOfBoundsException("invalid index");
@@ -235,12 +236,16 @@ public class NGGroup extends NGNode {
 
     @Override
     protected void renderContent(Graphics g) {
+// System.out.println("NGGroup.renderContent START for " + this);
         List<NGNode> orderedChildren = getOrderedChildren();
         if (orderedChildren == null) {
+// System.out.println("NGGroup.renderContent1 DONE for " + this);
             return;
         }
 
         NodePath renderRoot = g.getRenderRoot();
+// System.out.println("NGGroup.renderContent renderRoot = " + renderRoot);
+// System.out.println("NGGroup.renderContent orderedChildren = " + orderedChildren);
         int startPos = 0;
         if (renderRoot != null) {
             if (renderRoot.hasNext()) {
@@ -248,9 +253,11 @@ public class NGGroup extends NGNode {
                 startPos = orderedChildren.indexOf(renderRoot.getCurrentNode());
 
                 for (int i = 0; i < startPos; ++i) {
+// System.out.println("NGGroup, clearDirtyTree");
                     orderedChildren.get(i).clearDirtyTree();
                 }
             } else {
+// System.out.println("NGGroup.renderContent set renderRoot to NULL");
                 g.setRenderRoot(null);
             }
         }
@@ -270,6 +277,7 @@ public class NGGroup extends NGNode {
                     child.render(g);
                 }
             }
+// System.out.println("NGGroup.renderContent2 DONE for " + this);
             return;
         }
 
@@ -312,6 +320,7 @@ public class NGGroup extends NGNode {
         if (bot != null) {
             bot.unref();
         }
+// System.out.println("NGGroup.renderContent DONE for " + this);
     }
 
     @Override

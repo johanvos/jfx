@@ -423,6 +423,7 @@ public abstract class View {
 
     protected abstract long _create(Map capabilities);
     protected View() {
+System.err.println("[UIVIEW] construct View");
         Application.checkEventThread();
         this.ptr = _create(Application.GetApplication().getDeviceDetails());
         if (this.ptr == 0L) {

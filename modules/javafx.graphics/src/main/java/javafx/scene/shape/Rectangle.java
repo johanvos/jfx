@@ -89,7 +89,7 @@ public  class Rectangle extends Shape {
             @Override
             public BaseBounds doComputeGeomBounds(Node node,
                     BaseBounds bounds, BaseTransform tx) {
-                return ((Rectangle) node).doComputeGeomBounds(bounds, tx);
+                return ((Rectangle) node).rectdoComputeGeomBounds(bounds, tx);
             }
 
             @Override
@@ -513,7 +513,7 @@ public  class Rectangle extends Shape {
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private BaseBounds doComputeGeomBounds(BaseBounds bounds, BaseTransform tx) {
+    private BaseBounds rectdoComputeGeomBounds(BaseBounds bounds, BaseTransform tx) {
         // if there is no fill or stroke, then there are no bounds. The bounds
         // must be marked empty in this case to distinguish it from 0,0,0,0
         // which would actually contribute to the bounds of a group.

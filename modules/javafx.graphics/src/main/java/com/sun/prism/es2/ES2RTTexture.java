@@ -289,11 +289,13 @@ class ES2RTTexture extends ES2Texture<ES2RTTextureData>
                                  texWidth, texHeight, size);
         ES2TextureResource<ES2RTTextureData> texRes = new ES2TextureResource<ES2RTTextureData>(texData);
 
+System.err.println("[ES2RTTexture] create, msaa = " + msaa);
         ES2RTTexture es2RTT = new ES2RTTexture(context, texRes, wrapMode,
                                 texWidth, texHeight,
                                 contentX, contentY,
                                 contentW, contentH,
                                 maxContentW, maxContentH);
+System.err.println("[ES2RTTexture] create");
         if (msaa) {
             es2RTT.createAndAttachMSAABuffer(context);
         }

@@ -82,7 +82,7 @@ public class LauncherImpl {
 
     // set system property javafx.verbose to true to make the launcher noisy
     @SuppressWarnings("removal")
-    private static final boolean verbose = AccessController.doPrivileged((PrivilegedAction<Boolean>) () ->
+    private static boolean verbose = AccessController.doPrivileged((PrivilegedAction<Boolean>) () ->
         Boolean.getBoolean("javafx.verbose"));
 
     private static final String MF_MAIN_CLASS = "Main-Class";
@@ -119,6 +119,11 @@ public class LauncherImpl {
     // is started.
     private static ClassLoader savedMainCcl = null;
 
+    static {
+System.err.println("[JVDBG] LI, launchapp0");
+        verbose = true;
+    }
+
     /**
      * This method is called by the Application.launch method.
      * It must not be called more than once or an exception will be thrown.
@@ -132,6 +137,7 @@ public class LauncherImpl {
     @SuppressWarnings("unchecked")
     public static void launchApplication(final Class<? extends Application> appClass,
             final String[] args) {
+System.err.println("[LauncherImpl] launchApplication2arg");
 
         Class<? extends Preloader> preloaderClass = savedPreloaderClass;
 
@@ -152,6 +158,7 @@ public class LauncherImpl {
         }
 
         launchApplication(appClass, preloaderClass, args);
+System.err.println("[LauncherImpl] launchApplication2arg DONE");
     }
 
     /**
@@ -169,9 +176,7 @@ public class LauncherImpl {
             final Class<? extends Preloader> preloaderClass,
             final String[] args) {
 
-        if (com.sun.glass.ui.Application.isEventThread()) {
-            throw new IllegalStateException("Application launch must not be called on the JavaFX Application Thread");
-        }
+System.err.println("[LauncherImpl] launchApplication");
         if (launchCalled.getAndSet(true)) {
             throw new IllegalStateException("Application launch must not be called more than once");
         }
@@ -191,34 +196,44 @@ public class LauncherImpl {
 
         // Create a new Launcher thread and then wait for that thread to finish
         final CountDownLatch launchLatch = new CountDownLatch(1);
-        Thread launcherThread = new Thread(() -> {
+        // Thread launcherThread = new Thread(() -> {
             try {
                 launchApplication1(appClass, preloaderClass, args);
             } catch (RuntimeException rte) {
+System.err.println("RTEee: " +rte);
+rte.printStackTrace();
                 launchException = rte;
             } catch (Exception ex) {
+System.err.println("EX: " + ex);
                 launchException =
                     new RuntimeException("Application launch exception", ex);
             } catch (Error err) {
+System.err.println("ERR: " + err);
                 launchException =
                     new RuntimeException("Application launch error", err);
             } finally {
+System.err.println("[LauncherImpl], launchappA4 finally");
                 launchLatch.countDown();
             }
-        });
-        launcherThread.setName("JavaFX-Launcher");
-        launcherThread.start();
+        // });
+        // launcherThread.setName("JavaFX-Launcher");
+// System.err.println("[JVDBG] LI, launchapp start LauncherThread");
+        // launcherThread.start();
 
         // Wait for FX launcher thread to finish before returning to user
+/*
         try {
             launchLatch.await();
         } catch (InterruptedException ex) {
             throw new RuntimeException("Unexpected exception: ", ex);
         }
+*/
 
         if (launchException != null) {
+System.err.println("We have a launch exception!");
             throw launchException;
         }
+System.err.println("[JVDBG] LI, launchapp DONE");
     }
 
     /**
@@ -456,6 +471,7 @@ public class LauncherImpl {
 
         Exception theEx = null;
         try {
+System.err.println("tempAppClass = " + tempAppClass);
             Method mainMethod = tempAppClass.getMethod("main",
                     new Class[] { (new String[0]).getClass() });
             if (verbose) {
@@ -649,17 +665,22 @@ public class LauncherImpl {
     }
 
     private static void startToolkit() throws InterruptedException {
+System.err.println("Start toolkit 0");
         if (toolkitStarted.getAndSet(true)) {
             return;
         }
+System.err.println("Start toolkit 1");
 
         final CountDownLatch startupLatch = new CountDownLatch(1);
+System.err.println("Start toolkit 2");
 
         // Note, this method is called on the FX Application Thread
         PlatformImpl.startup(() -> startupLatch.countDown());
+System.err.println("Start toolkit 3");
 
         // Wait for FX platform to start
-        startupLatch.await();
+        // startupLatch.await();
+System.err.println("Start toolkit 4");
     }
 
     private static volatile boolean error = false;
@@ -675,7 +696,7 @@ public class LauncherImpl {
     private static void launchApplication1(final Class<? extends Application> appClass,
             final Class<? extends Preloader> preloaderClass,
             final String[] args) throws Exception {
-
+System.err.println("launchApplication1");
         startToolkit();
 
         if (savedMainCcl != null) {
@@ -797,19 +818,24 @@ public class LauncherImpl {
                             StateChangeNotification.Type.BEFORE_LOAD, null);
                 }
 
-                PlatformImpl.runAndWait(() -> {
-                    try {
+                // PlatformImpl.runAndWait(() -> {
+                    // try {
                         Constructor<? extends Application> c = appClass.getConstructor();
+Application abc = c.newInstance();
                         app.set(c.newInstance());
+Application aaa = app.get();
                         // Set startup parameters
                         ParametersImpl.registerParameters(app.get(), new ParametersImpl(args));
                         PlatformImpl.setApplicationName(appClass);
+/*
                     } catch (Throwable t) {
+t.printStackTrace();
                         System.err.println("Exception in Application constructor");
                         constructorError = t;
                         error = true;
                     }
-                });
+*/
+                // });
             }
             final Application theApp = app.get();
 
@@ -837,6 +863,7 @@ public class LauncherImpl {
                             StateChangeNotification.Type.BEFORE_START, theApp);
                 }
                 // Call the application start method on FX thread
+System.err.println("launchApp1 - 16");
                 PlatformImpl.runAndWait(() -> {
                     try {
                         startCalled.set(true);
@@ -846,16 +873,20 @@ public class LauncherImpl {
                         StageHelper.setPrimary(primaryStage, true);
                         theApp.start(primaryStage);
                     } catch (Throwable t) {
+t.printStackTrace();
+System.err.println("startError, t= " + t);
                         System.err.println("Exception in Application start method");
                         startError = t;
                         error = true;
                     }
                 });
             }
+System.err.println("launchApp1 - 17");
 
+/*
             if (!error) {
                 shutdownLatch.await();
-//                System.err.println("JavaFX Launcher: time to call stop");
+                System.err.println("JavaFX Launcher: time to call stop");
             }
 
             // Call stop method if start was called
@@ -871,6 +902,7 @@ public class LauncherImpl {
                     }
                 });
             }
+*/
 
             if (error) {
                 if (pConstructorError != null) {
@@ -907,9 +939,15 @@ public class LauncherImpl {
                     }
                 }
             }
+System.err.println("We made it all the way to the end of launchApplication1");
+        } catch (Throwable t) {
+System.err.println("Bummer!! " + t);
+t.printStackTrace();
+System.err.println("done");
         } finally {
-            PlatformImpl.removeListener(listener);
-            PlatformImpl.tkExit();
+System.err.println("launchApp1 - finally done!");
+            // PlatformImpl.removeListener(listener);
+            // PlatformImpl.tkExit();
         }
     }
 

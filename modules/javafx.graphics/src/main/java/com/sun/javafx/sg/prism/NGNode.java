@@ -386,6 +386,7 @@ public abstract class NGNode {
         }
 
         transform = transform.deriveWithNewTransform(tx);
+// System.err.println("TRANSFORM set to " + transform);
         if (useHint) {
             markDirtyByTranslation();
         } else {
@@ -1950,6 +1951,7 @@ public abstract class NGNode {
      * @param g The graphics object we're rendering to. This must never be null.
      */
     public final void render(Graphics g) {
+// System.out.println("NGNode.render START for " + this);
         if (PULSE_LOGGING_ENABLED) {
             PulseLogger.incrementCounter("Nodes visited during render");
         }
@@ -1962,6 +1964,7 @@ public abstract class NGNode {
         // doRender method, which subclasses implement to do the actual
         // rendering work.
         doRender(g);
+// System.out.println("NGNode.render DONE for " + this);
     }
 
     /**
@@ -1990,6 +1993,7 @@ public abstract class NGNode {
      * of this method should make sure to save & restore the transform state.
      */
     protected void doRender(Graphics g) {
+// System.out.println("NGNode.doRender START for " + this+", transform = " + transform);
 
         g.setState3D(isShape3D());
 
@@ -2102,6 +2106,7 @@ public abstract class NGNode {
                 painted |= 1 << (g.getClipRectIndex() * 2);
             }
         }
+// System.out.println("NGNode.doRender DONE for " + this);
     }
 
     /**

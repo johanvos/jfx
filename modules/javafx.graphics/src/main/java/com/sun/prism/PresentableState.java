@@ -302,10 +302,13 @@ public abstract class PresentableState {
      * @param source - the source for the Pixels object to be uploaded
      */
     public void uploadPixels(PixelSource source) {
+System.out.println("[PRESENTABLESTATE] upload pixels");
         Pixels pixels = source.getLatestPixels();
         if (pixels != null) {
             try {
+System.out.println("[PRESENTABLESTATE] upload pixels to view ");
                 view.uploadPixels(pixels);
+System.out.println("[PRESENTABLESTATE] upload pixels DONE to view ");
             } finally {
                 source.doneWithPixels(pixels);
             }
@@ -322,6 +325,7 @@ public abstract class PresentableState {
                           float renderScaleX, float renderScaleY,
                           float outputScaleX, float outputScaleY)
     {
+System.out.println("[PRESENTABLESTATE] update to " + viewScaleX+", " + viewScaleY+", "+renderScaleX+", "+renderScaleY+", "+ outputScaleX+", " + outputScaleY);
         this.renderScaleX = renderScaleX;
         this.renderScaleY = renderScaleY;
         this.outputScaleX = outputScaleX;

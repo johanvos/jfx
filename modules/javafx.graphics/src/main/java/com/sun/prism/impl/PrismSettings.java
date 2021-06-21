@@ -28,6 +28,7 @@ package com.sun.prism.impl;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import com.sun.javafx.PlatformUtil;
@@ -178,7 +179,8 @@ public final class PrismSettings {
         useNewImageLoader = getBoolean(systemProperties, "prism.newiio", true);
 
         /* Verbose output*/
-        verbose = getBoolean(systemProperties, "prism.verbose", false);
+        // verbose = getBoolean(systemProperties, "prism.verbose", true);
+        verbose = true;
 
         /* Prism statistics print frequency, <=0 means "do not print" */
         prismStatFrequency =
@@ -222,7 +224,12 @@ public final class PrismSettings {
             }
         }
 
-        tryOrder = List.of(tryOrderArr);
+        // tryOrder = List.of(tryOrderArr);
+        tryOrder = new LinkedList<>();
+        for (String oo : tryOrderArr) {
+            tryOrder.add(oo);
+        }
+
 
         RasterizerType rSpec = null;
         String rOrder = systemProperties.getProperty("prism.rasterizerorder");
@@ -238,7 +245,9 @@ public final class PrismSettings {
                 }
                 break;
             }
+System.err.println("[PS] clinit 7h,");
         }
+System.err.println("[PS] clinit 8");
         if (rSpec == null) {
             rSpec = RasterizerType.DoubleMarlin;
         }
@@ -353,6 +362,7 @@ public final class PrismSettings {
 
         // Force non anti-aliasing (not smooth) shape rendering
         forceNonAntialiasedShape = getBoolean(systemProperties, "prism.forceNonAntialiasedShape", false);
+System.err.println("[PS] clinit DONE");
 
     }
 

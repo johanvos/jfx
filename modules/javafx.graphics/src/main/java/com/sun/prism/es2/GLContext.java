@@ -264,6 +264,7 @@ abstract class GLContext {
     }
 
     void bindFBO(int nativeFBOID) {
+// System.err.println("Java: bindFBO to " + nativeFBOID+" and current = " + this.nativeFBOID);
         switch (this.nativeFBOID) {
             case FBO_ID_UNSET:
                 this.nativeFBOID = nativeFBOID;
@@ -576,6 +577,7 @@ abstract class GLContext {
     boolean texImage2D(int target, int level, int internalFormat,
             int width, int height, int border, int format, int type,
             java.nio.Buffer pixels, boolean useMipmap) {
+// System.out.println("[GLCONTEXT] texImage2D, target = " + target+", internalFormat = " + internalFormat+", format = " + format+", type = " + type);
         boolean result;
         boolean direct = BufferFactory.isDirect(pixels);
         if (direct) {
@@ -720,6 +722,7 @@ abstract class GLContext {
     }
 
     void drawIndexedQuads(float coords[], byte colors[], int numVertices) {
+// System.err.println("[JAVA] I will draw indexedquads, nv = " + numVertices+", coordssize = " + coords.length+", colorsize = " + colors.length);
         nDrawIndexedQuads(nativeCtxInfo, numVertices, coords, colors);
     }
 

@@ -85,9 +85,11 @@ public abstract class Timer {
      * If starting the timer fails, the RuntimeException is thrown.
      */
     public synchronized void start(int period) {
+System.err.println("[TIMER] start called, period = " + period);
         if (period < getMinPeriod() || period > getMaxPeriod()) {
             throw new IllegalArgumentException("period is out of range");
         }
+System.err.println("[TIMER] start called, ptr = " + this.ptr);
 
         if (this.ptr != 0L) {
             stop();
@@ -109,6 +111,8 @@ public abstract class Timer {
      * vsync-based timer or if there was an issue starting the timer.
      */
     public synchronized void start() {
+System.err.println("[TIMER] start called without period!!");
+Thread.dumpStack();
         if (this.ptr != 0L) {
             stop();
         }

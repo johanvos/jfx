@@ -154,6 +154,7 @@ JNIEXPORT jint JNICALL Java_com_sun_glass_ui_gtk_GtkApplication__1queryLibrary
 JNIEXPORT void JNICALL Java_com_sun_glass_ui_gtk_GtkApplication__1init
   (JNIEnv * env, jobject obj, jlong handler, jboolean _disableGrab)
 {
+fprintf(stderr, "IN native code, GtkApplication_init\n");
     (void)obj;
 
     mainEnv = env;

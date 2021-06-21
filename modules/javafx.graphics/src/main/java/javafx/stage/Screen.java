@@ -78,12 +78,19 @@ public final class Screen {
     }
 
     private static void checkDirty() {
+try {
         if (configurationDirty.compareAndSet(true, false)) {
             updateConfiguration();
         }
+} catch (Exception e) {
+System.err.println("[SCREEN] checkDirty failed");
+System.err.println("[SCREEN] checkDirty failed because of "+ e);
+throw new RuntimeException (e);
+}
     }
 
     private static void updateConfiguration() {
+System.err.println("[Screen] updateConfiguration");
         Object primaryScreen = Toolkit.getToolkit().getPrimaryScreen();
         Screen screenTmp = nativeToScreen(primaryScreen, Screen.primary);
         if (screenTmp != null) {
@@ -118,6 +125,7 @@ public final class Screen {
         }
 
         configurationDirty.set(false);
+System.err.println("[Sceen] updateConfiguration done");
     }
 
     // returns null if the new one is to be equal the old one

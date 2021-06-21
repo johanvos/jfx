@@ -140,10 +140,13 @@ public abstract class Application {
 
     // May be called on any thread.
     public static void run(final Runnable launchable) {
+System.err.println("[GlassApp] run 0");
         if (application != null) {
             throw new IllegalStateException("Application is already running");
         }
+System.err.println("[GlassApp] run 1");
         application = PlatformFactory.getPlatformFactory().createApplication();
+System.err.println("[GlassApp] run 2");
         // each concrete Application should set the app name using its own platform mechanism:
         // on Mac OS X - use NSBundle info, which can be overriden by -Xdock:name
         // on Windows - TODO

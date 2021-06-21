@@ -25,7 +25,7 @@
 
 package com.sun.scenario.effect.impl.prism;
 
-import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Set;
 import com.sun.glass.ui.Screen;
 import com.sun.prism.GraphicsPipeline;
@@ -33,6 +33,8 @@ import com.sun.prism.GraphicsPipeline.ShaderModel;
 import com.sun.prism.RTTexture;
 import com.sun.scenario.effect.FilterContext;
 import com.sun.scenario.effect.impl.Renderer;
+import com.sun.scenario.effect.impl.prism.ps.PPSRenderer;
+import com.sun.scenario.effect.impl.prism.sw.PSWRenderer;
 
 public abstract class PrRenderer extends Renderer {
 
@@ -41,11 +43,15 @@ public abstract class PrRenderer extends Renderer {
      * we can do a fast check to see whether the given peer name is an
      * intrinsic one instead of relying on reflection to do the check.
      */
-    private static final Set<String> INTRINSIC_PEER_NAMES = Set.of(
-        "Crop",
-        "Flood",
-        "Merge",
-        "Reflection");
+    private static final Set<String> INTRINSIC_PEER_NAMES;
+
+    static {
+        INTRINSIC_PEER_NAMES = new HashSet<>();
+        INTRINSIC_PEER_NAMES.add("Crop");
+        INTRINSIC_PEER_NAMES.add("Flood");
+        INTRINSIC_PEER_NAMES.add("Merge");
+        INTRINSIC_PEER_NAMES.add("Reflection");
+    }
 
     /**
      * Private constructor to prevent instantiation.
@@ -74,15 +80,7 @@ public abstract class PrRenderer extends Renderer {
     }
 
     private static PrRenderer createRenderer(FilterContext fctx, boolean isHW) {
-        String klassName = isHW ?
-            Renderer.rootPkg + ".impl.prism.ps.PPSRenderer" :
-            Renderer.rootPkg + ".impl.prism.sw.PSWRenderer";
-        try {
-            Class klass = Class.forName(klassName);
-            Method m = klass.getMethod("createRenderer", new Class[] { FilterContext.class });
-            return (PrRenderer)m.invoke(null, new Object[] { fctx });
-        } catch (Throwable e) {}
-        return null;
+        return (PrRenderer) (isHW ? PPSRenderer.createRenderer(fctx) : PSWRenderer.createRenderer(fctx));
     }
 
     public static boolean isIntrinsicPeer(String name) {

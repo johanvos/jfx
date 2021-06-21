@@ -342,6 +342,7 @@ final class PaintCollector implements CompletionListener {
      * we have. This method is only called on the FX thread.
      */
     final void renderAll() {
+// System.err.println("[PAINTCollector] renderAll");
         // Ensure we're called only from the FX thread
         assert Thread.currentThread() == QuantumToolkit.getFxUserThread();
 
@@ -447,9 +448,10 @@ final class PaintCollector implements CompletionListener {
         }
 
         dirtyScenes.clear();
-
+// System.err.println("[PAINTCollector] all done, wait to complete?");
         if (toolkit.shouldWaitForRenderingToComplete()) {
             waitForRenderingToComplete();
         }
+// System.err.println("[PAINTCollector] all DONE");
     }
 }

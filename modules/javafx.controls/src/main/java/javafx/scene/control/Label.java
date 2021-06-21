@@ -65,6 +65,7 @@ public class Label extends Labeled {
      * Creates an empty label
      */
     public Label() {
+System.err.println("LABEL constructor");
         initialize();
     }
 
@@ -74,6 +75,7 @@ public class Label extends Labeled {
      */
     public Label(String text) {
         super(text);
+System.err.println("LABEL constructor 2");
         initialize();
     }
 
@@ -88,6 +90,7 @@ public class Label extends Labeled {
     }
 
     private void initialize() {
+System.err.println("LABEL initialize");
         getStyleClass().setAll("label");
         setAccessibleRole(AccessibleRole.TEXT);
         // Labels are not focus traversable, unlike most other UI Controls.
@@ -96,6 +99,7 @@ public class Label extends Labeled {
         // override. Initializing focusTraversable by calling set on the
         // CssMetaData ensures that css will be able to override the value.
         ((StyleableProperty<Boolean>)(WritableValue<Boolean>)focusTraversableProperty()).applyStyle(null, Boolean.FALSE);
+System.err.println("LABEL initialize done");
     }
 
     /***************************************************************************

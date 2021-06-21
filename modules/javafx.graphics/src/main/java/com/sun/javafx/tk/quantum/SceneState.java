@@ -83,7 +83,8 @@ class SceneState extends PresentableState {
      * render lock.
      */
     public boolean isValid() {
-        return getWindow() != null && getView() != null && !isViewClosed() && getWidth() > 0 && getHeight() > 0;
+        boolean answer = getWindow() != null && getView() != null && !isViewClosed() && getWidth() > 0 && getHeight() > 0;
+        return answer;
     }
 
     /** Updates the state of this object based on the current
@@ -120,6 +121,7 @@ class SceneState extends PresentableState {
     public void uploadPixels(PixelSource source) {
         Application.invokeLater(() -> {
             if (isValid()) {
+System.out.println("[SCENESTATE] uploadPixels will be executed of class " + source.getClass()+" and thead = " + Thread.currentThread());
                 SceneState.super.uploadPixels(source);
             } else {
                 source.skipLatestPixels();

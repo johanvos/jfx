@@ -447,18 +447,12 @@ public class PPSRenderer extends PrRenderer {
     }
 
     private static ShaderSource createShaderSource(String name) {
-        Class klass = null;
-        try {
-            klass = Class.forName(name);
-            return (ShaderSource)klass.getDeclaredConstructor().newInstance();
-        } catch (ClassNotFoundException e) {
-            System.err.println(name + " class not found");
-            return null;
-        } catch (Throwable t) {
-            //System.err.println("Error loading renderer:");
-            //t.printStackTrace();
-            return null;
+        if (name.endsWith("D3DShaderSource")) {
+            return new com.sun.scenario.effect.impl.hw.d3d.D3DShaderSource();
+        } else if (name.endsWith("ES2ShaderSource")) {
+            return new com.sun.scenario.effect.impl.es2.ES2ShaderSource();
         }
+        return null;
     }
 
     public static Renderer createRenderer(FilterContext fctx) {

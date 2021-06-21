@@ -106,23 +106,25 @@ public abstract class Parent extends Node {
 
             @Override
             public void doUpdatePeer(Node node) {
-                ((Parent) node).doUpdatePeer();
+                ((Parent) node).parentdoUpdatePeer();
             }
 
             @Override
             public BaseBounds doComputeGeomBounds(Node node,
                     BaseBounds bounds, BaseTransform tx) {
-                return ((Parent) node).doComputeGeomBounds(bounds, tx);
+                return ((Parent) node).parentdoComputeGeomBounds(bounds, tx);
             }
 
             @Override
             public boolean doComputeContains(Node node, double localX, double localY) {
-                return ((Parent) node).doComputeContains(localX, localY);
+                return ((Parent) node).parentdoComputeContains(localX, localY);
             }
 
             @Override
             public void doProcessCSS(Node node) {
-                ((Parent) node).doProcessCSS();
+// System.err.println("[PARENTACC] doProcessCSS START for " + node+" and accessor(me) = "+this);
+                ((Parent) node).parentdoProcessCSS();
+// System.err.println("[PARENTACC] doProcessCSS DONE for " + node);
             }
 
             @Override
@@ -156,8 +158,9 @@ public abstract class Parent extends Node {
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private void doUpdatePeer() {
+    private void parentdoUpdatePeer() {
         final NGGroup peer = getPeer();
+// System.out.println("[PARENT] doUpdatePeer for " + this+" and peer = " + peer);
 
         if (Utils.assertionEnabled()) {
             List<NGNode> pgnodes = peer.getChildren();
@@ -174,6 +177,7 @@ public abstract class Parent extends Node {
             // sides, so we only need to update the remaining portion.
             peer.clearFrom(startIdx);
             for (int idx = startIdx; idx < children.size(); idx++) {
+// System.out.println("[PARENT] doUpdatePeer for " + this+" and peer = " + peer);
                 peer.add(idx, children.get(idx).getPeer());
             }
             if (removedChildrenOptimizationDisabled) {
@@ -199,6 +203,7 @@ public abstract class Parent extends Node {
         }
 
         if (Utils.assertionEnabled()) validatePG();
+// System.out.println("[PARENT] DONE doUpdatePeer for " + this+" and peer = " + peer);
     }
 
 
@@ -933,17 +938,22 @@ public abstract class Parent extends Node {
     }
 
     private void markDirtyLayout(boolean local, boolean forceParentLayout) {
+// System.err.println("[Parent] markDirtyLayout");
         setLayoutFlag(LayoutFlags.NEEDS_LAYOUT);
         if (local || layoutRoot) {
+// System.err.println("[Parent] local or layoutroot");
             if (sceneRoot) {
+// System.err.println("[Parent] sceneRoot!");
                 Toolkit.getToolkit().requestNextPulse();
                 if (getSubScene() != null) {
                     getSubScene().setDirtyLayout(this);
                 }
             } else {
+// System.err.println("[Parent] NOsceneRoot!");
                 markDirtyLayoutBranch();
             }
         } else {
+// System.err.println("[Parent] requestParentLayout!");
             requestParentLayout(forceParentLayout);
         }
     }
@@ -1353,7 +1363,8 @@ public abstract class Parent extends Node {
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private void doProcessCSS() {
+    private void parentdoProcessCSS() {
+// System.err.println("[PARENT] doprocessCSS START on " + this);
 
         // Nothing to do...
         if (cssFlag == CssFlags.CLEAN) return;
@@ -1399,6 +1410,7 @@ public abstract class Parent extends Node {
             }
             NodeHelper.processCSS(child);
         }
+// System.err.println("[PARENT] doprocessCSS DONE on " + this);
     }
 
     /***********************************************************************
@@ -1487,7 +1499,7 @@ public abstract class Parent extends Node {
     private Node near;
     private Node far;
 
-    private BaseBounds doComputeGeomBounds(BaseBounds bounds, BaseTransform tx) {
+    private BaseBounds parentdoComputeGeomBounds(BaseBounds bounds, BaseTransform tx) {
         // If we have no children, our bounds are invalid
         if (children.isEmpty()) {
             return bounds.makeEmpty();
@@ -1889,7 +1901,7 @@ public abstract class Parent extends Node {
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private boolean doComputeContains(double localX, double localY) {
+    private boolean parentdoComputeContains(double localX, double localY) {
         final Point2D tempPt = TempState.getInstance().point;
         for (int i=0, max=children.size(); i<max; i++) {
             final Node node = children.get(i);

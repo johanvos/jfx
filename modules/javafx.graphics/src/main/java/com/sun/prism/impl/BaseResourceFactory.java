@@ -191,6 +191,7 @@ public abstract class BaseResourceFactory implements ResourceFactory {
             throw new IllegalArgumentException("no caching for "+wrapMode);
         }
          Texture tex = texCache.get(image);
+System.err.println("[R] getCachedTexture, tex = " + tex+", mipmap? " + useMipmap);
          if (tex != null) {
              tex.lock();
              if (tex.isSurfaceLost()) {
@@ -235,6 +236,7 @@ public abstract class BaseResourceFactory implements ResourceFactory {
                 return null;
             }
 
+System.err.println("[R] createTexture now");
             tex = createTexture(image, Usage.DEFAULT, wrapMode, useMipmap);
             if (tex != null) {
                 tex.setLastImageSerial(idRect.getKey());
@@ -274,6 +276,8 @@ public abstract class BaseResourceFactory implements ResourceFactory {
         int w = image.getWidth();
         int h = image.getHeight();
 
+System.err.println("[R] now we create a texture, I am " + this);
+System.err.println("Image = " + image+", format = " + image.getPixelFormat());
         Texture tex = createTexture(format, usageHint, wrapMode, w, h, useMipmap);
         // creation of a texture does not require flushing the vertex buffer
         // since there are no pending vertices that depend on this new texture,

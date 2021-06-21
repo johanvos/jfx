@@ -700,9 +700,12 @@ public abstract class Window {
                 if (parent != 0) {
                     final Runnable checkRunnable = () -> checkScreenLocation();
                     final Runnable timerRunnable = () -> Application.invokeLater(checkRunnable);
+System.err.println("[JVDBG] Window, create apptime");
                     embeddedLocationTimer =
                            Application.GetApplication().createTimer(timerRunnable);
+System.err.println("[JVDBG] Window, start apptime");
                     embeddedLocationTimer.start(16);
+System.err.println("[JVDBG] Window, started apptime");
                 }
 
                 synthesizeViewMoveEvent();

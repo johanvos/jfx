@@ -284,6 +284,8 @@ public class Image implements PlatformImage {
                   int width, int height, int minX, int minY,
                   int scanlineStride, float pixelScale)
     {
+System.err.println("IMAGE CREATED, pixelFormat = " + pixelFormat);
+Thread.dumpStack();
         if (pixelFormat == PixelFormat.MULTI_YCbCr_420) {
             throw new IllegalArgumentException("Format not supported "+pixelFormat.name());
         }

@@ -190,7 +190,9 @@ public abstract class NodeHelper {
     }
 
     protected void processCSSImpl(Node node) {
+System.err.println("[NODEHELPER] processCSSImpl START asked for this = " + this+" and node = " +node+" and nodeAccessor = " + nodeAccessor);
         nodeAccessor.doProcessCSS(node);
+System.err.println("[NODEHELPER] processCSSImpl DONE asked for this = " + this+" and node = " +node+" and nodeAccessor = " + nodeAccessor);
     }
 
     /*

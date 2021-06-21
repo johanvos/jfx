@@ -82,7 +82,7 @@ public  class Group extends Parent {
         GroupHelper.setGroupAccessor(new GroupHelper.GroupAccessor() {
             @Override
             public Bounds doComputeLayoutBounds(Node node) {
-                return ((Group) node).doComputeLayoutBounds();
+                return ((Group) node).mydoComputeLayoutBounds();
             }
         });
     }
@@ -172,7 +172,7 @@ public  class Group extends Parent {
     /*
      * Note: This method MUST only be called via its accessor method.
      */
-    private Bounds doComputeLayoutBounds() {
+    private Bounds mydoComputeLayoutBounds() {
         layout(); // Needs to done prematurely, as we otherwise don't know the bounds of the children
         return null; // helper only requires this node to call layout().
     }

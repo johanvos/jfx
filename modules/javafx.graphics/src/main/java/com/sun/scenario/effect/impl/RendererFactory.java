@@ -30,6 +30,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import com.sun.javafx.PlatformUtil;
 import com.sun.scenario.effect.FilterContext;
+import com.sun.scenario.effect.impl.prism.PrRenderer;
 
 /**
  * A factory that produces a {@code Renderer} instance appropriate for
@@ -113,14 +114,7 @@ class RendererFactory {
 
     private static Renderer createPrismRenderer(FilterContext fctx) {
         if (tryPrism) {
-            try {
-                Class klass = Class.forName(rootPkg + ".impl.prism.PrRenderer");
-                Method m = klass.getMethod("createRenderer",
-                                           new Class[] { FilterContext.class });
-                return (Renderer)m.invoke(null, new Object[] { fctx });
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+            return PrRenderer.createRenderer(fctx);
             // don't disable prism if failed, it may be available for other config
         }
         return null;

@@ -74,10 +74,12 @@ public class PlatformUtil {
             @SuppressWarnings("removal")
             boolean bool3 = AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> Boolean.getBoolean("doNativeComposite"));
             doEGLCompositing = bool3;
-        } else
+        } else {
             doEGLCompositing = false;
+        }
     }
 
+    private static final boolean WEB = System.getProperty("java.vendor", "none").equalsIgnoreCase("bck2brwsr");
     private static final boolean ANDROID = "android".equals(javafxPlatform) || "Dalvik".equals(System.getProperty("java.vm.name"));
     private static final boolean WINDOWS = os.startsWith("Windows");
     private static final boolean WINDOWS_VISTA_OR_LATER = WINDOWS && versionNumberGreaterThanOrEqualTo(6.0f);
@@ -297,6 +299,10 @@ public class PlatformUtil {
             }
             return null;
         });
+    }
+
+    public static boolean isWeb() {
+       return WEB;
     }
 
     public static boolean isAndroid() {

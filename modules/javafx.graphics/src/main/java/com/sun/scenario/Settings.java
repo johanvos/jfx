@@ -179,10 +179,12 @@ public class Settings {
         // get() will call checkKeyArg(), so don't check it here
         String value = getImpl(key);
         int retVal = defaultVal;
-        try {
-            retVal = Integer.parseInt(value);
-        } catch (NumberFormatException ignore) {
-            // ignore.printStackTrace();
+        if (value != null) {
+            try {
+                retVal = Integer.parseInt(value);
+            } catch (NumberFormatException ignore) {
+                // ignore.printStackTrace();
+            }
         }
         return retVal;
     }

@@ -41,6 +41,8 @@ class X11GLContext extends GLContext {
     X11GLContext(GLDrawable drawable, GLPixelFormat pixelFormat,
             boolean vSyncRequest) {
 
+Thread.dumpStack();
+System.err.println("[X11GLContext] init");
         // holds the list of attributes to be translated for native call
         int attrArr[] = new int[GLPixelFormat.Attributes.NUM_ITEMS];
 
@@ -57,6 +59,7 @@ class X11GLContext extends GLContext {
         // return the context info object created on the default screen
         nativeCtxInfo = nInitialize(drawable.getNativeDrawableInfo(),
                 pixelFormat.getNativePFInfo(), vSyncRequest);
+System.err.println("[X11GLContext] init done");
     }
 
     @Override

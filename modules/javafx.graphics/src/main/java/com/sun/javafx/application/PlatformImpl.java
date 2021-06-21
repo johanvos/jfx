@@ -25,7 +25,7 @@
 
 package com.sun.javafx.application;
 
-import static com.sun.javafx.FXPermissions.CREATE_TRANSPARENT_WINDOW_PERMISSION;
+// import static com.sun.javafx.FXPermissions.CREATE_TRANSPARENT_WINDOW_PERMISSION;
 import com.sun.javafx.PlatformUtil;
 import com.sun.javafx.css.StyleManager;
 import com.sun.javafx.tk.TKListener;
@@ -57,9 +57,12 @@ import javafx.application.ConditionalFeature;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Scene;
-import javafx.util.FXPermission;
+// import javafx.util.FXPermission;
 
 public class PlatformImpl {
+ // private static final boolean isWeb = System.getProperty("glass.platform", "none").equalsIgnoreCase("web");
+private static final boolean isWeb = System.getProperty("java.vendor", "none").equalsIgnoreCase("bck2brwsr");
+
 
     private static AtomicBoolean initialized = new AtomicBoolean(false);
     private static AtomicBoolean platformExit = new AtomicBoolean(false);
@@ -106,8 +109,8 @@ public class PlatformImpl {
                     -> Boolean.getBoolean("com.sun.javafx.application.debug"));
 
     // Internal permission used by FXCanvas (SWT interop)
-    private static final FXPermission FXCANVAS_PERMISSION =
-            new FXPermission("accessFXCanvasInternals");
+    // private static final FXPermission FXCANVAS_PERMISSION =
+            // new FXPermission("accessFXCanvasInternals");
 
     /**
      * Set a flag indicating whether this application should show up in the
@@ -138,7 +141,12 @@ public class PlatformImpl {
      * @param appClass the Application class.
      */
     public static void setApplicationName(final Class appClass) {
-        runLater(() -> com.sun.glass.ui.Application.GetApplication().setName(appClass.getName()));
+System.err.println("Need to set Appname, later...");
+        runLater(() -> {
+            System.err.println("RUNLATERnow to set appname...");
+            com.sun.glass.ui.Application.GetApplication().setName(appClass.getName());
+            System.err.println("RUNLATER to set appname done ...");
+        });
     }
 
     /**
@@ -191,6 +199,7 @@ public class PlatformImpl {
             return;
         }
 
+/*
         final Module module = PlatformImpl.class.getModule();
         final ModuleDescriptor moduleDesc = module.getDescriptor();
         if (!module.isNamed()
@@ -207,6 +216,7 @@ public class PlatformImpl {
             }
             Logging.getJavaFXLogger().warning(warningStr);
         }
+*/
 
         @SuppressWarnings("removal")
         var dummy = AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
@@ -287,17 +297,25 @@ public class PlatformImpl {
                 checkIdle();
             }
         };
+Toolkit mt = Toolkit.getToolkit();
+System.err.println("PI, startup2 5a, tk = "+mt);
         Toolkit.getToolkit().addTkListener(toolkitListener);
+System.err.println("PI, startup2 6");
 
         Toolkit.getToolkit().startup(() -> {
+System.err.println("PI, startup2 7");
             startupLatch.countDown();
+System.err.println("PI, startup2 7a");
             r.run();
+System.err.println("PI, startup2 7b");
         });
+System.err.println("PI, startup2 8");
 
         //Initialize the thread merging mechanism
         if (isThreadMerged) {
             installFwEventQueue();
         }
+System.err.println("PI, startup2 DONE");
     }
 
     // Pass certain system properties to glass via the device details Map
@@ -349,7 +367,7 @@ public class PlatformImpl {
     // FXCanvas-specific initialization
     private static void initFXCanvas() {
         // Verify that we have the appropriate permission
-        @SuppressWarnings("removal")
+/*
         final SecurityManager sm = System.getSecurityManager();
         if (sm != null) {
             try {
@@ -360,6 +378,7 @@ public class PlatformImpl {
                 return;
             }
         }
+*/
 
         // Find the calling class, ignoring any stack frames from FX application classes
         Predicate<StackWalker.StackFrame> classFilter = f ->
@@ -432,12 +451,13 @@ public class PlatformImpl {
     }
 
     private static void runLater(final Runnable r, boolean exiting) {
+System.err.println("[PI] runLater asked, runnable " + r);
         if (!initialized.get()) {
             throw new IllegalStateException("Toolkit not initialized");
         }
 
         pendingRunnables.incrementAndGet();
-        waitForStart();
+        // waitForStart();
 
         synchronized (runLaterLock) {
             if (!exiting && toolkitExit.get()) {
@@ -451,8 +471,10 @@ public class PlatformImpl {
             // Don't catch exceptions, they are handled by Toolkit.defer()
             Toolkit.getToolkit().defer(() -> {
                 try {
+System.err.println("[PI] Runnable is about to get called: " + r);
                     @SuppressWarnings("removal")
                     var dummy = AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+System.err.println("[PI] runLater will really run now, runnable " + r);
                         r.run();
                         return null;
                     }, acc);
@@ -462,6 +484,7 @@ public class PlatformImpl {
                 }
             });
         }
+System.err.println("[PI] runLater queued, runnable " + r);
     }
 
     public static void runAndWait(final Runnable r) {
@@ -469,19 +492,26 @@ public class PlatformImpl {
     }
 
     private static void runAndWait(final Runnable r, boolean exiting) {
+System.err.println("[RUNANDWAIT], asked to run " + r);
         if (isFxApplicationThread()) {
              try {
+System.err.println("[RUNANDWAIT], on appthread, asked to run " + r);
                  r.run();
+System.err.println("[RUNANDWAIT], on appthread, did run " + r);
              } catch (Throwable t) {
                  System.err.println("Exception in runnable");
                  t.printStackTrace();
              }
         } else {
             final CountDownLatch doneLatch = new CountDownLatch(1);
+System.err.println("[RUNANDWAIT], NOT on appthread, will runlater " + r);
             runLater(() -> {
                 try {
+System.err.println("[RUNANDWAIT], now on appthread, will run " + r);
                     r.run();
+System.err.println("[RUNANDWAIT], now on appthread, did run " + r);
                 } finally {
+System.err.println("[JVDBG] PI, I should wait internally on doneLatch but ignore");
                     doneLatch.countDown();
                 }
             }, exiting);
@@ -490,6 +520,9 @@ public class PlatformImpl {
                 throw new IllegalStateException("Toolkit has exited");
             }
 
+if (isWeb) {
+System.err.println("[JVDBG] PI, I should wait on doneLatch but ignore");
+} else {
             try {
                 doneLatch.await();
             } catch (InterruptedException ex) {
@@ -497,6 +530,7 @@ public class PlatformImpl {
             }
         }
     }
+}
 
     public static void setImplicitExit(boolean implicitExit) {
         PlatformImpl.implicitExit = implicitExit;
@@ -653,6 +687,7 @@ public class PlatformImpl {
 
     public static boolean isSupported(ConditionalFeature feature) {
         final boolean supported = isSupportedImpl(feature);
+/*
         if (supported && (feature == ConditionalFeature.TRANSPARENT_WINDOW)) {
             // some features require the application to have the corresponding
             // permissions, if the application doesn't have them, the platform
@@ -671,6 +706,7 @@ public class PlatformImpl {
             return true;
         }
 
+*/
         return supported;
    }
 

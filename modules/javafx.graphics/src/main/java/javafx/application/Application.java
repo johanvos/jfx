@@ -231,6 +231,7 @@ public abstract class Application {
      * method, start method, or stop method.
      */
     public static void launch(Class<? extends Application> appClass, String... args) {
+System.err.println("javafx.application.Application.launch() is called, invoke launchApplication now on LauncherImpl");
         LauncherImpl.launchApplication(appClass, args);
     }
 
@@ -273,8 +274,10 @@ public abstract class Application {
      * method, start method, or stop method.
      */
     public static void launch(String... args) {
+System.err.println("[JVDBG] javafx.application.Application: launch1");
         // Figure out the right class to call
         StackTraceElement[] cause = Thread.currentThread().getStackTrace();
+System.err.println("[JVDBG] javafx.application.Application: launch2");
 
         boolean foundThisMethod = false;
         String callingClassName = null;
@@ -301,6 +304,7 @@ public abstract class Application {
                                Thread.currentThread().getContextClassLoader());
             if (Application.class.isAssignableFrom(theClass)) {
                 Class<? extends Application> appClass = theClass;
+System.err.println("[JVDBG] javafx.application.Application: launch3");
                 LauncherImpl.launchApplication(appClass, args);
             } else {
                 throw new RuntimeException("Error: " + theClass

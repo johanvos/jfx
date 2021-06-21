@@ -263,11 +263,11 @@ public final class QuantumToolkit extends Toolkit {
                 dispose();
             }
         };
-        @SuppressWarnings("removal")
-        var dummy = AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
-            Runtime.getRuntime().addShutdownHook(shutdownHook);
-            return null;
-        });
+        // AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            // Runtime.getRuntime().addShutdownHook(shutdownHook);
+            // return null;
+        // });
+// System.err.println("[QTK] init done with collector = " + collector);
         return true;
     }
 
@@ -281,6 +281,7 @@ public final class QuantumToolkit extends Toolkit {
      *                            functionality after the toolkit has been initialized.
      */
     @Override public void startup(final Runnable userStartupRunnable) {
+System.err.println("[QT] startup called");
         // Save the context class loader of the launcher thread
         ccl = Thread.currentThread().getContextClassLoader();
 
@@ -288,7 +289,9 @@ public final class QuantumToolkit extends Toolkit {
             this.userRunnable = userStartupRunnable;
 
             // Ensure that the toolkit can only be started here
+System.err.println("[QT] startup called, app.run will be called with runToolkit");
             Application.run(() -> runToolkit());
+System.err.println("[QT] startup called, app.run was called with runToolkit");
         } catch (RuntimeException ex) {
             if (verbose) {
                 ex.printStackTrace();
@@ -301,11 +304,13 @@ public final class QuantumToolkit extends Toolkit {
             throw new RuntimeException(t);
         }
 
+/*
         try {
             launchLatch.await();
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
+*/
     }
 
     // restart the toolkit if previously terminated
@@ -487,19 +492,22 @@ public final class QuantumToolkit extends Toolkit {
     }
 
     void postPulse() {
+// System.err.println("[QT] POSTPULSE!");
         if (toolkitRunning.get() &&
             (animationRunning.get() || nextPulseRequested.get()) &&
             !setPulseRunning()) {
 
             Application.invokeLater(pulseRunnable);
+                // System.err.println("JJ QT.postPulse@(" + System.nanoTime() + "): " + pulseString());
 
             if (debug) {
-                System.err.println("QT.postPulse@(" + System.nanoTime() + "): " + pulseString());
+                // System.err.println("QT.postPulse@(" + System.nanoTime() + "): " + pulseString());
             }
         } else if (!animationRunning.get() && !nextPulseRequested.get() && !pulseRunning.get()) {
+// System.err.println("[QT] pause!");
             pauseTimer();
-        } else if (debug) {
-            System.err.println("QT.postPulse#(" + System.nanoTime() + "): DROP : " + pulseString());
+        } else {
+            // System.err.println("QT.postPulse#(" + System.nanoTime() + "): DROP : " + pulseString());
         }
     }
 
@@ -540,13 +548,18 @@ public final class QuantumToolkit extends Toolkit {
         if (debug) {
             System.err.println("QT.endPulse: " + System.nanoTime());
         }
+// System.err.println("[QT] endPulseRunning");
     }
 
     void pulseFromQueue() {
         try {
+// System.err.println("[QT] pulseFromQueue 0");
             pulse();
+        } catch (Throwable t) {
+System.err.println("[QT] ERROR in pulseFromQueue: " + t);
         } finally {
             endPulseRunning();
+// System.err.println("[QT] pulseFromQueue 3");
         }
     }
 
@@ -556,28 +569,40 @@ public final class QuantumToolkit extends Toolkit {
 
     void pulse(boolean collect) {
         try {
+// System.err.println("[PULSE] 1");
             inPulse++;
             if (PULSE_LOGGING_ENABLED) {
                 PulseLogger.pulseStart();
             }
+// System.err.println("[PULSE] 2");
 
             if (!toolkitRunning.get()) {
                 return;
             }
+// System.err.println("[PULSE] 3");
             nextPulseRequested.set(false);
+// System.err.println("[PULSE] 4");
             if (animationRunnable != null) {
                 animationRunning.set(true);
                 animationRunnable.run();
             } else {
                 animationRunning.set(false);
             }
+// System.err.println("[PULSE] 5");
             firePulse();
+// System.err.println("[PULSE] 6, render if we need to collect? " + collect);
             if (collect) collector.renderAll();
+// System.err.println("[PULSE] 7");
+        } catch (Exception e) {
+System.err.println("[PULSE] got exception: " + e);
+e.printStackTrace();
         } finally {
+// System.err.println("[PULSE] 8");
             inPulse--;
             if (PULSE_LOGGING_ENABLED) {
                 PulseLogger.pulseEnd();
             }
+// System.err.println("[PULSE] 9");
         }
     }
 
@@ -615,6 +640,7 @@ public final class QuantumToolkit extends Toolkit {
         }
         stage.setRTL(rtl);
         stage.init(systemMenu);
+System.err.println("[QTK] createTKStage done");
         return stage;
     }
 
@@ -745,6 +771,7 @@ public final class QuantumToolkit extends Toolkit {
     }
 
     private static void assignScreensAdapters() {
+// System.err.println("[QTK] assignScreensAdapters");
         GraphicsPipeline pipeline = GraphicsPipeline.getPipeline();
         for (Screen screen : Screen.getScreens()) {
             screen.setAdapterOrdinal(pipeline.getAdapterOrdinal(screen));
@@ -817,9 +844,15 @@ public final class QuantumToolkit extends Toolkit {
     // shutdown. Calling Platform.runLater *is* thread-safe even when the
     // toolkit is shutting down.
     @Override public void defer(Runnable runnable) {
-        if (!toolkitRunning.get()) return;
+// System.err.println("[QT] defer runnable: " + runnable);
+        if (!toolkitRunning.get()) {
+// System.err.println("[QT] Warning, toolkit not yet running!");
+            // return;
+        }
+// System.err.println("[QT] defer2 runnable: " + runnable);
 
         Application.invokeLater(runnable);
+// System.err.println("[QT] defer3 runnable: " + runnable);
     }
 
     @Override public void exit() {
@@ -899,6 +932,8 @@ public final class QuantumToolkit extends Toolkit {
     }
 
     @Override public void requestNextPulse() {
+// System.err.println("[QT] requestNextPulse asked!");
+// Thread.dumpStack();
         nextPulseRequested.set(true);
     }
 

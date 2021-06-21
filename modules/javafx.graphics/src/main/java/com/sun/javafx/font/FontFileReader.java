@@ -41,6 +41,7 @@ class FontFileReader implements FontConstants {
     RandomAccessFile raFile;
 
     public FontFileReader(String filename) {
+System.err.println("FONTFILEREADER created for " + filename);
         this.filename = filename;
     }
 
@@ -55,7 +56,9 @@ class FontFileReader implements FontConstants {
      * @throws PrivilegedActionException
      */
     @SuppressWarnings("removal")
-    public synchronized boolean openFile() throws PrivilegedActionException {
+    public synchronized boolean openFile() { // throws PrivilegedActionException {
+Thread.dumpStack();
+/*
         if (raFile != null) {
             return false;
         }
@@ -75,22 +78,29 @@ class FontFileReader implements FontConstants {
             } catch (IOException e) {
             }
         }
+*/
         return false;
     }
 
     public synchronized void closeFile() throws IOException {
+Thread.dumpStack();
+/*
         if (raFile != null) {
             raFile.close();
             raFile = null;
             readBuffer = null;
         }
+*/
     }
 
     public synchronized long getLength() {
-        return filesize;
+Thread.dumpStack();
+return 0;
+        // return filesize;
     }
 
     public synchronized void reset() throws IOException {
+Thread.dumpStack();
         if (raFile != null) {
             raFile.seek(0);
         }
@@ -231,6 +241,7 @@ class FontFileReader implements FontConstants {
     private int readBufferLen;
     private int readBufferStart;
     synchronized public Buffer readBlock(int offset, int len) {
+Thread.dumpStack();
         if (readBuffer == null) {
             readBuffer = new byte[READBUFFERSIZE];
             readBufferLen = 0; // length of valid contents.

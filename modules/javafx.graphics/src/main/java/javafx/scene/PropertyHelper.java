@@ -36,7 +36,7 @@ class PropertyHelper {
             @SuppressWarnings("removal")
             boolean answer =
                 AccessController.doPrivileged((java.security.PrivilegedAction<Boolean>) () -> {
-                        String propVal = System.getProperty(propName);
+                        String propVal = System.getProperty(propName, "false");
                         return "true".equals(propVal.toLowerCase());
                     });
             return answer;

@@ -25,14 +25,19 @@
 
 package com.sun.javafx.tk.quantum;
 
+// import org.apidesign.bck2brwsr.core.JavaScriptBody;
+
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -54,8 +59,9 @@ import java.util.HashMap;
 /*
  * Quantum Renderer
  */
-final class QuantumRenderer extends ThreadPoolExecutor  {
+final class QuantumRenderer extends AbstractExecutorService {
     @SuppressWarnings("removal")
+    private static final boolean isWeb = System.getProperty("glass.platform", "none").equalsIgnoreCase("web");
     private static boolean usePurgatory = // TODO - deprecate
         AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> Boolean.getBoolean("decora.purgatory"));
 
@@ -68,8 +74,9 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
     private CountDownLatch  initLatch = new CountDownLatch(1);
 
     private QuantumRenderer() {
-        super(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-        setThreadFactory(new QuantumThreadFactory());
+        // super(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        // setThreadFactory(new QuantumThreadFactory());
+        _renderer = new QuantumThreadFactory().newThread(null);
     }
 
     protected Throwable initThrowable() {
@@ -88,12 +95,15 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
         }
 
         public void init() {
+System.err.println("[QR] Pipeline init0");
             try {
                 if (GraphicsPipeline.createPipeline() == null) {
+// System.err.println("[QR] Pipeline init1");
                     String MSG = "Error initializing QuantumRenderer: no suitable pipeline found";
                     System.err.println(MSG);
                     throw new RuntimeException(MSG);
                 } else {
+// System.err.println("[QR] Pipeline init2");
                     Map device = GraphicsPipeline.getPipeline().getDeviceDetails();
                     if (device == null) {
                         device = new HashMap();
@@ -107,7 +117,10 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
                     Application.setDeviceDetails(device);
                 }
             } catch (Throwable th) {
-                QuantumRenderer.this.setInitThrowable(th);
+System.err.println("[QR] error Pipeline init");
+th.printStackTrace();
+throw new InternalError();
+                // QuantumRenderer.this.setInitThrowable(th);
             } finally {
                 initLatch.countDown();
             }
@@ -135,7 +148,11 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
 
         @SuppressWarnings("removal")
         @Override public Thread newThread(Runnable r) {
-            final PipelineRunnable pipeline = new PipelineRunnable(r);
+System.err.println("[QR] create newThread");
+        final PipelineRunnable pipeline = new PipelineRunnable(r);
+System.err.println("[QR] create newThread, pipeline = " + pipeline);
+pipeline.init();
+System.err.println("[QR] create newThread, inited pipeline = " + pipeline);
             _renderer =
                 AccessController.doPrivileged((PrivilegedAction<Thread>) () -> {
                     Thread th = new Thread(pipeline);
@@ -166,13 +183,20 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
 
         final RenderJob job = new RenderJob(factoryCreator, createDone);
 
+        if (isWeb) {
+            com.sun.glass.ui.web.WebApplication.invokeOtherJob(job);
+        } else {
         submit(job);
+        }
 
+System.err.println("[QR] createResourceFactory should wait, but we ignore that.");
+/*
         try {
             createLatch.await();
         } catch (Throwable th) {
             th.printStackTrace(System.err);
         }
+*/
     }
 
     /*
@@ -223,8 +247,10 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
 
     /* java.util.concurrent.ThreadPoolExecutor */
 
-    @Override public void afterExecute(Runnable r, Throwable t) {
-        super.afterExecute(r, t);
+//    @Override 
+// JV: this needs to be called after a job has finished
+public void afterExecute(Runnable r, Throwable t) {
+        // super.afterExecute(r, t);
 
         /*
          * clean up what we can after every render job
@@ -257,16 +283,70 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
         }
     }
 
+    @Override
+    public void shutdown() {
+    }
+
+    @Override
+    public List<Runnable> shutdownNow() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isShutdown() {
+        return false;
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return false;
+    }
+
+    @Override
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        throw new InterruptedException();
+    }
+
+    @Override
+    public void execute(Runnable r) {
+// System.err.println("[QR] EXECUTE! " + r);
+// System.err.println("[QR] startEXECUTE! r.run " + r);
+r.run();
+        //Thread t = new Thread(r);
+        // t.start();
+// System.err.println("[QR] startEXECUTEdone! " + r);
+
+/*
+        schedule(() -> {
+            Throwable thrwbl = null;
+            try {
+                r.run();
+            } catch (Exception | Error t) {
+                thrwbl = t;
+            } 
+        });
+*/
+    }
+
     public static synchronized QuantumRenderer getInstance() {
+// System.err.println("[QR] getIstance asked!");
         if (instanceReference.get() == null) {
             synchronized (QuantumRenderer.class) {
                 QuantumRenderer newTk = null;
                 try {
                     newTk = new QuantumRenderer();
-                    newTk.prestartCoreThread();
+// System.err.println("[QR] ready to prestart0!");
+// QuantumThreadFactory qtf = new QuantumThreadFactory();
+// System.err.println("[QR] created qtf!");
+// Thread t = qtf.newThread(null);
+                    // newTk.prestartCoreThread();
+// System.err.println("[QR] ready to prestart done!");
 
-                    newTk.initLatch.await();
+                    // newTk.initLatch.await();
+// System.err.println("[QR] ready to prestart awaited!");
                 } catch (Throwable t) {
+System.err.println("[QR] Bummer! throwable detected: "+t);
+t.printStackTrace();
                     if (newTk != null) {
                         newTk.setInitThrowable(t);
                     }
@@ -274,7 +354,9 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
                         t.printStackTrace();
                     }
                 }
+// System.err.println("is newtk null? " + newTk);
                 if (newTk != null && newTk.initThrowable() != null) {
+System.err.println("problem!!!");
                     if (PrismSettings.noFallback) {
                         System.err.println("Cannot initialize a graphics pipeline, and Prism fallback is disabled");
                         throw new InternalError("Could not initialize prism toolkit, " +

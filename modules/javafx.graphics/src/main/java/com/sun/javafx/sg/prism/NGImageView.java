@@ -96,12 +96,14 @@ public class NGImageView extends NGNode {
 
     @Override
     protected void doRender(Graphics g) {
+// System.out.println("NGImageView.doRender START for " + this);
         if (!coordsOK) {
             calculatePositionAndClipping();
         }
         if (renderable) {
             super.doRender(g);
         }
+// System.out.println("NGImageView.doRender DONE for " + this);
     }
 
     // method for testing reasons
@@ -112,13 +114,16 @@ public class NGImageView extends NGNode {
 
     @Override
     protected void renderContent(Graphics g) {
+// System.out.println("NGImageView.renderContent START for " + this);
         int imgW = image.getWidth();
         int imgH = image.getHeight();
 
         ResourceFactory factory = g.getResourceFactory();
         int maxSize = maxSizeWrapper(factory);
+// System.err.println("[NGImageView] maxSize = " + maxSize+", w = " + imgW+", h = " + imgH);
         if (imgW <= maxSize && imgH <= maxSize) {
             Texture texture = factory.getCachedTexture(image, Texture.WrapMode.CLAMP_TO_EDGE);
+// System.err.println("[NGImageView] texture = " + texture+", coords = " + coords);
             if (coords == null) {
                 g.drawTexture(texture, x, y, x + w, y + h, 0, 0, imgW, imgH);
             } else {
@@ -133,6 +138,7 @@ public class NGImageView extends NGNode {
             if (compoundCoords == null) compoundCoords = new CompoundCoords(compoundImage, coords);
             compoundCoords.draw(g, compoundImage, x, y);
         }
+// System.out.println("NGImageView.renderContent DONE for " + this);
     }
 
     @Override

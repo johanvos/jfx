@@ -436,7 +436,7 @@ public abstract class Node implements EventTarget, Styleable {
 
             @Override
             public void doUpdatePeer(Node node) {
-                node.doUpdatePeer();
+                node.nodedoUpdatePeer();
             }
 
             @Override
@@ -478,7 +478,7 @@ public abstract class Node implements EventTarget, Styleable {
 
             @Override
             public void doProcessCSS(Node node) {
-                node.doProcessCSS();
+                node.privatedoProcessCSS();
             }
 
             @Override
@@ -706,6 +706,7 @@ public abstract class Node implements EventTarget, Styleable {
      * clear dirtybits of this node in the PG graph
      */
     final void syncPeer() {
+// System.out.println("[NODE] syncPeer asked for " + this);
         // Do not synchronize invisible nodes unless their visibility has changed
         // or they have requested a forced synchronization
         if (!isDirtyEmpty() && (treeVisible
@@ -715,6 +716,7 @@ public abstract class Node implements EventTarget, Styleable {
             NodeHelper.updatePeer(this);
             clearDirty();
         }
+// System.out.println("[NODE] syncPeer DONE for " + this);
     }
 
     /**
@@ -786,7 +788,7 @@ public abstract class Node implements EventTarget, Styleable {
      *
      * Note: This method MUST only be called via its accessor method.
      */
-    private void doUpdatePeer() {
+    private void nodedoUpdatePeer() {
         final NGNode peer = getPeer();
 
         // For debug / diagnostic purposes, we will copy across a name for this node down to
@@ -8808,6 +8810,8 @@ public abstract class Node implements EventTarget, Styleable {
     public String getTypeSelector() {
 
         final Class<?> clazz = getClass();
+return clazz.getName();
+/*
         final Package pkg = clazz.getPackage();
 
         // package could be null. not likely, but could be.
@@ -8820,6 +8824,7 @@ public abstract class Node implements EventTarget, Styleable {
         final int pos = (0 < plen && plen < clen) ? plen + 1 : 0;
 
         return clazz.getName().substring(pos);
+*/
     }
 
     /**
@@ -9555,7 +9560,8 @@ public abstract class Node implements EventTarget, Styleable {
      *
      * Note: This method MUST only be called via its accessor method.
      */
-    private void doProcessCSS() {
+    private void privatedoProcessCSS() {
+// System.err.println("[NODE] doProcessCSS() START on this = " + this);
 
         // Nothing to do...
         if (cssFlag == CssFlags.CLEAN) return;
@@ -9573,6 +9579,7 @@ public abstract class Node implements EventTarget, Styleable {
         if (styleHelper != null && getScene() != null) {
             styleHelper.transitionToState(this);
         }
+// System.err.println("[NODE] doProcessCSS() DONE on this = " + this);
     }
 
 

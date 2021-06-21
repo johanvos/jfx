@@ -85,6 +85,7 @@ public abstract class PrismFontFactory implements FontFactory {
         new HashMap<String, CompositeFontResource>();
 
     static {
+System.err.println("[PFF] <clinit> start");
         isWindows = PlatformUtil.isWindows();
         isMacOSX  = PlatformUtil.isMac();
         isLinux   = PlatformUtil.isLinux();
@@ -96,9 +97,12 @@ public abstract class PrismFontFactory implements FontFactory {
         @SuppressWarnings("removal")
         boolean tmp = AccessController.doPrivileged(
                 (PrivilegedAction<Boolean>) () -> {
+System.err.println("[PFF] nll loading...");
                     NativeLibLoader.loadLibrary("javafx_font");
+System.err.println("[PFF] nll loading done");
                     String dbg = System.getProperty("prism.debugfonts", "");
-                    boolean debug = "true".equals(dbg);
+boolean debug = true;
+                    // boolean debug = "true".equals(dbg);
                     jreFontDir = getJDKFontDir();
                     String s = System.getProperty("com.sun.javafx.fontSize");
                     systemFontSize = -1f;
@@ -156,6 +160,7 @@ public abstract class PrismFontFactory implements FontFactory {
         );
         debugFonts = tmp;
         cacheLayoutSize = tempCacheLayoutSize[0];
+System.err.println("[PFF] <clinit> done");
     }
 
     private static String getJDKFontDir() {
@@ -167,7 +172,7 @@ public abstract class PrismFontFactory implements FontFactory {
         if (isWindows) return DW_FACTORY;
         if (isMacOSX || isIOS) return CT_FACTORY;
         if (isLinux || isAndroid) return FT_FACTORY;
-        return null;
+        return FT_FACTORY;
     }
 
     public static float getFontSizeLimit() {
@@ -206,11 +211,14 @@ public abstract class PrismFontFactory implements FontFactory {
     private static synchronized PrismFontFactory getFontFactory(String factoryClass) {
         try {
             Class<?> clazz = Class.forName(factoryClass);
-            Method mid = clazz.getMethod("getFactory", (Class[])null);
+Class[] empty = new Class[0];
+            Method mid = clazz.getMethod("getFactory", empty);
             return (PrismFontFactory)mid.invoke(null);
         } catch (Throwable t) {
             if (debugFonts) {
                 System.err.println("Loading font factory failed "+ factoryClass);
+System.err.println("Reason = " + t);
+t.printStackTrace();
             }
         }
         return null;
