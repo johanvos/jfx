@@ -240,6 +240,7 @@ public class LogicalFont implements CompositeFontResource {
     }
 
     public int getSlotForFont(String fontName) {
+System.err.println("LogicalFont: getSlotForFont " + fontName);
         getLinkedFonts();
         int i = 1;
         for (String linkedFontName : linkedFontNames) {
@@ -272,7 +273,7 @@ public class LogicalFont implements CompositeFontResource {
         FontResource fr = factory.getFontResource(fontName, null, false);
         if (fr == null) {
             if (PrismFontFactory.debugFonts) {
-                System.err.println("\t Font name not supported \"" + fontName + "\".");
+                System.err.println("\t Font name NOT supported \"" + fontName + "\".");
             }
             return -1;
         }

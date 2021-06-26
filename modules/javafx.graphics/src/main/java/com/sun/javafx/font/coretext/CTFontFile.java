@@ -79,6 +79,7 @@ class CTFontFile extends PrismFontFile {
         if (fileRef != 0) {
             int pathStyle = OS.kCFURLPOSIXPathStyle;
             long urlRef = OS.CFURLCreateWithFileSystemPath(alloc, fileRef, pathStyle, false);
+System.err.println("registerfont, urlref = " + urlRef);
             if (urlRef != 0) {
                 int scope = OS.kCTFontManagerScopeProcess;
                 result = OS.CTFontManagerRegisterFontsForURL(urlRef, scope, 0);

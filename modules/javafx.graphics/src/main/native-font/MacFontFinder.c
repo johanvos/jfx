@@ -163,6 +163,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_sun_javafx_font_MacFontFinder_getFontDat
     }
 
     CFIndex i = 0, j = 0;
+fprintf(stderr, "[n] getfontdata, count = %d \n", count);
     while (i < count) {
         CTFontDescriptorRef fd = (CTFontDescriptorRef)CFArrayGetValueAtIndex(fonts, i++);
         j = addCTFontDescriptor(fd, env, result, j);

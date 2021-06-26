@@ -67,6 +67,8 @@ public class CompositeStrike implements FontStrike {
                     float size, BaseTransform graphicsTransform, int aaMode,
                     FontStrikeDesc desc) {
 
+Thread.dumpStack();
+System.err.println("Create CS for fontResource " + fontResource);
         this.fontResource = fontResource;
         this.size = size;
         if (graphicsTransform.isTranslateOrIdentity()) {

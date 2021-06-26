@@ -25,11 +25,16 @@
 
 package com.sun.javafx.font;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import com.sun.glass.utils.NativeLibLoader;
 
@@ -72,7 +77,15 @@ class MacFontFinder {
         if (locale == null) {
             locale = Locale.ENGLISH;
         }
+        try {
+            Stream<Path> stream = Files.list(Paths.get("/System/Library/Fonts"));
+            stream.forEach(f -> PrismFontFactory.getFontFactory().registerEmbeddedFont(f.toString()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         String[] fontData = getFontData();
+System.err.println("in populateFontFilenameMap, locale = " + locale+" and datasize = " + fontData.length);
         if (fontData == null) return false;
 
         int i = 0;

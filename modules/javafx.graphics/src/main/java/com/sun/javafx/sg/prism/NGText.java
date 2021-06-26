@@ -63,6 +63,8 @@ public class NGText extends NGShape {
 
     private PGFont font;
     public void setFont(Object font) {
+Thread.dumpStack();
+System.err.println("CONTINUE HERE!");
         if (font != null && font.equals(this.font)) {
             return;
         }

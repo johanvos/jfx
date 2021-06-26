@@ -54,6 +54,7 @@ class OS {
     static final long CFStringCreate(String string) {
         char[] buffer = string.toCharArray();
         long alloc = kCFAllocatorDefault();
+System.err.println("[OS]CFStringCreate width string = " + string+" and alloc = " + alloc);
         return CFStringCreateWithCharacters(alloc, buffer, buffer.length);
     }
 

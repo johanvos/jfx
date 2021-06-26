@@ -790,6 +790,7 @@ public class PrismTextLayout implements TextLayout {
     }
 
     private void shape(TextRun run, char[] chars, GlyphLayout layout) {
+System.err.println("[PrismTextLayout] shape");
         FontStrike strike;
         PGFont font;
         if (spans != null) {

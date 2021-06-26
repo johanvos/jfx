@@ -358,6 +358,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(CFStringCreateWithCharacters__J_3CJ)
     jchar *lparg1=NULL;
     jlong rc = 0;
     if (arg1) if ((lparg1 = (*env)->GetCharArrayElements(env, arg1, NULL)) == NULL) goto fail;
+fprintf(stderr, "native, CFStringCreateWithCharacters\n");
     rc = (jlong)CFStringCreateWithCharacters((CFAllocatorRef)arg0, (UniChar*)lparg1, (CFIndex)arg2);
 fail:
     if (arg1 && lparg1) (*env)->ReleaseCharArrayElements(env, arg1, lparg1, 0);
@@ -385,17 +386,22 @@ JNIEXPORT jlong JNICALL OS_NATIVE(CTFontCreateWithGraphicsFont)
 JNIEXPORT jlong JNICALL OS_NATIVE(CTFontCreateWithName)
     (JNIEnv *env, jclass that, jlong arg0, jdouble arg1, jobject arg2)
 {
+fprintf(stderr, "ctfontCreateWidhtName\n");
     CGAffineTransform _arg2, *lparg2=NULL;
     jlong rc = 0;
     if (arg2) if ((lparg2 = getCGAffineTransformFields(env, arg2, &_arg2)) == NULL) goto fail;
     CFStringRef fontName = (CFStringRef)arg0;
     if (CFStringGetCharacterAtIndex(fontName, 0) == '.') {
+    // if (CFStringGetCharacterAtIndex(fontName, 0) == 'X') {
+fprintf(stderr, "char is dot \n");
         bool bold = CFStringFind(fontName, CFSTR("bold"), kCFCompareCaseInsensitive).location != kCFNotFound;
         CTFontRef font = CTFontCreateUIFontForLanguage(bold ? kCTFontUIFontEmphasizedSystem : kCTFontUIFontSystem, 0.0, NULL);
         rc = (jlong) CTFontCreateCopyWithAttributes(font, (CGFloat)arg1, (CGAffineTransform*)lparg2, NULL);
-        CFRelease(font);
+fprintf(stderr, "char is ., answer = %ld\n", rc);
+        // CFRelease(font);
     } else {
         rc = (jlong) CTFontCreateWithName(fontName, (CGFloat)arg1, (CGAffineTransform*)lparg2);
+fprintf(stderr, "char is NOT ., answer = %ld\n", rc);
     }
 fail:
     /* In only */

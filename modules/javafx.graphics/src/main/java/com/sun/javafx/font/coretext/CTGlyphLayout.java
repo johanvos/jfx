@@ -37,6 +37,7 @@ class CTGlyphLayout extends GlyphLayout {
 
     private long createCTLine(long fontRef, char[] chars, boolean rtl,
                               int start, int length) {
+System.err.println("[CTGlyphLayout] createCTLine, fontRef = " + fontRef);
         /* Use CoreText to analize the run */
         long alloc = OS.kCFAllocatorDefault();
         long textRef = OS.CFStringCreateWithCharacters(alloc, chars, start, length);
@@ -64,10 +65,12 @@ class CTGlyphLayout extends GlyphLayout {
             }
             OS.CFRelease(textRef);
         }
+System.err.println("[CTGlyphLayout] line created, return "+ lineRef);
         return lineRef;
     }
 
     private int getFontSlot(long runRef, CompositeFontResource fr, String name, int slot) {
+System.err.println("getFontSlot, runref = " + runRef+", name = " + name+", slot = " + slot+", fr = " + fr);
         long runAttrs = OS.CTRunGetAttributes(runRef);
         if (runAttrs == 0) return -1;
         long actualFont = OS.CFDictionaryGetValue(runAttrs, OS.kCTFontAttributeName());
@@ -76,6 +79,7 @@ class CTGlyphLayout extends GlyphLayout {
         /* Use the display name from the kCTFontDisplayNameAttribute attribute
          * instead of CTFontCopyDisplayName() to avoid localized names*/
         String fontName = OS.CTFontCopyAttributeDisplayName(actualFont);
+System.err.println("[CTGlyphLayout] getFontSlot, name = " + name+", fontNam = " + fontName+", af = " + actualFont);
         if (fontName == null) return -1;
         if (!fontName.equalsIgnoreCase(name)) {
             if (fr == null) return -1;
@@ -89,6 +93,7 @@ class CTGlyphLayout extends GlyphLayout {
 
     public void layout(TextRun run, PGFont font, FontStrike strike, char[] text) {
 
+
         int baseSlot = 0;
         CompositeFontResource composite = null;
         if (strike instanceof CompositeStrike) {
@@ -99,6 +104,7 @@ class CTGlyphLayout extends GlyphLayout {
         float size = strike.getSize();
         String fontName = strike.getFontResource().getFullName();
         long fontRef = ((CTFontStrike)strike).getFontRef();
+System.err.println("[CTGlyphLayout] layout, fontRef = " + fontRef);
         if (fontRef == 0) return;
         boolean rtl = (run.getLevel() & 1) != 0;
         long lineRef = createCTLine(fontRef, text, rtl, run.getStart(), run.getLength());
@@ -112,9 +118,12 @@ class CTGlyphLayout extends GlyphLayout {
             long runCount = OS.CFArrayGetCount(runs);
             int glyphStart = 0, posStart = 0, indicesStart = 0;
             for (int i = 0; i < runCount; i++) {
+System.err.println("[CTGlyphLayout] i = " + i+", runs = " + runs);
                 long runRef = OS.CFArrayGetValueAtIndex(runs, i);
+System.err.println("[CTGlyphLayout] i = " + i+", runRef = " + runRef+", fontName = " + fontName);
                 if (runRef == 0) continue;
                 int slot = getFontSlot(runRef, composite, fontName, baseSlot);
+System.err.println("[CTGlyphLayout, slot = " + slot);
                 if (slot != -1) {
                     glyphStart += OS.CTRunGetGlyphs(runRef, slot << 24, glyphStart, glyphs);
                 } else {

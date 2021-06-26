@@ -195,7 +195,7 @@ class FallbackResource implements CompositeFontResource {
         FontResource fr = factory.getFontResource(fontName, null, false);
         if (fr == null) {
             if (PrismFontFactory.debugFonts) {
-                System.err.println("\t Font name not supported \"" + fontName + "\".");
+                System.err.println("\t Font name NOT supported \"" + fontName + "\".");
             }
             return -1;
         }

@@ -58,6 +58,8 @@ class CTFontStrike extends PrismFontStrike<CTFontFile> {
                  BaseTransform graphicsTransform, int aaMode,
                  FontStrikeDesc desc) {
         super(fontResource, size, graphicsTransform, aaMode, desc);
+Thread.dumpStack();
+System.err.println("[JAVA] CTFontStrike, fr = " +fontResource);
         float maxDim = PrismFontFactory.getFontSizeLimit();
         if (graphicsTransform.isTranslateOrIdentity()) {
             drawShapes = size > maxDim;
@@ -85,10 +87,13 @@ class CTFontStrike extends PrismFontStrike<CTFontFile> {
                         cgFontRef, size, matrix, 0);
             }
         } else {
+System.err.println("[JAVA] Try CFStringCreate for " + fontResource.getPSName());
             final long psNameRef = OS.CFStringCreate(fontResource.getPSName());
             if (psNameRef != 0) {
+System.err.println("[JAVA] psNameref = " + psNameRef);
                 fontRef = OS.CTFontCreateWithName(psNameRef, size, matrix);
-                OS.CFRelease(psNameRef);
+System.err.println("[JAVA] psNameref = " + psNameRef+", fontRef = " + fontRef+" for font named "+fontResource.getPSName());
+                // OS.CFRelease(psNameRef);
             }
         }
         if (fontRef == 0) {
