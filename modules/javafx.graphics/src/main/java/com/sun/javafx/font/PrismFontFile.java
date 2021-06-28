@@ -606,7 +606,9 @@ public abstract class PrismFontFile implements FontResource, FontConstants {
              * in which case that would remain valid, but also will help
              * any file read implementation which doesn't have random access.
              */
+System.err.println("ready to initnames, fullname = " + fullName+" and name = " + name);
             initNames();
+System.err.println("done initnames, fullname = " + fullName+" and name = " + name+" and famname = " + familyName);
 
             if (familyName == null || fullName == null) {
                 String fontName = name != null ? name : "";

@@ -33,6 +33,7 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -251,7 +252,7 @@ System.err.println("[JVDBG] PFF, createFontResource name = " + name);
 System.err.println("[JVDBG] PFF, createFontResource2 name = " + name);
             fr = createFontFile(name, filename, index, register,
                                 embedded, copy, tracked);
-System.err.println("[JVDBG] PFF2, createFontResource2 name = " + name);
+System.err.println("[JVDBG] PFF2, createFontResource2 name = " + name+", result fullname = " + fr.getFullName());
             if (register) {
                 storeInMap(fr.getFullName(), fr);
                 fileNameToFontResourceMap.put(key, fr);
@@ -270,13 +271,21 @@ System.err.println("[JVDBG] PFF3, createFontResource2 name = " + name);
 System.err.println("[PrismFontFactory], simple cfr for name = " + name+", fn = " + filename);
         PrismFontFile[] pffArr =
             createFontResources(name, filename,
-                                true, false, false, false, false);
+                                true, false, false, false, true);
         if (pffArr == null || pffArr.length == 0) {
 System.err.println("[PrismFontFactory], simple cfr returns null!");
            return null;
         } else {
-System.err.println("[PrismFontFactory], simple cfr returns " + pffArr[0]);
-           return pffArr[0];
+System.err.println("[PrismFontFactory], simple cfr has " + pffArr.length+" entries.");
+for (int i = 0; i < pffArr.length; i++) {
+System.err.println("creaed fr named " + pffArr[i].getFullName());
+}
+ PrismFontFile answer = Arrays.stream(pffArr)
+                        .filter(fr -> name.equalsIgnoreCase(fr.getFullName()))
+                        .findFirst()
+                        .orElse(pffArr[0]);
+System.err.println("I will return " + answer);
+           return answer;
         }
     }
 
@@ -288,7 +297,7 @@ System.err.println("[PrismFontFactory], simple cfr returns " + pffArr[0]);
                                                 boolean loadAll) {
 
 System.err.println("[PrismFontFactory] createFontResources for " +name+" and filename = " + filename);
-Thread.dumpStack();
+// Thread.dumpStack();
         PrismFontFile[] fArr = null;
         if (filename == null) {
             return null;
@@ -373,6 +382,7 @@ System.err.println("[PrismFontFactory] return fArr = " + fArr);
 
     private void storeInMap(String name, FontResource resource) {
 System.err.println("STOREINMAP, name = " + name+", resource = " + resource);
+Thread.dumpStack();
         if (name == null || resource == null) {
             return;
         }
@@ -686,7 +696,7 @@ Thread.dumpStack();
             // else look in the physical resource map
             FontResource fontResource = lookupResource(lcName, wantComp);
             if (fontResource != null) {
-System.err.println("[PFF] getFontResource1, name = " + name+", file = " +file+", wc = " + wantComp);
+System.err.println("[PFF] getFontResource1, name = " + name+", file = " +file+", wc = " + wantComp+", fn = " + fontResource.getFullName());
                 return fontResource;
             }
 

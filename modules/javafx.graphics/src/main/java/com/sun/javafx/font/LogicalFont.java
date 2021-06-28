@@ -243,14 +243,17 @@ public class LogicalFont implements CompositeFontResource {
 System.err.println("LogicalFont: getSlotForFont " + fontName);
         getLinkedFonts();
         int i = 1;
+System.err.println("linkedFontNames = " + linkedFontNames);
         for (String linkedFontName : linkedFontNames) {
             if (fontName.equalsIgnoreCase(linkedFontName)) {
                 return i;
             }
             i++;
         }
+System.err.println("nativeFallbacks = " + nativeFallbacks);
         if (nativeFallbacks != null) {
             for (FontResource nativeFallback : nativeFallbacks) {
+System.err.println("consider fallback " + nativeFallback.getFullName());
                 if (fontName.equalsIgnoreCase(nativeFallback.getFullName())) {
                     return i;
                 }
@@ -267,6 +270,7 @@ System.err.println("LogicalFont: getSlotForFont " + fontName);
             if (PrismFontFactory.debugFonts) {
                 System.err.println("\tToo many font fallbacks!");
             }
+            System.err.println("\tToo many font fallbacks, i = "+i);
             return -1;
         }
         PrismFontFactory factory = PrismFontFactory.getFontFactory();
@@ -275,6 +279,7 @@ System.err.println("LogicalFont: getSlotForFont " + fontName);
             if (PrismFontFactory.debugFonts) {
                 System.err.println("\t Font name NOT supported \"" + fontName + "\".");
             }
+            System.err.println("\t Font name NOT supported \"" + fontName + "\".");
             return -1;
         }
 
@@ -286,6 +291,7 @@ System.err.println("LogicalFont: getSlotForFont " + fontName);
             tmp = new FontResource[nativeFallbacks.length + 1];
             System.arraycopy(nativeFallbacks, 0, tmp, 0, nativeFallbacks.length);
         }
+System.err.println("[Adding nativefallback] " + fr.getFullName());
         tmp[tmp.length - 1] = fr;
         nativeFallbacks = tmp;
 
