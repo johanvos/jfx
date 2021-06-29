@@ -78,8 +78,9 @@ System.err.println("getFontSlot, runref = " + runRef+", name = " + name+", slot 
 
         /* Use the display name from the kCTFontDisplayNameAttribute attribute
          * instead of CTFontCopyDisplayName() to avoid localized names*/
-        String fontName = OS.CTFontCopyAttributeDisplayName(actualFont);
-System.err.println("[CTGlyphLayout] getFontSlot, name = " + name+", fontNam = " + fontName+", af = " + actualFont);
+        String fontName1 = OS.CTFontCopyAttributeDisplayName(actualFont);
+        String fontName = OS.CTFontCopyFullName(actualFont);
+System.err.println("[CTGlyphLayout] getFontSlot, name = " + name+", fontName = " + fontName+", displayname = " + fontName1+", af = " + actualFont);
         if (fontName == null) return -1;
         if (!fontName.equalsIgnoreCase(name)) {
             if (fr == null) return -1;
@@ -110,6 +111,7 @@ System.err.println("[CTGlyphLayout] layout, fontRef = " + fontRef);
         long lineRef = createCTLine(fontRef, text, rtl, run.getStart(), run.getLength());
         if (lineRef == 0) return;
         long runs = OS.CTLineGetGlyphRuns(lineRef);
+System.err.println("[CTGlyphLayout] layout, fontFullName = " + strike.getFontResource().getFullName()+", runs = " + runs);
         if (runs != 0) {
             int glyphCount = (int)OS.CTLineGetGlyphCount(lineRef);
             int[] glyphs = new int[glyphCount];
@@ -118,7 +120,7 @@ System.err.println("[CTGlyphLayout] layout, fontRef = " + fontRef);
             long runCount = OS.CFArrayGetCount(runs);
             int glyphStart = 0, posStart = 0, indicesStart = 0;
             for (int i = 0; i < runCount; i++) {
-System.err.println("[CTGlyphLayout] i = " + i+", runs = " + runs);
+System.err.println("[CTGlyphLayout] i = " + i+", runs = " + runs+" and runcount = " + runCount);
                 long runRef = OS.CFArrayGetValueAtIndex(runs, i);
 System.err.println("[CTGlyphLayout] i = " + i+", runRef = " + runRef+", fontName = " + fontName);
                 if (runRef == 0) continue;

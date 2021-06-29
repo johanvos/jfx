@@ -606,8 +606,12 @@ public abstract class PrismFontFile implements FontResource, FontConstants {
              * in which case that would remain valid, but also will help
              * any file read implementation which doesn't have random access.
              */
-System.err.println("ready to initnames, fullname = " + fullName+" and name = " + name);
+System.err.println("ready to initnames, fullname = " + fullName+" and name = " + name+" anf famname = " + familyName+", lfun = " + localeFullName+", lffn = " + localeFamilyName);
             initNames();
+            Thread.dumpStack();
+            if (name != null) {
+                fullName = name;
+            }
 System.err.println("done initnames, fullname = " + fullName+" and name = " + name+" and famname = " + familyName);
 
             if (familyName == null || fullName == null) {
@@ -768,6 +772,7 @@ System.err.println("done initnames, fullname = " + fullName+" and name = " + nam
     public static final int PS_NAME_ID = 6;
 
     void initNames() throws Exception {
+System.err.println("initnames");
         byte[] name = new byte[256];
 
         DirectoryEntry nameDE = getDirectoryEntry(nameTag);
@@ -786,6 +791,7 @@ System.err.println("done initnames, fullname = " + fullName+" and name = " + nam
          * fonts do not have these, so we must also accept these in the
          * absence of the preferred Windows names.
          */
+System.err.println("numrecords = " + numRecords);
         for (int i=0; i<numRecords; i++) {
             short platformID = buffer.getShort();
             if (platformID != MS_PLATFORM_ID &&
@@ -813,6 +819,7 @@ System.err.println("done initnames, fullname = " + fullName+" and name = " + nam
             int namePtr    = (((int)buffer.getShort()) & 0xffff) + stringPtr;
             String tmpName = null;
             String enc;
+System.err.println("nameID = " + nameID);
             switch (nameID) {
 
             case FAMILY_NAME_ID:
@@ -851,6 +858,7 @@ System.err.println("done initnames, fullname = " + fullName+" and name = " + nam
                             enc = "UTF-16BE";
                         }
                         tmpName = new String(name, 0, nameLen, enc);
+System.err.println("FULLNAMEID, tmpName = " + tmpName);
 
                         if (fullName == null ||
                             langID == MS_ENGLISH_LOCALE_ID) {

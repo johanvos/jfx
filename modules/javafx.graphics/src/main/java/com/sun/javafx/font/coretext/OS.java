@@ -64,6 +64,7 @@ System.err.println("[OS]CFStringCreate width string = " + string+" and alloc = "
     static final native Path2D CGPathApply(long path);
     static final native CGRect CGPathGetPathBoundingBox(long path);
     static final native long CFStringCreateWithCharacters(long alloc, char[] chars, long start, long numChars);
+    static final native String CTFontCopyFullName(long font);
     static final native String CTFontCopyAttributeDisplayName(long font);
     static final native void CTFontDrawGlyphs(long font, short glyphs, double x, double y, long context);
     static final native double CTFontGetAdvancesForGlyphs(long font, int orientation, short glyphs, CGSize advances);

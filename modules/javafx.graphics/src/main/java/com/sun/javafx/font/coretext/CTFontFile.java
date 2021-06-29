@@ -62,6 +62,7 @@ class CTFontFile extends PrismFontFile {
     CTFontFile(String name, String filename, int fIndex, boolean register,
                boolean embedded, boolean copy, boolean tracked) throws Exception {
         super(name, filename, fIndex, register, embedded, copy, tracked);
+System.err.println("[CTFontFile] create for name = " + name+", filename = " + filename);
 
         if (embedded) {
             cgFontRef = createCGFontForEmbeddedFont();
@@ -69,6 +70,7 @@ class CTFontFile extends PrismFontFile {
         } else {
             cgFontRef = 0;
         }
+System.err.println("[CTFontFile] created for name = " + name+", filename = " + filename+" has count " + getFontCount());
     }
 
     public static boolean registerFont(String fontfile) {
@@ -112,6 +114,13 @@ System.err.println("registerfont, urlref = " + urlRef);
 
     long getCGFontRef() {
         return cgFontRef;
+    }
+
+@Override
+    public String getFullName() {
+        String answer = super.getFullName();
+System.err.println("GetFullname asked for " + cgFontRef+" will return " + answer);
+        return answer;
     }
 
     CGRect getBBox(int gc, float size) {

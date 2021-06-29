@@ -183,6 +183,7 @@ public class LogicalFont implements CompositeFontResource {
         } else {
             physicalFamily = PrismFontFactory.getSystemFont(familyName);
         }
+System.err.println("LogicalFont created for family " + family+", bold = " +bold+", italic = " + italic);
     }
 
     private FontResource slot0FontResource;

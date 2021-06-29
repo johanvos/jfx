@@ -252,9 +252,10 @@ System.err.println("[JVDBG] PFF, createFontResource name = " + name);
 System.err.println("[JVDBG] PFF, createFontResource2 name = " + name);
             fr = createFontFile(name, filename, index, register,
                                 embedded, copy, tracked);
-System.err.println("[JVDBG] PFF2, createFontResource2 name = " + name+", result fullname = " + fr.getFullName());
+System.err.println("[JVDBG] PFF2, createFontResource2 name = " + name+", result fullname = " + fr.getFullName()+" with fontcount = " + fr.getFontCount());
             if (register) {
-                storeInMap(fr.getFullName(), fr);
+                // storeInMap(fr.getFullName(), fr);
+                storeInMap(name, fr);
                 fileNameToFontResourceMap.put(key, fr);
             }
 System.err.println("[JVDBG] PFF3, createFontResource2 name = " + name);
@@ -621,7 +622,8 @@ Thread.dumpStack();
     }
 
     private PrismFontFile getFontResource(String name, String file) {
-System.err.println("[GFR] name = " + name+", file = " + file);
+System.err.println("[GetFontResource] name = " + name+", file = " + file);
+Thread.dumpStack();
         /* caller assures file not null */
         PrismFontFile fr = null;
         /* Still need decode the dfont (event when coretext is used)
@@ -685,7 +687,7 @@ System.err.println("frm = " + fontResourceMap);
     public synchronized FontResource getFontResource(String name, String file,
                                                      boolean wantComp) {
 System.err.println("[PFF] getFontResource, name = " + name+", file = " +file+", wc = " + wantComp);
-Thread.dumpStack();
+// Thread.dumpStack();
         FontResource fr = null;
 
         // First check if the font is already known.
@@ -696,8 +698,10 @@ Thread.dumpStack();
             // else look in the physical resource map
             FontResource fontResource = lookupResource(lcName, wantComp);
             if (fontResource != null) {
-System.err.println("[PFF] getFontResource1, name = " + name+", file = " +file+", wc = " + wantComp+", fn = " + fontResource.getFullName());
+System.err.println("[PFF] getFontResource, this was a known font: name = " + name+", file = " +file+", wc = " + wantComp+", fn = " + fontResource.getFullName());
                 return fontResource;
+            } else {
+System.err.println("[PFF] getFontResource, this font (lcName = " + lcName+") is not yet known.");
             }
 
             /* We may have registered this as an embedded font.
@@ -710,7 +714,7 @@ System.err.println("[PFF] getFontResource1, name = " + name+", file = " +file+",
                     fr = new PrismCompositeFontResource(fr, lcName);
                 }
                 if (fr != null) {
-System.err.println("[PFF] getFontResource2, name = " + name+", file = " +file+", wc = " + wantComp);
+System.err.println("[PFF] getFontResource2, name = " + name+", file = " +file+", wc = " + wantComp+" was registered as an embedded font");
                     return fr;
                 }
             }
@@ -751,7 +755,7 @@ System.err.println("[PFF] getFontResource4, name = " + name+", file = " +file+",
         }
 
         if (name != null) { // Typically normal application lookup
-System.err.println("[PFF] try getFontResourceByFullName");
+System.err.println("[PFF] getFontResource, try getting by fullname, name = " + name);
             fr = getFontResourceByFullName(name, wantComp);
 System.err.println("[PFF] result of getFontResourceByFullName = " + fr);
             if (fr != null) {

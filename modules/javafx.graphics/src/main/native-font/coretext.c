@@ -762,6 +762,19 @@ JNIEXPORT jint JNICALL OS_NATIVE(CTRunGetStringIndices)
     return i;
 }
 
+JNIEXPORT jstring JNICALL OS_NATIVE(CTFontCopyFullName)
+    (JNIEnv *env, jclass that, jlong arg0) {
+    CTFontRef fontRef = (CTFontRef)arg0;
+    CFStringRef stringRef = CTFontCopyFullName(fontRef);
+    if (stringRef == NULL) return NULL;
+    CFIndex length = CFStringGetLength(stringRef);
+    UniChar buffer[length];
+    CFStringGetCharacters(stringRef, CFRangeMake(0, length), buffer);
+    CFRelease(stringRef);
+    return (*env)->NewString(env, (jchar *)buffer, length);
+}
+
+
 JNIEXPORT jstring JNICALL OS_NATIVE(CTFontCopyAttributeDisplayName)
     (JNIEnv *env, jclass that, jlong arg0)
 {

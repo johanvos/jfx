@@ -57,6 +57,19 @@ JNI_OnLoad_javafx_font(JavaVM * vm, void * reserved) {
 
 extern jboolean checkAndClearException(JNIEnv *env);
 
+char* createCString(CFStringRef stringRef) {
+return CFStringGetCStringPtr(stringRef, kCFStringEncodingUTF8);
+}
+/*
+    CFIndex length = CFStringGetLength(stringRef);
+    CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+    char* buffer = (char*) malloc(maxSize);
+    CFStringGetCharacters(stringRef, CFRangeMake(0, length), buffer);
+    buffer[maxSize] = `n`;
+    return buffer;
+}
+*/
+
 jstring createJavaString(JNIEnv *env, CFStringRef stringRef)
 {
     CFIndex length = CFStringGetLength(stringRef);
@@ -107,9 +120,12 @@ CFIndex addCTFontDescriptor(CTFontDescriptorRef fd, JNIEnv *env, jobjectArray re
 {
     if (fd) {
         CFStringRef name = CTFontDescriptorCopyAttribute(fd, kCTFontDisplayNameAttribute);
+ char* cname = createCString(name);
         CFStringRef family = CTFontDescriptorCopyAttribute(fd, kCTFontFamilyNameAttribute);
         CFURLRef url = CTFontDescriptorCopyAttribute(fd, kCTFontURLAttribute);
         CFStringRef file = url ? CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle) : NULL;
+if (file != NULL)
+ fprintf(stderr, "desc %ld, name = %s, family = %s and file = %s\n", fd, cname, createCString(family), createCString(file));
         if (name && family && file) {
             jstring jname = createJavaString(env, name);
             jstring jfamily = createJavaString(env, family);
