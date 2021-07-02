@@ -62,7 +62,7 @@ class CTFontFile extends PrismFontFile {
     CTFontFile(String name, String filename, int fIndex, boolean register,
                boolean embedded, boolean copy, boolean tracked) throws Exception {
         super(name, filename, fIndex, register, embedded, copy, tracked);
-System.err.println("[CTFontFile] create for name = " + name+", filename = " + filename);
+System.err.println("[CTFontFile] createCTFontFile for name = " + name+", filename = " + filename);
 
         if (embedded) {
             cgFontRef = createCGFontForEmbeddedFont();

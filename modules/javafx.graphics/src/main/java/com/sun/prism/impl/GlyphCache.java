@@ -91,6 +91,7 @@ public class GlyphCache {
         new WeakHashMap<BaseContext, RectanglePacker>();
 
     public GlyphCache(BaseContext context, FontStrike strike) {
+System.err.println("[GLYPHCACHE] create for strike = " + strike);
         this.context = context;
         this.strike = strike;
         //numGlyphs = strike.getNumGlyphs();
@@ -134,8 +135,10 @@ public class GlyphCache {
         Color currentColor = null;
         Point2D pt = new Point2D();
 
+System.err.println("[GlyphCache.render], len = " + len);
         for (int gi = 0; gi < len; gi++) {
             int gc = gl.getGlyphCode(gi);
+System.err.println("glyph = " + gl+", code = " + gc);
 
             // If we have a supplementary character, then a special
             // glyph is inserted in the list, which is one we skip
@@ -146,7 +149,9 @@ public class GlyphCache {
             pt.setLocation(x + gl.getPosX(gi), y + gl.getPosY(gi));
             xform.transform(pt, pt);
             int subPixel = strike.getQuantizedPosition(pt);
+System.err.println("subpixel = " + subPixel);
             GlyphData data = getCachedGlyph(gc, subPixel);
+System.err.println("glyphdata = " + data);
             if (data != null) {
                 if (clip != null) {
                     // Always check clipping using user space.
@@ -203,6 +208,7 @@ public class GlyphCache {
         float ty1 = (rect.y + border) / th;
         float tx2 = tx1 + (gw / tw);
         float ty2 = ty1 + (gh / th);
+System.err.println("addDataToQuad, rect = " + rect+", x = " + x+", y = " + y+" dstw = " + dstw+", dsth = " + dsth+", tex = " + tex+", data = " + data);
         if (isLCDCache) {
             dx1 = Math.round(dx1 * 3.0f) / 3.0f;
             dx2 = dx1 + gw / 3.0f;
@@ -243,6 +249,7 @@ public class GlyphCache {
         int subIndex = glyphCode & SEGMASK;
         segIndex |= (subPixel << SUBPIXEL_SHIFT);
         GlyphData[] segment = glyphDataMap.get(segIndex);
+System.err.println("[GCG for code = " + glyphCode+", sp = " + subPixel+", idx = " + segIndex+", sidx = " + subIndex);
         if (segment != null) {
             if (segment[subIndex] != null) {
                 return segment[subIndex];
@@ -258,11 +265,14 @@ public class GlyphCache {
         if (glyph != null) {
             byte[] glyphImage = glyph.getPixelData(subPixel);
             if (glyphImage == null || glyphImage.length == 0) {
+System.err.println("EMPTY glyph");
                 data = new GlyphData(0, 0, 0,
                                      glyph.getPixelXAdvance(),
                                      glyph.getPixelYAdvance(),
                                      null);
             } else {
+System.err.println("rasterize glyph with ox = " + glyph.getOriginX()+", oy = " + glyph.getOriginY()+", gw = " + glyph.getWidth()+
+           ", gh = " + glyph.getHeight());
                 // Rasterize the glyph
                 // NOTE : if the MaskData can be stored back directly
                 // in the glyph, even as an opaque type, it should save

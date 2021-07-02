@@ -58,8 +58,8 @@ class CTFontStrike extends PrismFontStrike<CTFontFile> {
                  BaseTransform graphicsTransform, int aaMode,
                  FontStrikeDesc desc) {
         super(fontResource, size, graphicsTransform, aaMode, desc);
-// Thread.dumpStack();
-System.err.println("[JAVA] CTFontStrike, fr = " +fontResource);
+ Thread.dumpStack();
+System.err.println("[JAVA] CTFontStrike, fontresource = " +fontResource+" with PS name = " + fontResource.getPSName());
         float maxDim = PrismFontFactory.getFontSizeLimit();
         if (graphicsTransform.isTranslateOrIdentity()) {
             drawShapes = size > maxDim;

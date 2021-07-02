@@ -95,12 +95,14 @@ public abstract class PrismFontFile implements FontResource, FontConstants {
     protected PrismFontFile(String name, String filename, int fIndex,
                           boolean register, boolean embedded,
                           boolean copy, boolean tracked) throws Exception {
+System.err.println("[PrismFontFile] create PFF with name " + name+", filename = " + filename+", fIndex = " + fIndex);
         this.filename = filename;
         this.isRegistered = register;
         this.isEmbedded = embedded;
         this.isCopy = copy;
         this.isTracked = tracked;
         init(name, fIndex);
+System.err.println("[PrismFontFile] created PFF with name " + name+", filename = " + filename+", fIndex = " + fIndex+": " + this);
     }
 
     WeakReference<PrismFontFile> createFileDisposer(PrismFontFactory factory,
@@ -819,7 +821,7 @@ System.err.println("numrecords = " + numRecords);
             int namePtr    = (((int)buffer.getShort()) & 0xffff) + stringPtr;
             String tmpName = null;
             String enc;
-System.err.println("nameID = " + nameID);
+// System.err.println("nameID = " + nameID);
             switch (nameID) {
 
             case FAMILY_NAME_ID:

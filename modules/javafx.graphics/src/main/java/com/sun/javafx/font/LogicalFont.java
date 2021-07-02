@@ -292,7 +292,7 @@ System.err.println("consider fallback " + nativeFallback.getFullName());
             tmp = new FontResource[nativeFallbacks.length + 1];
             System.arraycopy(nativeFallbacks, 0, tmp, 0, nativeFallbacks.length);
         }
-System.err.println("[Adding nativefallback] " + fr.getFullName());
+System.err.println("[Adding nativefallback] " +fr+" with fillname " +  fr.getFullName()+" or psname = " + fr.getPSName());
         tmp[tmp.length - 1] = fr;
         nativeFallbacks = tmp;
 
@@ -300,16 +300,19 @@ System.err.println("[Adding nativefallback] " + fr.getFullName());
     }
 
     public FontResource getSlotResource(int slot) {
+System.err.println("LogicalFont, getSlotResource for slot " + slot);
         if (slot == 0) {
             return getSlot0Resource();
         } else {
             getLinkedFonts();
             slot = slot - 1;
+System.err.println("fallbakcs.length = " + fallbacks.length);
             if (slot >= fallbacks.length) {
                 slot = slot - fallbacks.length;
                 if (nativeFallbacks == null || slot >= nativeFallbacks.length) {
                     return null;
                 }
+System.err.println("slot = " + slot+" and nativefb = " + nativeFallbacks[slot]);
                 return nativeFallbacks[slot];
             }
             if (fallbacks[slot] == null) {

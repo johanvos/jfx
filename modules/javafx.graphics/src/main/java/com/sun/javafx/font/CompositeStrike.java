@@ -68,7 +68,7 @@ public class CompositeStrike implements FontStrike {
                     FontStrikeDesc desc) {
 
 // Thread.dumpStack();
-System.err.println("Create CS for fontResource " + fontResource);
+System.err.println("Create CompositeStrike for fontResource " + fontResource);
         this.fontResource = fontResource;
         this.size = size;
         if (graphicsTransform.isTranslateOrIdentity()) {
@@ -121,6 +121,8 @@ System.err.println("Create CS for fontResource " + fontResource);
             }
             if (strikeSlots[slot] == null) {
                 FontResource slotResource = fontResource.getSlotResource(slot);
+System.err.println("compositeResource, get strike from fontresource " + fontResource+" with name " + fontResource.getPSName()+" and slot = " + slot);
+System.err.println("compositeResource, get strike for slotResource " + slotResource+" with name " + slotResource.getPSName());
                 strikeSlots[slot] = slotResource.getStrike(size, transform,
                                                            getAAMode());
             }

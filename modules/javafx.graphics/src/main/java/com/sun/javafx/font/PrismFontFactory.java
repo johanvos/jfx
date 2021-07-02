@@ -382,7 +382,7 @@ System.err.println("[PrismFontFactory] return fArr = " + fArr);
     }
 
     private void storeInMap(String name, FontResource resource) {
-System.err.println("STOREINMAP, name = " + name+", resource = " + resource);
+System.err.println("STOREINMAP, name = " + name+", resource = " + resource+" fullname = " + resource.getFullName()+", PSName = " + resource.getPSName());
 Thread.dumpStack();
         if (name == null || resource == null) {
             return;
