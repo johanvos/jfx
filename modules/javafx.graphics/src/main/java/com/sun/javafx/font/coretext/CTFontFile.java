@@ -48,6 +48,7 @@ class CTFontFile extends PrismFontFile {
 
         SelfDisposerRecord(long cgFontRef) {
             this.cgFontRef = cgFontRef;
+System.err.println("CGFONTREF = " + cgFontRef);
         }
 
         @Override
@@ -55,6 +56,7 @@ class CTFontFile extends PrismFontFile {
             if (cgFontRef != 0) {
                 OS.CFRelease(cgFontRef);
                 cgFontRef = 0;
+System.err.println("CGFONTREF disposed = " + cgFontRef);
             }
         }
     }
@@ -70,7 +72,7 @@ System.err.println("[CTFontFile] createCTFontFile for name = " + name+", filenam
         } else {
             cgFontRef = 0;
         }
-System.err.println("[CTFontFile] created for name = " + name+", filename = " + filename+" has count " + getFontCount());
+System.err.println("[CTFontFile] created for name = " + name+", filename = " + filename+" has count " + getFontCount()+" and CGFONTREF = " + cgFontRef+" resulting in " + this+" and psname = " + getPSName()+" and fullname = " + getFullName()+" and embedded = " + embedded);
     }
 
     public static boolean registerFont(String fontfile) {
@@ -103,6 +105,7 @@ System.err.println("registerfont, urlref = " + urlRef);
                 final long dataProvider = OS.CGDataProviderCreateWithURL(url);
                 if (dataProvider != 0) {
                     cgFontRef = OS.CGFontCreateWithDataProvider(dataProvider);
+System.err.println("CGFONTREF for embedded created, cgf = " + cgFontRef);
                     OS.CFRelease(dataProvider);
                 }
                 OS.CFRelease(url);
@@ -119,7 +122,7 @@ System.err.println("registerfont, urlref = " + urlRef);
 @Override
     public String getFullName() {
         String answer = super.getFullName();
-System.err.println("GetFullname asked for " + cgFontRef+" will return " + answer);
+System.err.println("GetFullname asked for "+ this+" with cgFontRef " + cgFontRef+" will return " + answer);
         return answer;
     }
 

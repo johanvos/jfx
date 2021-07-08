@@ -391,6 +391,8 @@ fprintf(stderr, "ctfontCreateWidhtName\n");
     jlong rc = 0;
     if (arg2) if ((lparg2 = getCGAffineTransformFields(env, arg2, &_arg2)) == NULL) goto fail;
     CFStringRef fontName = (CFStringRef)arg0;
+char* cfname = CFStringGetCStringPtr(fontName, kCFStringEncodingUTF8);
+    fprintf(stderr, "[native] CTFontCreateWithName, fontname = %s\n", cfname);
     if (CFStringGetCharacterAtIndex(fontName, 0) == '.') {
     // if (CFStringGetCharacterAtIndex(fontName, 0) == 'X') {
 fprintf(stderr, "char is dot \n");

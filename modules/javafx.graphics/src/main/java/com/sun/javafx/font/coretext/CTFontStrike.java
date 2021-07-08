@@ -87,8 +87,9 @@ System.err.println("[JAVA] CTFontStrike, fontresource = " +fontResource+" with P
                         cgFontRef, size, matrix, 0);
             }
         } else {
-System.err.println("[JAVA] Try CFStringCreate for " + fontResource.getPSName());
-            final long psNameRef = OS.CFStringCreate(fontResource.getPSName());
+System.err.println("[JAVA] Try CFStringCreate for " + fontResource.getPSName()+", fullname = " + fontResource.getFullName());
+            // final long psNameRef = OS.CFStringCreate(fontResource.getPSName());
+            final long psNameRef = OS.CFStringCreate(fontResource.getFullName());
             if (psNameRef != 0) {
 System.err.println("[JAVA] psNameref = " + psNameRef);
                 fontRef = OS.CTFontCreateWithName(psNameRef, size, matrix);

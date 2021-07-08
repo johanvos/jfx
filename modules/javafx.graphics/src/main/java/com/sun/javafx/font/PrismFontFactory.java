@@ -242,9 +242,10 @@ public abstract class PrismFontFactory implements FontFactory {
                                              boolean register, boolean embedded,
                                              boolean copy, boolean tracked) {
         String key = (filename+index).toLowerCase();
-System.err.println("[JVDBG] PFF, createFontResource name = " + name);
+System.err.println("[JVDBG] PFF, createFontResource name = " + name+", key = " + key);
         PrismFontFile fr = fileNameToFontResourceMap.get(key);
         if (fr != null) {
+System.err.println("[JVDBG] PFF, got and return resource!");
             return fr;
         }
 
@@ -306,12 +307,12 @@ System.err.println("[PrismFontFactory] createFontResources for " +name+" and fil
 System.err.println("[PrismFontFactory] createFontResources1 for " +name+" and filename = " + filename);
         PrismFontFile fr = createFontResource(name, filename, 0, register,
                                               embedded, copy, tracked);
-System.err.println("[PrismFontFactory] createFontResources1 resulted in " + fr);
+System.err.println("[PrismFontFactory] createFontResource resulted in " + fr);
         if (fr == null) {
             return null;
         }
         int cnt = (!loadAll) ? 1 : fr.getFontCount();
-System.err.println("[PrismFontFactory] createFontResources2 resulted in  count = " + cnt);
+System.err.println("[PrismFontFactory] createFontResources has  count = " + cnt);
         fArr = new PrismFontFile[cnt];
         fArr[0] = fr;
         if (cnt == 1) { // Not a TTC, or only requesting one font.
@@ -1956,6 +1957,7 @@ System.err.println("prepare to populateFontFileNameMap  "  );
     }
 
     void populateFontFileNameMapGeneric(String fontDir) {
+System.err.println("POPULATEFONTFILENAMEMAPGENERIC, fontDir = " + fontDir);
         final File dir = new File(fontDir);
         String[] files = null;
         try {
