@@ -43,6 +43,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -119,6 +120,20 @@ public class LauncherImpl {
     // is started.
     private static ClassLoader savedMainCcl = null;
 
+//    private static final boolean isWeb = System.getProperty("java.vendor", "none").equalsIgnoreCase("bck2brwsr");
+    static {
+//        if (isWeb) { // TODO: define isWeb before webScheduler.Util does
+            try {
+                System.out.println("[PROMISE] [LauncherImpl] warmup:");
+                Class c = Class.forName("com.gluonhq.webscheduler.Util");
+                c.getMethod("warmup");
+            } catch (Exception e) {
+                System.out.println("[PROMISE] [LauncherImpl] warmup error " + e.getMessage());
+                e.printStackTrace();
+            }
+//        }
+    }
+
     /**
      * This method is called by the Application.launch method.
      * It must not be called more than once or an exception will be thrown.
@@ -168,7 +183,7 @@ public class LauncherImpl {
     public static void launchApplication(final Class<? extends Application> appClass,
             final Class<? extends Preloader> preloaderClass,
             final String[] args) {
-System.out.println("[PROMISE] [LauncherImpl] launchApplication called");
+System.out.println("[PROMISE] [LauncherImpl] launchApplication called for args: " + Arrays.toString(args));
 
         if (com.sun.glass.ui.Application.isEventThread()) {
             throw new IllegalStateException("Application launch must not be called on the JavaFX Application Thread");

@@ -1562,6 +1562,65 @@ void addMavenPublication(Project project, List<String> projectDependencies) {
     }
 
     project.apply plugin: 'maven-publish'
+    project.apply plugin: 'java'
+    project.apply plugin: 'bck2brwsr'
+
+    // 1. Create jar with classes for bck2brwsr
+    project.task("jar${project.name}Web", type: Jar) {
+        archiveBaseName = "pre-${project.name}"
+        exclude {it.file in file("${project.buildDir}/classes/java/main/javafx.${project.name}")}
+        from file("${project.buildDir}/classes/java/main/javafx.${project.name}")
+        if (project.name == 'controls') {
+            dependsOn(":graphics:bundlegraphicsJS")
+        }
+    }
+
+    // 2. Create artifact, after running bck2brwsrAot
+    project.task("bundle${project.name}JS", type: Jar) {
+        exclude {it.file in file("${project.buildDir}/classes/java/main/javafx.${project.name}")}
+        from file("${project.buildDir}/web/main.js")
+        rename { String filename ->
+            filename.replace("main.js", "${project.name}-${project.version}.js")
+        }
+        // we need to remove the classpath block, for now just change its key name:
+        filter { line -> line.replaceAll('classpath', 'unusedclasspath') }
+
+        dependsOn "bck2brwsrAot"
+        doFirst {
+            manifest {
+                def jarAttributes = ['Bck2BrwsrArtifactId': "${project.name}",
+                                     'Bck2BrwsrGroupId': "org.openjfx",
+                                     'Bck2BrwsrVersion': archiveVersion,
+                                     'Bck2BrwsrMagic': "melta",
+                                     'Bck2BrwsrDebug': "true"]
+                attributes(jarAttributes, "${project.name}-${project.version}.js")
+            }
+        }
+    }
+
+    // 3. Create bck2brwsr artifact for publishing, after running bck2brwsrAot
+    project.task("bundle${project.name}JSWeb", type: Jar) {
+        exclude {it.file in file("${project.buildDir}/classes/java/main/javafx.${project.name}")}
+        from file("${project.buildDir}/web/main.js")
+        classifier "bck2brwsr"
+        rename { String filename ->
+            filename.replace("main.js", "javafx-${project.name}-${project.version}-bck2brwsr.js")
+        }
+        // we need to remove the classpath block, for now just change its key name:
+        filter { line -> line.replaceAll('classpath', 'invalidclasspath') }
+
+        dependsOn "bundle${project.name}JS"
+        doFirst {
+            manifest {
+                def jarAttributes = ['Bck2BrwsrArtifactId': "javafx-${project.name}",
+                                  'Bck2BrwsrGroupId': "org.openjfx",
+                                  'Bck2BrwsrVersion': archiveVersion,
+                                  'Bck2BrwsrMagic': "melta",
+                                  'Bck2BrwsrDebug': "true"]
+                attributes(jarAttributes, "javafx-${project.name}-${project.version}-bck2brwsr.js")
+            }
+        }
+    }
 
     project.group = MAVEN_GROUP_ID
     project.version = MAVEN_VERSION
@@ -1616,9 +1675,10 @@ void addMavenPublication(Project project, List<String> projectDependencies) {
                     afterEvaluate {
                         artifact project.tasks."moduleEmptyPublicationJar$t.capital"
                         artifact project.tasks."modularPublicationJar$t.capital" {
-                            // classifier "$t.name"
-                            classifier "web"
+                            classifier "$t.name"
                         }
+                        // Build web artifact
+                        artifact project.tasks."bundle${project.name}JSWeb"
                     }
 
                     pom.withXml {
@@ -1633,8 +1693,7 @@ void addMavenPublication(Project project, List<String> projectDependencies) {
                         projectDependencyPlatform.appendNode("groupId", MAVEN_GROUP_ID)
                         projectDependencyPlatform.appendNode("artifactId", "javafx-${project.name}")
                         projectDependencyPlatform.appendNode("version", MAVEN_VERSION)
-                        // projectDependencyPlatform.appendNode("classifier", "\${javafx.platform}")
-                        projectDependencyPlatform.appendNode("classifier", "web")
+                        projectDependencyPlatform.appendNode("classifier", "\${javafx.platform}")
 
                         if (!projectDependencies.empty) {
                             projectDependencies.each { dep ->

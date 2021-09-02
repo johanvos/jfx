@@ -23,6 +23,15 @@
  * questions.
  */
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.apidesign.bck2brwsr:bck2brwsr-maven-plugin:0.51"
+    }
+}
+
 include "base", "graphics", "controls", "swing", "swt", "fxml", "web", "media", "systemTests"
 
 project(":base").projectDir = file("modules/javafx.base")
