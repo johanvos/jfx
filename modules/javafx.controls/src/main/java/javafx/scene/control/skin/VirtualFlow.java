@@ -2318,6 +2318,8 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * the viewport in the next layout cycle.
      */
     void getCellSizesInExpectedViewport(int index) {
+        State state = getCurrentState();
+        if (index >= getCellCount()) index = getCellCount()-1;
         double estlength = getOrCreateCellSize(index);
         int i = index;
         while ((estlength < viewportLength) && (++i < getCellCount())) {
@@ -2329,6 +2331,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 estlength = estlength + getOrCreateCellSize(j);
             }
         }
+        restoreState(state);
         recalculateEstimatedSize();
     }
 
@@ -3038,6 +3041,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 answer = cell.getLayoutBounds().getWidth();
             }
             itemSizeCache.set(idx, answer);
+            recalculateAndImproveEstimatedSize(0);
 
             if (doRelease) { // we need to release the accumcell
                 releaseCell(cell);
@@ -3054,14 +3058,17 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      */
     void updateCellSize(T cell) {
         int cellIndex = cell.getIndex();
+        State state = getCurrentState();
         if (itemSizeCache.size() > cellIndex) {
-        if (isVertical()) {
-            double newh = cell.getLayoutBounds().getHeight();
-            itemSizeCache.set(cellIndex, newh);
-          } else {
-            double newh = cell.getLayoutBounds().getWidth();
-            itemSizeCache.set(cellIndex, newh);
-          }
+            if (isVertical()) {
+                double newh = cell.getLayoutBounds().getHeight();
+                itemSizeCache.set(cellIndex, newh);
+            } else {
+                double newh = cell.getLayoutBounds().getWidth();
+                itemSizeCache.set(cellIndex, newh);
+            }
+            restoreState(state);
+            recalculateAndImproveEstimatedSize(0);
         }
     }
 
@@ -3083,9 +3090,18 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             int cacheCount = itemSizeCache.size();
             boolean keepRatio = ((cacheCount > 0) && !Double.isInfinite(this.absoluteOffset));
 
-            int oldIndex = computeCurrentIndex();
-            double oldOffset = computeViewportOffset(getPosition());
+            State oldState = getCurrentState();
             int added = 0;
+            // First, check if we filled the cache with empty values
+            int nullIndex = 0;
+            while ((nullIndex < itemSizeCache.size()) && (added < improve)) {
+                if (itemSizeCache.get(nullIndex) == null) {
+                    getOrCreateCellSize(nullIndex);
+                    added++;
+                }
+                nullIndex++;
+            }
+            // Second, add items to the cache
             while ((itemCount > itemSizeCache.size()) && (added < improve)) {
                 getOrCreateCellSize(itemSizeCache.size());
                 added++;
@@ -3101,23 +3117,49 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
                 }
             }
             this.estimatedSize = cnt == 0 ? 1d : tot * itemCount / cnt;
-            double estSize = estimatedSize / itemCount;
 
             if (keepRatio) {
-                double newOffset = 0;
-                for (int i = 0; i < oldIndex; i++) {
-                    double h = getCellSize(i);
-                    if (h < 0) {
-                        h = estSize;
-                    }
-                    newOffset += h;
-                }
-                this.absoluteOffset = newOffset + oldOffset;
-                adjustPosition();
+                restoreState(oldState);
             }
         } finally {
             recalculating = false;
         }
+    }
+
+    static class State {
+        double position;
+        double absoluteOffset;
+        double viewportOffset;
+        int currentIndex;
+
+        public State (double pos, double offset, double vpo, int index) {
+            this.position = pos;
+            this.absoluteOffset = offset;
+            this.viewportOffset = vpo;
+            this.currentIndex = index;
+        }
+    }
+
+    private State getCurrentState() {
+        double pos = getPosition();
+        State state = new State(pos, absoluteOffset, computeViewportOffset(pos), computeCurrentIndex());
+        return state;
+    }
+
+    private void restoreState(State oldState) {
+        int oldIndex = oldState.currentIndex;
+        double oldOffset = oldState.viewportOffset;
+        double newOffset = 0;
+        double estSize = estimatedSize / getCellCount();
+        for (int i = 0; i < oldIndex; i++) {
+            double h = getCellSize(i);
+            if (h < 0) {
+                h = estSize;
+            }
+            newOffset += h;
+        }
+        this.absoluteOffset = newOffset + oldOffset;
+        adjustPosition();
     }
 
     private void resetSizeEstimates() {
