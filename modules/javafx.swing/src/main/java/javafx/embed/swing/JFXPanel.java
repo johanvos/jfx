@@ -416,8 +416,8 @@ System.err.println("[JFXP] consider sx = " + screen.getPlatformX()+" and sy = " 
          // {
          if ((Math.abs(screen.getPlatformX() - awtBounds.getX()) < 2.) &&
              (Math.abs(screen.getPlatformY() - awtBounds.getY()) < 2.) &&
-             (Math.abs(screen.getPlatformWidth() - awtScale.getScaleX() * awtBounds.getWidth()) < 2.) &&
-             (Math.abs(screen.getPlatformHeight() - awtScale.getScaleY() * awtBounds.getHeight()) < 2.))
+             (Math.abs(screen.getPlatformWidth() - awtScales.getScaleX() * awtBounds.getWidth()) < 2.) &&
+             (Math.abs(screen.getPlatformHeight() - awtScales.getScaleY() * awtBounds.getHeight()) < 2.))
          {
  System.err.println("Yes, match for " + screen.getPlatformX());
             return screen;
