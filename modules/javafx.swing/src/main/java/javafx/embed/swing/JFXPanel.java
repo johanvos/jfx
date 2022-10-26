@@ -679,6 +679,7 @@ false);
     private Dimension2D getSwingToFxPixel(GraphicsConfiguration g, float wx, float wy) {
 float newx, newy;
          Screen screen = findScreen(getGraphicsConfiguration());
+      AffineTransform awtScales = getGraphicsConfiguration().getDefaultTransform();
                 if (screen != null) {
                     float pScaleX = screen.getPlatformScaleX();
                     float pScaleY = screen.getPlatformScaleY();
@@ -686,8 +687,8 @@ float newx, newy;
                     float sy = screen.getY();
                     float px = screen.getPlatformX();
                     float py = screen.getPlatformY();
-                    newx = sx + (wx - px) / pScaleX;
-                    newy = sy + (wy - py) / pScaleY;
+                    newx = (float) (sx + (wx - px) * awtScales.getScaleX() / pScaleX);
+                    newy = (float) (sy + (wy - py) * awtScales.getScaleY() / pScaleY);
                  } else {
                     newx = wx;
                     newy = wy;
