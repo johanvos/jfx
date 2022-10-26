@@ -409,10 +409,15 @@ private Map<GraphicsConfiguration, Dimension2D> swingToFxPixelOffsets = new Weak
       for (Screen screen : Screen.getScreens())
       {
 System.err.println("[JFXP] consider sx = " + screen.getPlatformX()+" and sy = " + screen.getPlatformY()+" and pw = " + screen.getPlatformWidth()+" and ph = " + screen.getPlatformHeight());
-         if ((Math.abs(screen.getPlatformX() - awtBounds.getX() * awtScales.getScaleX()) < 0.001) &&
-             (Math.abs(screen.getPlatformY() - awtBounds.getY() * awtScales.getScaleY()) < 0.001) &&
-             (Math.abs(screen.getPlatformWidth() - awtBounds.getWidth()) < 0.001) &&
-             (Math.abs(screen.getPlatformHeight() - awtBounds.getHeight()) < 0.001))
+         // if ((Math.abs(screen.getPlatformX() - awtBounds.getX() * awtScales.getScaleX()) < 0.001) &&
+             // (Math.abs(screen.getPlatformY() - awtBounds.getY() * awtScales.getScaleY()) < 0.001) &&
+             // (Math.abs(screen.getPlatformWidth() - awtBounds.getWidth()) < 0.001) &&
+             // (Math.abs(screen.getPlatformHeight() - awtBounds.getHeight()) < 0.001))
+         // {
+         if ((Math.abs(screen.getPlatformX() - awtBounds.getX()) < 2.) &&
+             (Math.abs(screen.getPlatformY() - awtBounds.getY()) < 2.) &&
+             (Math.abs(screen.getPlatformWidth() - awtScale.getScaleX() * awtBounds.getWidth()) < 2.) &&
+             (Math.abs(screen.getPlatformHeight() - awtScale.getScaleY() * awtBounds.getHeight()) < 2.))
          {
  System.err.println("Yes, match for " + screen.getPlatformX());
             return screen;
