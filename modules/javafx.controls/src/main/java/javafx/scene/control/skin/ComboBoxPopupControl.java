@@ -404,6 +404,7 @@ public abstract class ComboBoxPopupControl<T> extends ComboBoxBaseSkin<T> {
 
     private void positionAndShowPopup() {
         final ComboBoxBase<T> comboBoxBase = getSkinnable();
+System.err.println("[COMBO] skinnable = " + getSkinnable());
         if (comboBoxBase.getScene() == null) {
             return;
         }
@@ -416,6 +417,8 @@ public abstract class ComboBoxPopupControl<T> extends ComboBoxBaseSkin<T> {
         sizePopup();
 
         Point2D p = getPrefPopupPosition();
+
+System.err.println("[COMBOBOX] popup point = " + p);
 
         popupNeedsReconfiguring = true;
         reconfigurePopup();

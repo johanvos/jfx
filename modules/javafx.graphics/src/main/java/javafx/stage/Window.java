@@ -168,7 +168,9 @@ public class Window implements EventTarget {
                     @Override
                     public void notifyLocationChanged(
                             Window window, double x, double y) {
+System.err.println("[javafx.WIN] change xloc to " + x);
                         window.notifyLocationChanged(x, y);
+System.err.println("[javafx.WIN] changed xloc to " + x);
                     }
 
                     @Override
@@ -556,6 +558,8 @@ public class Window implements EventTarget {
     public final ReadOnlyDoubleProperty xProperty() { return x.getReadOnlyProperty(); }
 
     void setXInternal(double value) {
+System.err.println("WINDOW setXINTERNAL to " + value);
+ Thread.dumpStack();
         x.set(value);
         peerBoundsConfigurator.setX(value, 0);
         xExplicit = true;
@@ -600,8 +604,11 @@ public class Window implements EventTarget {
      * @param newY the new window y position
      */
     void notifyLocationChanged(double newX, double newY) {
+System.err.println("[WIN] loc needs to change to newX = (" + newX+", " + newY+")");
+// Thread.dumpStack();
         x.set(newX);
         y.set(newY);
+System.err.println("[WIN] loc changed to newX = (" + x.get() +", " + y.get()+")");
     }
 
     private boolean widthExplicit = false;

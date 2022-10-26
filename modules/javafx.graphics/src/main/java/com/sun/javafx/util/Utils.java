@@ -463,6 +463,7 @@ public class Utils {
             boolean reposition)
     {
         final Bounds parentBounds = getBounds(parent);
+System.err.println("[REL1] parentBounds = " + parentBounds+", dx = " + dx+", jpos = " + hpos);
         Scene scene = parent.getScene();
         NodeOrientation orientation = parent.getEffectiveNodeOrientation();
 
@@ -476,6 +477,7 @@ public class Utils {
         }
 
         double layoutX = positionX(parentBounds, anchorWidth, hpos) + dx;
+System.err.println("[REL2] lx = " + layoutX);
         final double layoutY = positionY(parentBounds, anchorHeight, vpos) + dy;
 
         if (orientation == NodeOrientation.RIGHT_TO_LEFT && hpos == HPos.CENTER) {
@@ -486,6 +488,7 @@ public class Utils {
                 layoutX = layoutX - parentBounds.getWidth() - anchorWidth;
             }
         }
+System.err.println("[REL] rep = " + reposition+", lx = " + layoutX+", hpos = " + hpos);
 
         if (reposition) {
             return pointRelativeTo(parent, anchorWidth, anchorHeight, layoutX, layoutY, hpos, vpos);
@@ -612,12 +615,16 @@ public class Utils {
      * given Object. If the Object type is not supported, a default Bounds will be returned.
      */
     private static Bounds getBounds(Object obj) {
+System.err.println("[RELL] getBounds for " + obj);
         if (obj instanceof Node) {
             final Node n = (Node)obj;
+System.err.println("[RELL] getlayoutBounds  = " + n.getLayoutBounds());
             Bounds b = n.localToScreen(n.getLayoutBounds());
+System.err.println("[RELL] getBounds  will return " + b);
             return b != null ? b : new BoundingBox(0, 0, 0, 0);
         } else if (obj instanceof Window) {
             final Window window = (Window)obj;
+System.err.println("[RELL] we are a window! " + window.getX());
             return new BoundingBox(window.getX(), window.getY(), window.getWidth(), window.getHeight());
         } else {
             return new BoundingBox(0, 0, 0, 0);

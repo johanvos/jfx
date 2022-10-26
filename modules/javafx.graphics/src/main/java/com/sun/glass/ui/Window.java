@@ -236,6 +236,8 @@ public abstract class Window {
 
     protected abstract long _createWindow(long ownerPtr, long screenPtr, int mask);
     protected Window(Window owner, Screen screen, int styleMask) {
+System.err.println("[JV] WINDOW is now created!, owner = " + owner+", screen = " + screen);
+Thread.dumpStack();
         Application.checkEventThread();
         switch (styleMask & (TITLED | TRANSPARENT)) {
             case UNTITLED:
@@ -512,6 +514,7 @@ public abstract class Window {
     }
 
     public int getX() {
+System.err.println("[JV]WINDOW getX asked, return " + this.x);
         Application.checkEventThread();
         return this.x;
     }
@@ -522,6 +525,7 @@ public abstract class Window {
     }
 
     public int getWidth() {
+System.err.println("[JV]WINDOW getWidth asked, return " + this.width);
         Application.checkEventThread();
         return this.width;
     }
@@ -565,6 +569,8 @@ public abstract class Window {
                           float w, float h, float cw, float ch,
                           float xGravity, float yGravity)
     {
+System.err.println("[JV] win, setBounds called, x= " + x+", w = " + w+", cw = " + cw);
+Thread.dumpStack();
         Application.checkEventThread();
         checkNotClosed();
         float pScaleX = platformScaleX;
@@ -575,10 +581,12 @@ public abstract class Window {
         int ph = (int) (h > 0 ? Math.ceil(h * pScaleY) : h);
         int pcw = (int) (cw > 0 ? Math.ceil(cw * pScaleX) : cw);
         int pch = (int) (ch > 0 ? Math.ceil(ch * pScaleY) : ch);
+System.err.println("[JV] win, _setbounds with px = " + px+", xset = " + xSet+", pw = " + pw+ ", pcw = " + pcw);
         _setBounds(ptr, px, py, xSet, ySet, pw, ph, pcw, pch, xGravity, yGravity);
     }
 
     public void setPosition(int x, int y) {
+System.err.println("[JV] win, set pos called to " + x+", " + y);
         Application.checkEventThread();
         checkNotClosed();
         _setBounds(ptr, x, y, true, true, 0, 0, 0, 0, 0, 0);
@@ -1168,6 +1176,7 @@ public abstract class Window {
     }
 
     protected void notifyMove(final int x, final int y) {
+System.err.println("glass[WIN], move to x = " + x);
         this.x = x;
         this.y = y;
         handleWindowEvent(System.nanoTime(), WindowEvent.MOVE);
@@ -1244,6 +1253,7 @@ public abstract class Window {
     // window event handlers
     // *****************************************************
     protected void handleWindowEvent(long time, int type) {
+System.err.println("glass[WIN] handleWindowEvent, handler = " + this.eventHandler);
         if (this.eventHandler != null) {
             this.eventHandler.handleWindowEvent(this, time, type);
         }

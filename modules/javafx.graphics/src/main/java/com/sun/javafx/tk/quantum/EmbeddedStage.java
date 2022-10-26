@@ -236,6 +236,8 @@ final class EmbeddedStage extends GlassStage implements EmbeddedStageInterface {
 
     @Override
     public void setLocation(final int x, final int y) {
+System.err.println("[EMBEDDEDSTAGE] setLocation to " + x);
+Thread.dumpStack();
         Runnable r = () -> {
             if (stageListener != null) {
                 stageListener.changedLocation(x, y);

@@ -308,6 +308,7 @@ public class ContextMenu extends PopupControl {
     final void setShowRelativeToWindow(boolean value) { showRelativeToWindow = value; }
 
     private void doShow(Node anchor, double screenX, double screenY) {
+System.err.println("[ContextMenu] show on screenX = " + screenX);
         Event.fireEvent(this, new Event(Menu.ON_SHOWING));
         if(isShowRelativeToWindow()) {
             final Scene scene = (anchor == null) ? null : anchor.getScene();

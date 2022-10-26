@@ -278,6 +278,7 @@ final class EmbeddedScene extends GlassScene implements EmbeddedSceneInterface {
                            final boolean shift, final boolean ctrl, final boolean alt, final boolean meta,
                            final boolean popupTrigger)
     {
+System.err.println("[EMBSCENE] mouseEvent, x= " + x+", xAbs = " + xAbs);
         Platform.runLater(() -> {
             AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
                 if (sceneListener == null) {
@@ -340,6 +341,7 @@ final class EmbeddedScene extends GlassScene implements EmbeddedSceneInterface {
     @SuppressWarnings("removal")
     @Override
     public void menuEvent(final int x, final int y, final int xAbs, final int yAbs, final boolean isKeyboardTrigger) {
+System.err.println("[EMBSCENE] menuEvent, x= " + x+", xAbs = " + xAbs);
         Platform.runLater(() -> {
             AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
                 if (sceneListener != null) {

@@ -38,6 +38,8 @@ import java.awt.Insets;
 import java.awt.EventQueue;
 import java.awt.SecondaryLoop;
 import java.awt.GraphicsEnvironment;
+import java.awt.GraphicsConfiguration;
+import java.awt.Rectangle;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
@@ -48,10 +50,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.InvocationEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.im.InputMethodRequests;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.nio.IntBuffer;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -59,7 +64,9 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import javafx.application.Platform;
+import javafx.geometry.Dimension2D;
 import javafx.scene.Scene;
+import com.sun.glass.ui.Screen;
 
 import com.sun.javafx.application.PlatformImpl;
 import com.sun.javafx.cursor.CursorFrame;
@@ -362,6 +369,58 @@ public class JFXPanel extends JComponent {
         return false;
     }
 
+private Map<GraphicsConfiguration, Dimension2D> swingToFxPixelOffsets = new WeakHashMap<>();
+
+   /**
+    * Determines an offset that needs to be applied to swing pixel coordinates
+    * when passed to JavaFX. On scaled monitors with multiple resolutions, Swing
+    * and JavaFX differ in how they organise their logical pixels:
+    *
+    * Swing: All coordinates and widths can be multiplied by the monitor scales,
+    * i.e. monitors can look as if they overlap
+    * JavaFX: Logical views are laid out next to each other, so they never overlap.
+    */
+   private Dimension2D getSwingToFxPixelOffset(GraphicsConfiguration graphicsConfiguration)
+   {
+      Dimension2D offset = null; // swingToFxPixelOffsets.get(graphicsConfiguration);
+      if (offset == null)
+      {
+         Screen screen = findScreen(graphicsConfiguration);
+         if (screen != null)
+         {
+            offset = new Dimension2D(screen.getX() - graphicsConfiguration.getBounds().getX(),
+                                     screen.getY() - graphicsConfiguration.getBounds().getY());
+         }
+         else
+         {
+            offset = new Dimension2D(0.0d, 0.0d);
+         }
+         swingToFxPixelOffsets.put(graphicsConfiguration, offset);
+      }
+      return offset;
+   }
+
+   private Screen findScreen(GraphicsConfiguration graphicsConfiguration)
+   {
+      Rectangle awtBounds = graphicsConfiguration.getBounds();
+      AffineTransform awtScales = graphicsConfiguration.getDefaultTransform();
+// System.err.println("[JFXPANEL] screens = " + Screen.getScreens());
+// System.err.println("[JFXPANEL] awtBounds = " + awtBounds);
+// System.err.println("[JFXPANEL] awtScales = " + awtScales);
+      for (Screen screen : Screen.getScreens())
+      {
+         if ((Math.abs(screen.getPlatformX() - awtBounds.getX() * awtScales.getScaleX()) < 0.001) &&
+             (Math.abs(screen.getPlatformY() - awtBounds.getY() * awtScales.getScaleY()) < 0.001) &&
+             (Math.abs(screen.getPlatformWidth() - awtBounds.getWidth()) < 0.001) &&
+             (Math.abs(screen.getPlatformHeight() - awtBounds.getHeight()) < 0.001))
+         {
+// System.err.println("Yes, match for " + screen.getPlatformX());
+            return screen;
+         }
+      }
+      return null;
+   }
+
     private void sendMouseEventToFX(MouseEvent e) {
         if (scenePeer == null || !isFxEnabled()) {
             return;
@@ -407,6 +466,18 @@ public class JFXPanel extends JComponent {
         if (e.getID() == MouseEvent.MOUSE_PRESSED || e.getID() == MouseEvent.MOUSE_RELEASED) {
             popupTrigger = e.isPopupTrigger();
         }
+System.err.println("[JV] send event: " + e+" to JavaFX");
+System.err.println("[JV] gcc = " + getGraphicsConfiguration());
+      // Dimension2D screenOffset = getSwingToFxPixelOffset(getGraphicsConfiguration());
+      // int xOnScreen = (int) (e.getXOnScreen() + screenOffset.getWidth());
+      // int yOnScreen = (int) (e.getYOnScreen() + screenOffset.getHeight());
+      Dimension2D local = getSwingToFxPixel(getGraphicsConfiguration(), e.getX(), e.getY());
+      Dimension2D onScreen = getSwingToFxPixel(getGraphicsConfiguration(), e.getXOnScreen(), e.getYOnScreen());
+      int x = (int)local.getWidth();
+      int y = (int)local.getHeight();
+      int xOnScreen = (int) onScreen.getWidth();
+      int yOnScreen = (int) onScreen.getHeight();
+ System.err.println("[JVB] new xonscreen = " + xOnScreen+" and y = " + yOnScreen+" replacing x = " +e.getXOnScreen()+" and " + e.getYOnScreen() );
 
         if(e.getID() == MouseEvent.MOUSE_WHEEL) {
             scenePeer.scrollEvent(AbstractEvents.MOUSEEVENT_VERTICAL_WHEEL,
@@ -415,6 +486,8 @@ public class JFXPanel extends JComponent {
                     40, 40, // multiplier
                     e.getX(), e.getY(),
                     e.getXOnScreen(), e.getYOnScreen(),
+                    // x,y,
+                    // xOnScreen, yOnScreen,
                     (extModifiers & MouseEvent.SHIFT_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.CTRL_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.ALT_DOWN_MASK) != 0,
@@ -425,7 +498,9 @@ public class JFXPanel extends JComponent {
                     SwingEvents.mouseButtonToEmbedMouseButton(e.getButton(), extModifiers),
                     primaryBtnDown, middleBtnDown, secondaryBtnDown,
                     backBtnDown, forwardBtnDown,
-                    e.getX(), e.getY(), e.getXOnScreen(), e.getYOnScreen(),
+                    e.getX(), e.getY(),
+                    // e.getXOnScreen(), e.getYOnScreen(),
+                    xOnScreen, yOnScreen,
                     (extModifiers & MouseEvent.SHIFT_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.CTRL_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.ALT_DOWN_MASK) != 0,
@@ -433,7 +508,11 @@ public class JFXPanel extends JComponent {
                     popupTrigger);
         }
         if (e.isPopupTrigger()) {
-            scenePeer.menuEvent(e.getX(), e.getY(), e.getXOnScreen(), e.getYOnScreen(), false);
+            scenePeer.menuEvent(e.getX(), e.getY(),
+                    xOnScreen, yOnScreen,
+ // e.getXOnScreen(),
+ // e.getYOnScreen(), 
+false);
         }
     }
 
@@ -592,14 +671,56 @@ public class JFXPanel extends JComponent {
             sendResizeEventToFX();
         }
     }
+    private Dimension2D getSwingToFxPixel(GraphicsConfiguration g, float wx, float wy) {
+float newx, newy;
+         Screen screen = findScreen(getGraphicsConfiguration());
+                if (screen != null) {
+                    float pScaleX = screen.getPlatformScaleX();
+                    float pScaleY = screen.getPlatformScaleY();
+                    float sx = screen.getX();
+                    float sy = screen.getY();
+                    float px = screen.getPlatformX();
+                    float py = screen.getPlatformY();
+                    newx = sx + (wx - px) / pScaleX;
+                    newy = sy + (wy - py) / pScaleY;
+                 } else {
+                    newx = wx;
+                    newy = wy;
+                 }
+System.err.println("TRANSFER (" + wx+", " + wy+") to ("+newx+", " + newy+")");
+        Dimension2D answer = new Dimension2D(newx, newy);
+return answer;
+    }
 
     // This methods should only be called on EDT
     private boolean updateScreenLocation() {
         synchronized (getTreeLock()) {
             if (isShowing()) {
                 Point p = getLocationOnScreen();
-                screenX = p.x;
-                screenY = p.y;
+float wx = p.x;
+float wy = p.y;
+float newx, newy;
+             // Dimension2D offset = getSwingToFxPixelOffset(GUIHelper.getGraphicsConfiguration(this, false));
+             // Dimension2D offset = getSwingToFxPixelOffset(getGraphicsConfiguration());
+         Screen screen = findScreen(getGraphicsConfiguration());
+                if (screen != null) {
+                    float pScaleX = screen.getPlatformScaleX();
+                    float pScaleY = screen.getPlatformScaleY();
+                    float sx = screen.getX();
+                    float sy = screen.getY();
+                    float px = screen.getPlatformX();
+                    float py = screen.getPlatformY();
+                    newx = sx + (wx - px) / pScaleX;
+                    newy = sy + (wy - py) / pScaleY;
+                 } else {
+                    newx = wx;
+                    newy = wy;
+                 }
+System.err.println("[JFXP] p = " + p+", newX = " + newx);
+                // screenX = (int)(p.x + offset.getWidth());
+                // screenY = (int)(p.y + offset.getHeight());
+                screenX = (int)newx;
+screenY = (int)newy;
                 return true;
             }
         }

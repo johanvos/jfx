@@ -2613,6 +2613,8 @@ public class Scene implements EventTarget {
                                boolean primaryDown, boolean middleDown, boolean secondaryDown,
                                boolean backDown, boolean forwardDown)
         {
+System.err.println("[SCENE] get mouseEvent with x = " + x+" and screenX = " + screenX);
+Thread.dumpStack();
             MouseEvent mouseEvent = new MouseEvent(type, x, y, screenX, screenY, button,
                     0, // click count will be adjusted by clickGenerator later anyway
                     shiftDown, controlDown, altDown, metaDown,

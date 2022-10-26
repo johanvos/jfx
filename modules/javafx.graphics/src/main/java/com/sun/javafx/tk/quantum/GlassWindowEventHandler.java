@@ -79,10 +79,12 @@ class GlassWindowEventHandler extends Window.EventHandler implements PrivilegedA
                     float py = screen.getPlatformY();
                     newx = sx + (wx - px) / pScaleX;
                     newy = sy + (wy - py) / pScaleY;
+System.err.println("[TK] -- pScaleX = " + pScaleX+", sx = " + sx+", px = " + px);
                 } else {
                     newx = wx;
                     newy = wy;
                 }
+System.err.println("[TK] WEH, move, wx = " + wx+", newx = " + newx);
                 stage.stageListener.changedLocation(newx, newy);
                 //We need to sync the new x,y for painting
                 if (!Application.GetApplication().hasWindowManager()) {

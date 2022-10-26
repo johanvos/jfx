@@ -745,7 +745,7 @@ public abstract class PopupWindow extends Window {
         final double anchorDeltaY = anchorYCoef * anchorBounds.getHeight();
         double anchorScrMinX = newAnchorX - anchorDeltaX;
         double anchorScrMinY = newAnchorY - anchorDeltaY;
-
+System.err.println("[PW] newAnchorX = " + newAnchorX+", asm = " + anchorScrMinX);
         if (autofixActive) {
             final Screen currentScreen =
                     Utils.getScreenForPoint(newAnchorX, newAnchorY);
@@ -790,6 +790,7 @@ public abstract class PopupWindow extends Window {
         final double windowScrMinY =
                 anchorScrMinY - anchorBounds.getMinY()
                               + extendedBounds.getMinY();
+System.err.println("[PW] windowScrMinX = " + windowScrMinX+", extendedBoundsmin = "  + extendedBounds.getMinX()+", abm = " + anchorBounds.getMinX()+", asm = " + anchorScrMinX);
 
         // update popup dimensions
         setWidth(extendedBounds.getWidth());

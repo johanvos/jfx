@@ -4522,11 +4522,13 @@ public abstract class Node implements EventTarget, Styleable {
 
         Point3D pt = localToScene(localX, localY, localZ);
         final SubScene subScene = getSubScene();
+System.err.println("[NODELTS] lx = " + localX+", pt = " + pt+", window = " + window);
         if (subScene != null) {
             pt = SceneUtils.subSceneToScene(subScene, pt);
         }
         final Point2D projection = CameraHelper.project(
                 SceneHelper.getEffectiveCamera(getScene()), pt);
+System.err.println("[NODELTS] projx = " + projection.getX()+", sceneX = " + scene.getX()+", windowX = " + window.getX());
 
         return new Point2D(projection.getX() + scene.getX() + window.getX(),
                            projection.getY() + scene.getY() + window.getY());
@@ -4559,6 +4561,7 @@ public abstract class Node implements EventTarget, Styleable {
         final Point2D p6 = localToScreen(localBounds.getMaxX(), localBounds.getMaxY(), localBounds.getMaxZ());
         final Point2D p7 = localToScreen(localBounds.getMaxX(), localBounds.getMinY(), localBounds.getMinZ());
         final Point2D p8 = localToScreen(localBounds.getMaxX(), localBounds.getMinY(), localBounds.getMaxZ());
+System.err.println("[NODE] LLTTSS, p1 = " + p1+", p2 = " + p2+", p3 = " +p3+", p4 = " + p4 + ", p5 = " +p5);
 
         return BoundsUtils.createBoundingBox(p1, p2, p3, p4, p5, p6, p7, p8);
     }

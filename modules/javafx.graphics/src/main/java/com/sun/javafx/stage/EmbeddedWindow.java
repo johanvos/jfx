@@ -49,6 +49,7 @@ public class EmbeddedWindow extends Window {
     private HostInterface host;
 
     public EmbeddedWindow(HostInterface host) {
+Thread.dumpStack();
         this.host = host;
         EmbeddedWindowHelper.initHelper(this);
     }
