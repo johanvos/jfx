@@ -630,6 +630,7 @@ System.err.println("[JFXP] consider sx = " + screen.getPlatformX()+" and sy = " 
         synchronized (getTreeLock()) {
             if (isShowing()) {
                 Point p = getLocationOnScreen();
+      AffineTransform awtScales = getGraphicsConfiguration().getDefaultTransform();
 float wx = p.x;
 float wy = p.y;
 float newx, newy;
@@ -637,13 +638,15 @@ float newx, newy;
                 if (screen != null) {
                     float pScaleX = screen.getPlatformScaleX();
                     float pScaleY = screen.getPlatformScaleY();
-                    float sx = screen.getX();
-                    float sy = screen.getY();
+                    float awtScaleX = (float)awtScales.getScaleX();
+                    float awtScaleY = (float)awtScales.getScaleY();
+                    float sx = screen.getX()* awtScaleX;
+                    float sy = screen.getY()* awtScaleY;
                     float px = screen.getPlatformX();
                     float py = screen.getPlatformY();
-                    newx = sx + (wx - px) / pScaleX;
-                    newy = sy + (wy - py) / pScaleY;
-System.err.println("[JFXP] sx = " + sx+", pScaleX = " + pScaleX+", px = " + px);
+                    newx = sx + (wx - px) * awtScaleX / pScaleX;
+                    newy = sy + (wy - py) * awtScaleY / pScaleY;
+System.err.println("[JFXP] sx = " + sx+", pScaleX = " + pScaleX+", px = " + px+", aScaleX = " + awtScaleX);
                  } else {
                     newx = wx;
                     newy = wy;
