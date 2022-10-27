@@ -471,7 +471,7 @@ System.err.println("[JFXP] consider sx = " + screen.getPlatformX()+" and sy = " 
         if (e.getID() == MouseEvent.MOUSE_PRESSED || e.getID() == MouseEvent.MOUSE_RELEASED) {
             popupTrigger = e.isPopupTrigger();
         }
-System.err.println("[JV] send event: " + e+" to JavaFX");
+System.err.println("[JV] prepare to send event: " + e+" to JavaFX");
 System.err.println("[JV] gcc = " + getGraphicsConfiguration());
       // Dimension2D screenOffset = getSwingToFxPixelOffset(getGraphicsConfiguration());
       // int xOnScreen = (int) (e.getXOnScreen() + screenOffset.getWidth());
@@ -498,13 +498,15 @@ System.err.println("[JV] gcc = " + getGraphicsConfiguration());
                     (extModifiers & MouseEvent.ALT_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.META_DOWN_MASK) != 0, false);
         } else {
+System.err.println("[JFXPanel] now pass event to scenePeer using xonscreen = " + xOnScreen+" instead of " + e.getXOnScreen()+" and x= " + x+" instead of " + e.getX());
             scenePeer.mouseEvent(
                     SwingEvents.mouseIDToEmbedMouseType(e.getID()),
                     SwingEvents.mouseButtonToEmbedMouseButton(e.getButton(), extModifiers),
                     primaryBtnDown, middleBtnDown, secondaryBtnDown,
                     backBtnDown, forwardBtnDown,
-                    e.getX(), e.getY(),
+                    // e.getX(), e.getY(),
                     // e.getXOnScreen(), e.getYOnScreen(),
+x,y,
                     xOnScreen, yOnScreen,
                     (extModifiers & MouseEvent.SHIFT_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.CTRL_DOWN_MASK) != 0,

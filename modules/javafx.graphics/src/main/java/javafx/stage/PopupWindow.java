@@ -156,6 +156,7 @@ public abstract class PopupWindow extends Window {
      * Constructor for subclasses to call.
      */
     public PopupWindow() {
+System.err.println("[POPUPWINDOW] constructor");
         final Pane popupRoot = new Pane();
         popupRoot.setBackground(Background.EMPTY);
         popupRoot.getStyleClass().add("popup");
@@ -397,6 +398,7 @@ public abstract class PopupWindow extends Window {
      *      in the window hierarchy
      */
     public void show(Node ownerNode, double anchorX, double anchorY) {
+System.err.println("[POPUPWINDOW] show at anchorX = " + anchorX+", ownerNode = " + ownerNode);
         if (ownerNode == null) {
             throw new NullPointerException("The owner node must not be null");
         }

@@ -243,6 +243,7 @@ System.err.println("[javafx.WIN] changed xloc to " + x);
      * Constructor for subclasses to call.
      */
     protected Window() {
+System.err.println("[WINDOW] protected constructor called");
         // necessary for WindowCloseRequestHandler
         initializeInternalEventDispatcher();
         WindowHelper.initHelper(this);
@@ -559,7 +560,7 @@ System.err.println("[javafx.WIN] changed xloc to " + x);
 
     void setXInternal(double value) {
 System.err.println("WINDOW setXINTERNAL to " + value);
- Thread.dumpStack();
+ // Thread.dumpStack();
         x.set(value);
         peerBoundsConfigurator.setX(value, 0);
         xExplicit = true;
