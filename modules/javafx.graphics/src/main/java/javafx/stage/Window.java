@@ -556,6 +556,8 @@ public class Window implements EventTarget {
     public final ReadOnlyDoubleProperty xProperty() { return x.getReadOnlyProperty(); }
 
     void setXInternal(double value) {
+System.err.println("WINDOW, set X to " + value);
+Thread.dumpStack();
         x.set(value);
         peerBoundsConfigurator.setX(value, 0);
         xExplicit = true;
@@ -1578,6 +1580,8 @@ public class Window implements EventTarget {
                                 final float yGravity) {
             this.x = x;
             this.y = y;
+System.err.println("Window, setLocation to " + x);
+Thread.dumpStack();
             this.xGravity = xGravity;
             this.yGravity = yGravity;
             setDirty();

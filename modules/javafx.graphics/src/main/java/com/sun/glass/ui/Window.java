@@ -575,12 +575,15 @@ public abstract class Window {
         int ph = (int) (h > 0 ? Math.ceil(h * pScaleY) : h);
         int pcw = (int) (cw > 0 ? Math.ceil(cw * pScaleX) : cw);
         int pch = (int) (ch > 0 ? Math.ceil(ch * pScaleY) : ch);
+System.err.println("[GLASSWIN] SB will invoke _setBounds with ptr = " + ptr+", px = " + px+", x = " + x+", pScaleX = " + pScaleX+", screenX = " + screen.getX()+", screenplatformX = " + screen.getPlatformX());
+Thread.dumpStack();
         _setBounds(ptr, px, py, xSet, ySet, pw, ph, pcw, pch, xGravity, yGravity);
     }
 
     public void setPosition(int x, int y) {
         Application.checkEventThread();
         checkNotClosed();
+System.err.println("[GLASSWIN] SP will invoke _setBounds with ptr = " + ptr+", px = " + x+", xSet = true");
         _setBounds(ptr, x, y, true, true, 0, 0, 0, 0, 0, 0);
     }
 
