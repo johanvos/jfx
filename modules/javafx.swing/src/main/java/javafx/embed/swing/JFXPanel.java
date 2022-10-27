@@ -30,7 +30,7 @@ import java.awt.geom.AffineTransform;
 
 import java.awt.Rectangle;
 import javafx.application.Platform;
-import javafx.geometry.Dimension2D;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import com.sun.glass.ui.Screen;
 
@@ -440,13 +440,18 @@ System.err.println("[JFXP] consider spx = " + screen.getPlatformX()+" and sy = "
             popupTrigger = e.isPopupTrigger();
         }
 
+        Point2D fxp = awtPointToFXDimension(new Point(e.getXOnScreen(), e.getYOnScreen()));
+        int xOnScreen = (int)fxp.getX();
+        int yOnScreen = (int)fxp.getY();
+        
+
         if(e.getID() == MouseEvent.MOUSE_WHEEL) {
             scenePeer.scrollEvent(AbstractEvents.MOUSEEVENT_VERTICAL_WHEEL,
                     0, -SwingEvents.getWheelRotation(e),
                     0, 0, // total scroll
                     40, 40, // multiplier
                     e.getX(), e.getY(),
-                    e.getXOnScreen(), e.getYOnScreen(),
+                    xOnScreen, yOnScreen,
                     (extModifiers & MouseEvent.SHIFT_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.CTRL_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.ALT_DOWN_MASK) != 0,
@@ -457,7 +462,7 @@ System.err.println("[JFXP] consider spx = " + screen.getPlatformX()+" and sy = "
                     SwingEvents.mouseButtonToEmbedMouseButton(e.getButton(), extModifiers),
                     primaryBtnDown, middleBtnDown, secondaryBtnDown,
                     backBtnDown, forwardBtnDown,
-                    e.getX(), e.getY(), e.getXOnScreen(), e.getYOnScreen(),
+                    e.getX(), e.getY(), xOnScreen, yOnScreen,
                     (extModifiers & MouseEvent.SHIFT_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.CTRL_DOWN_MASK) != 0,
                     (extModifiers & MouseEvent.ALT_DOWN_MASK) != 0,
@@ -465,7 +470,7 @@ System.err.println("[JFXP] consider spx = " + screen.getPlatformX()+" and sy = "
                     popupTrigger);
         }
         if (e.isPopupTrigger()) {
-            scenePeer.menuEvent(e.getX(), e.getY(), e.getXOnScreen(), e.getYOnScreen(), false);
+            scenePeer.menuEvent(e.getX(), e.getY(), xOnScreen, yOnScreen, false);
         }
     }
 
@@ -625,11 +630,7 @@ System.err.println("[JFXP] consider spx = " + screen.getPlatformX()+" and sy = "
         }
     }
 
-    // This methods should only be called on EDT
-    private boolean updateScreenLocation() {
-        synchronized (getTreeLock()) {
-            if (isShowing()) {
-                Point p = getLocationOnScreen();
+    private Point2D awtPointToFXDimension(Point p) {
       AffineTransform awtScales = getGraphicsConfiguration().getDefaultTransform();
 float wx = p.x;
 float wy = p.y;
@@ -651,8 +652,23 @@ System.err.println("[JFXP] sx = " + sx+", pScaleX = " + pScaleX+", px = " + px+"
                     newx = wx;
                     newy = wy;
                  }
-                screenX = (int)newx;
-screenY = (int)newy;
+        return new Point2D(newx, newy);
+    }
+
+    // This methods should only be called on EDT
+/*
+Before the new screen coordinates can be sent to the JavaFX queue, they need to be
+converted for HiDPI arithmetic:
+screen.getX() returns the logical value of the start of the screen in JavaFX, immediately following the end of the previous screen
+The Swing getLocationOnScreen starts from the platform screenValue
+*/
+    private boolean updateScreenLocation() {
+        synchronized (getTreeLock()) {
+            if (isShowing()) {
+                Point p = getLocationOnScreen();
+                Point2D fxp = awtPointToFXDimension(p);
+                screenX = (int)fxp.getX();
+screenY = (int)fxp.getY();
 System.err.println("[JFXP] screenX = " + screenX + " instead of "+ p.x);
                 return true;
             }
