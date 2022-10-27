@@ -556,8 +556,8 @@ public class Window implements EventTarget {
     public final ReadOnlyDoubleProperty xProperty() { return x.getReadOnlyProperty(); }
 
     void setXInternal(double value) {
-System.err.println("WINDOW, set X to " + value);
-Thread.dumpStack();
+System.err.println("[WINDOW], Internally set X to " + value);
+// Thread.dumpStack();
         x.set(value);
         peerBoundsConfigurator.setX(value, 0);
         xExplicit = true;

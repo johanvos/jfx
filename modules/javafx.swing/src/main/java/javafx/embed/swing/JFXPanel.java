@@ -25,6 +25,16 @@
 
 package javafx.embed.swing;
 
+import java.awt.GraphicsConfiguration;
+import java.awt.geom.AffineTransform;
+
+import java.awt.Rectangle;
+import javafx.application.Platform;
+import javafx.geometry.Dimension2D;
+import javafx.scene.Scene;
+import com.sun.glass.ui.Screen;
+
+
 import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -181,6 +191,28 @@ public class JFXPanel extends JComponent {
     private static boolean fxInitialized;
 
     private JFXPanelInteropN jfxPanelIOP;
+
+
+   private Screen findScreen(GraphicsConfiguration graphicsConfiguration)
+   {
+      Rectangle awtBounds = graphicsConfiguration.getBounds();
+      AffineTransform awtScales = graphicsConfiguration.getDefaultTransform();
+ System.err.println("[JFXPANEL] awtBounds = " + awtBounds + " and awtScales = " + awtScales);
+      for (Screen screen : Screen.getScreens())
+      {
+System.err.println("[JFXP] consider sx = " + screen.getPlatformX()+" and sy = " + screen.getPlatformY()+" and pw = " + screen.getPlatformWidth()+" and ph = " + screen.getPlatformHeight()+", screenX = " + screen.getX());
+         if ((Math.abs(screen.getPlatformX() - awtBounds.getX()) < 2.) &&
+             (Math.abs(screen.getPlatformY() - awtBounds.getY()) < 2.) &&
+             (Math.abs(screen.getPlatformWidth() - awtScales.getScaleX() * awtBounds.getWidth()) < 2.) &&
+             (Math.abs(screen.getPlatformHeight() - awtScales.getScaleY() * awtBounds.getHeight()) < 2.))
+         {
+ System.err.println("Yes, match for " + screen.getPlatformX());
+            return screen;
+         }
+      }
+      return null;
+   }
+
 
     private synchronized void registerFinishListener() {
         if (instanceCount.getAndIncrement() > 0) {
@@ -598,8 +630,27 @@ public class JFXPanel extends JComponent {
         synchronized (getTreeLock()) {
             if (isShowing()) {
                 Point p = getLocationOnScreen();
-                screenX = p.x;
-                screenY = p.y;
+float wx = p.x;
+float wy = p.y;
+float newx, newy;
+         Screen screen = findScreen(getGraphicsConfiguration());
+                if (screen != null) {
+                    float pScaleX = screen.getPlatformScaleX();
+                    float pScaleY = screen.getPlatformScaleY();
+                    float sx = screen.getX();
+                    float sy = screen.getY();
+                    float px = screen.getPlatformX();
+                    float py = screen.getPlatformY();
+                    newx = sx + (wx - px) / pScaleX;
+                    newy = sy + (wy - py) / pScaleY;
+System.err.println("[JFXP] sx = " + sx+", pScaleX = " + pScaleX+", px = " + px);
+                 } else {
+                    newx = wx;
+                    newy = wy;
+                 }
+                screenX = (int)newx;
+screenY = (int)newy;
+System.err.println("[JFXP] screenX = " + screenX + " instead of "+ p.x);
                 return true;
             }
         }
