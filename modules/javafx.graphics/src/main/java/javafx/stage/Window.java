@@ -602,6 +602,8 @@ Thread.dumpStack();
      * @param newY the new window y position
      */
     void notifyLocationChanged(double newX, double newY) {
+System.err.println("[WINDOW] notifyLocationChanged to x = " + newX);
+if ((int)newX%100 == 0) Thread.dumpStack();
         x.set(newX);
         y.set(newY);
     }

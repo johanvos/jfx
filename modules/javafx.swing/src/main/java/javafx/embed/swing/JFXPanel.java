@@ -610,7 +610,7 @@ public class JFXPanel extends JComponent {
         if (stagePeer == null) {
             return;
         }
-
+System.err.println("[JFXP] sendMoveEvent to stagePeer, screenX = " + screenX);
         stagePeer.setLocation(screenX, screenY);
     }
 

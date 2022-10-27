@@ -423,6 +423,7 @@ public abstract class ComboBoxPopupControl<T> extends ComboBoxBaseSkin<T> {
 
 System.err.println("[comboboxPOPUP SKINNABLE = " + getSkinnable());
 Window myParent = comboBoxBase.getScene().getWindow();
+System.err.println("[combobox parent = " + myParent);
 System.err.println("[comboboxPOPUP MYPARENTBOUNDSX = " + myParent.getX()+ ", osx = " + myParent.getOutputScaleX()+", rs = " + myParent.getRenderScaleX());
 
         _popup.show(comboBoxBase.getScene().getWindow(),
