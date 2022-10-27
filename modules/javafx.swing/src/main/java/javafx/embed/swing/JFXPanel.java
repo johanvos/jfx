@@ -200,7 +200,7 @@ public class JFXPanel extends JComponent {
  System.err.println("[JFXPANEL] awtBounds = " + awtBounds + " and awtScales = " + awtScales);
       for (Screen screen : Screen.getScreens())
       {
-System.err.println("[JFXP] consider sx = " + screen.getPlatformX()+" and sy = " + screen.getPlatformY()+" and pw = " + screen.getPlatformWidth()+" and ph = " + screen.getPlatformHeight()+", screenX = " + screen.getX());
+System.err.println("[JFXP] consider spx = " + screen.getPlatformX()+" and sy = " + screen.getPlatformY()+" and pw = " + screen.getPlatformWidth()+" and ph = " + screen.getPlatformHeight()+", screenX = " + screen.getX());
          if ((Math.abs(screen.getPlatformX() - awtBounds.getX()) < 2.) &&
              (Math.abs(screen.getPlatformY() - awtBounds.getY()) < 2.) &&
              (Math.abs(screen.getPlatformWidth() - awtScales.getScaleX() * awtBounds.getWidth()) < 2.) &&
@@ -640,8 +640,8 @@ float newx, newy;
                     float pScaleY = screen.getPlatformScaleY();
                     float awtScaleX = (float)awtScales.getScaleX();
                     float awtScaleY = (float)awtScales.getScaleY();
-                    float sx = screen.getX()* awtScaleX;
-                    float sy = screen.getY()* awtScaleY;
+                    float sx = screen.getX();
+                    float sy = screen.getY();
                     float px = screen.getPlatformX();
                     float py = screen.getPlatformY();
                     newx = sx + (wx - px) * awtScaleX / pScaleX;
