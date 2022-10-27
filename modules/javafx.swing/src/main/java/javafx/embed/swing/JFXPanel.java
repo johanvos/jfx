@@ -408,7 +408,7 @@ private Map<GraphicsConfiguration, Dimension2D> swingToFxPixelOffsets = new Weak
  System.err.println("[JFXPANEL] awtScales = " + awtScales);
       for (Screen screen : Screen.getScreens())
       {
-System.err.println("[JFXP] consider sx = " + screen.getPlatformX()+" and sy = " + screen.getPlatformY()+" and pw = " + screen.getPlatformWidth()+" and ph = " + screen.getPlatformHeight());
+System.err.println("[JFXP] consider sx = " + screen.getPlatformX()+" and sy = " + screen.getPlatformY()+" and pw = " + screen.getPlatformWidth()+" and ph = " + screen.getPlatformHeight()+", screenX = " + screen.getX());
          // if ((Math.abs(screen.getPlatformX() - awtBounds.getX() * awtScales.getScaleX()) < 0.001) &&
              // (Math.abs(screen.getPlatformY() - awtBounds.getY() * awtScales.getScaleY()) < 0.001) &&
              // (Math.abs(screen.getPlatformWidth() - awtBounds.getWidth()) < 0.001) &&
@@ -476,7 +476,7 @@ System.err.println("[JV] gcc = " + getGraphicsConfiguration());
       // Dimension2D screenOffset = getSwingToFxPixelOffset(getGraphicsConfiguration());
       // int xOnScreen = (int) (e.getXOnScreen() + screenOffset.getWidth());
       // int yOnScreen = (int) (e.getYOnScreen() + screenOffset.getHeight());
-      Dimension2D local = getSwingToFxPixel(getGraphicsConfiguration(), e.getX(), e.getY());
+      Dimension2D local = getSwingToFxPixelLocal(getGraphicsConfiguration(), e.getX(), e.getY());
       Dimension2D onScreen = getSwingToFxPixel(getGraphicsConfiguration(), e.getXOnScreen(), e.getYOnScreen());
       int x = (int)local.getWidth();
       int y = (int)local.getHeight();
@@ -678,6 +678,18 @@ false);
             sendResizeEventToFX();
         }
     }
+    private Dimension2D getSwingToFxPixelLocal(GraphicsConfiguration g, float wx, float wy) {
+        Screen screen = findScreen(getGraphicsConfiguration());
+        if (screen != null) {
+            float newx = wx/screen.getPlatformScaleX();
+            float newy = wy/screen.getPlatformScaleX();
+System.err.println("do localTRANSFER (" + wx+", " + wy+") to ("+newx+", " + newy+")");
+return new Dimension2D(newx, newy);
+        } else {
+System.err.println("keep localTRANSFER (" + wx+", " + wy+")");
+return new Dimension2D(wx, wy);
+        }
+    }
     private Dimension2D getSwingToFxPixel(GraphicsConfiguration g, float wx, float wy) {
 float newx, newy;
          Screen screen = findScreen(getGraphicsConfiguration());
@@ -691,11 +703,12 @@ float newx, newy;
                     float py = screen.getPlatformY();
                     newx = (float) (sx + (wx - px) * awtScales.getScaleX() / pScaleX);
                     newy = (float) (sy + (wy - py) * awtScales.getScaleY() / pScaleY);
+System.err.println("TRANSFER (" + wx+", " + wy+") to ("+newx+", " + newy+"), pScaleX = " + pScaleX+", sx = " + sx+", awtSX = " + awtScales.getScaleX());
                  } else {
                     newx = wx;
                     newy = wy;
+System.err.println("keep TRANSFER (" + wx+", " + wy+") to ("+newx+", " + newy+")");
                  }
-System.err.println("TRANSFER (" + wx+", " + wy+") to ("+newx+", " + newy+")");
         Dimension2D answer = new Dimension2D(newx, newy);
 return answer;
     }
