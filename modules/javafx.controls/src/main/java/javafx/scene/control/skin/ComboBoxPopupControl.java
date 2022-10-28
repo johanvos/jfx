@@ -25,7 +25,6 @@
 
 package javafx.scene.control.skin;
 
-import javafx.stage.Window;
 import com.sun.javafx.scene.ParentHelper;
 import com.sun.javafx.scene.control.FakeFocusTextField;
 import com.sun.javafx.scene.control.Properties;
@@ -420,11 +419,6 @@ public abstract class ComboBoxPopupControl<T> extends ComboBoxBaseSkin<T> {
 
         popupNeedsReconfiguring = true;
         reconfigurePopup();
-
-System.err.println("[comboboxPOPUP SKINNABLE = " + getSkinnable());
-Window myParent = comboBoxBase.getScene().getWindow();
-System.err.println("[combobox parent = " + myParent);
-System.err.println("[comboboxPOPUP MYPARENTBOUNDSX = " + myParent.getX()+ ", osx = " + myParent.getOutputScaleX()+", rs = " + myParent.getRenderScaleX());
 
         _popup.show(comboBoxBase.getScene().getWindow(),
                     snapPositionX(p.getX()),

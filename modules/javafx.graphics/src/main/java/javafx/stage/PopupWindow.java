@@ -437,7 +437,6 @@ public abstract class PopupWindow extends Window {
      *      create cycle in the window hierarchy
      */
     public void show(Window ownerWindow, double anchorX, double anchorY) {
-System.err.println("POPUPWINDOW, show with anchorX = " + anchorX);
         validateOwnerWindow(ownerWindow);
 
         updateWindow(anchorX, anchorY);
