@@ -901,8 +901,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
     };
     public final int getCellCount() { return cellCount.get(); }
     public final void setCellCount(int value) {
-// System.err.println("Set cellcount to " + value);
-// Thread.dumpStack();
         cellCount.set(value);
     }
     public final IntegerProperty cellCountProperty() { return cellCount; }
@@ -915,21 +913,17 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      */
     private DoubleProperty position = new SimpleDoubleProperty(this, "position") {
         @Override public void setValue(Number v) {
-// System.err.println("[VF] SETP to " + v);
             super.setValue(com.sun.javafx.util.Utils.clamp(0, get(), 1));
         }
 
         @Override protected void invalidated() {
             super.invalidated();
-// System.err.println("[VF] INVP ");
-// Thread.dumpStack();
             adjustAbsoluteOffset();
             requestLayout();
         }
     };
     public final double getPosition() { return position.get(); }
     public final void setPosition(double value) {
-// System.err.println("[VF] SP requested to set position to " + value);
         position.set(value);
     }
     public final DoubleProperty positionProperty() { return position; }
@@ -1039,7 +1033,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * match the (new) position.
      */
     void adjustAbsoluteOffset() {
- System.err.println("[VF] AO, current ao = " + this.absoluteOffset+", estsize = " + estimatedSize+", vpl = " + viewportLength+", pos = " + getPosition());
         absoluteOffset = (estimatedSize - viewportLength) * getPosition();
     }
 
@@ -1048,7 +1041,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * the (new) absoluteOffset.
      */
     void adjustPosition() {
-// System.err.println("[VF] AP, ao = " + absoluteOffset+", es = " + estimatedSize+", vpl = " + viewportLength);
         if (viewportLength >= estimatedSize) {
             setPosition(0.);
         } else {
@@ -1058,7 +1050,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
 
     /** {@inheritDoc} */
     @Override protected void layoutChildren() {
-System.err.println("[VF] lc, ao = " + absoluteOffset+", cci = " + computeCurrentIndex());
         // when we enter this method, the absoluteOffset and position are
         // already determined. In case this method invokes other methods
         // that may change either absoluteOffset or position, it is the
@@ -1103,20 +1094,6 @@ System.err.println("[VF] lc, ao = " + absoluteOffset+", cci = " + computeCurrent
 //                cell.updateIndex(-1);
                 if (cell != null) {
                     cell.requestLayout();
-/*
-if (itemSizeCache.size() > index) {
-double answer =1d;
-            if (isVertical()) {
-                answer = cell.getLayoutBounds().getHeight();
-            } else {
-                answer = cell.getLayoutBounds().getWidth();
-            }
-// System.err.println("OLD CACHE for " + index+" = " + itemSizeCache.get(index)+" and new val = " + answer);
-            itemSizeCache.set(index, answer);
-} else {
-// System.err.println("DIRTY CELL OUTSIDE CACHE");
-}
-*/
                 }
                 dirtyCells.clear(index);
             }
@@ -1144,7 +1121,6 @@ double answer =1d;
             needsCellsLayout = false;
             // yes, we return here - if needsCellsLayout was set to true, we
             // only did it to do the above - not rerun the entire layout.
-// System.err.println("[VF] lc will return0");
             return;
         }
 
@@ -1161,7 +1137,6 @@ double answer =1d;
             hbar.setVisible(false);
             vbar.setVisible(false);
             corner.setVisible(false);
-// System.err.println("[VF] lc will return1");
             return;
         }
 
@@ -1218,7 +1193,6 @@ double answer =1d;
                 // AND we are doing a full rebuild then we need to make sure we
                 // use that cell in the same physical location as before so that
                 // it gets the mouse release event.
-// System.err.println("[VF] lc will return2, pos = "+position);
                 return;
             }
         }
@@ -1525,13 +1499,11 @@ double answer =1d;
      * @param cell the cell
      */
     public void scrollTo(T cell) {
-// System.err.println("ScrollTo cell " + cell);
         if (cell != null) {
             final double start = getCellPosition(cell);
             final double length = getCellLength(cell);
             final double end = start + length;
             final double viewportLength = getViewportLength();
-// System.err.println("ScrollToCell, start = " + start+", length = " + length+", end = " + end+", vpl = " + viewportLength);
 
             if (start < 0) {
                 scrollPixels(start);
@@ -1547,9 +1519,7 @@ double answer =1d;
      * @param index the index
      */
     public void scrollTo(int index) {
-// System.err.println("ScrollToIndex  " + index);
         T cell = getVisibleCell(index);
-// System.err.println("[VF] visible cell at " + index+"? " + cell);
         if (cell != null) {
             scrollTo(cell);
         } else {
@@ -1561,10 +1531,8 @@ double answer =1d;
             }
 
             adjustPositionToIndex(index);
-// System.err.println("[VF] scrollToIndex, ao = " + absoluteOffset+", pos = " + getPosition());
             addAllToPile();
             requestLayout();
-// System.err.println("[VF] scrollToIndex done");
         }
     }
 
@@ -1635,9 +1603,8 @@ double answer =1d;
      * @return the number of pixels actually moved
      */
     public double scrollPixels(final double delta) {
-double oldOffset = computeViewportOffset(getPosition());
-int oldIndex = computeCurrentIndex();
- System.err.println("[VF] SP0 asked with delta = " + delta+", ao = " + absoluteOffset+" and cci = " + computeCurrentIndex()+", oo = " + oldOffset+", pos = " + getPosition());
+        double oldOffset = computeViewportOffset(getPosition());
+        int oldIndex = computeCurrentIndex();
         // Short cut this method for cases where nothing should be done
         if (delta == 0) return 0;
 
@@ -1648,13 +1615,9 @@ int oldIndex = computeCurrentIndex();
         double pos = getPosition();
         if (pos == 0.0f && delta < 0) return 0;
         if (pos == 1.0f && delta > 0) return 0;
-System.err.println("[VF] SP1, oo = " + computeViewportOffset(getPosition()));
-     getCellSizesInExpectedViewport(oldIndex);
-System.err.println("[VF] SP1bis, oo = " + computeViewportOffset(getPosition()));
+        getCellSizesInExpectedViewport(oldIndex);
         recalculateEstimatedSize();
-System.err.println("[VF] SP2, oo = " + computeViewportOffset(getPosition()));
         double answer = adjustByPixelAmount(delta);
-System.err.println("[VF] SP3, oo = " + computeViewportOffset(getPosition()));
         if (pos == getPosition()) {
             // The pos hasn't changed, there's nothing to do. This is likely
             // to occur when we hit either extremity
@@ -1703,7 +1666,6 @@ System.err.println("[VF] SP3, oo = " + computeViewportOffset(getPosition()));
             if (firstCell != null) {
                 int firstIndex = getCellIndex(firstCell);
                 double prevIndexSize = getCellLength(firstIndex - 1);
- System.err.println("[VF] SP, fi = " + firstIndex+", prevIndexSize = " + prevIndexSize);
                 addLeadingCells(firstIndex - 1, getCellPosition(firstCell) - prevIndexSize);
             } else {
                 int currentIndex = computeCurrentIndex();
@@ -1757,8 +1719,6 @@ System.err.println("[VF] SP3, oo = " + computeViewportOffset(getPosition()));
         lastPosition = getPosition();
 
         // notify
-double oldOffset2 = computeViewportOffset(getPosition());
- System.err.println("[VF] SP asked with delta = " + delta+" will return " + answer+", ao = " + absoluteOffset+" and cci = " + computeCurrentIndex()+", oo2 = " + oldOffset2+", lastpos = " + lastPosition);
         return answer;
     }
 
@@ -1937,7 +1897,6 @@ double oldOffset2 = computeViewportOffset(getPosition());
      */
     private double viewportLength;
     void setViewportLength(double value) {
-// Thread.dumpStack();
         if (value == this.viewportLength) {
             return;
         }
@@ -1985,8 +1944,7 @@ double oldOffset2 = computeViewportOffset(getPosition());
         double answer = isVertical() ?
                 cell.getLayoutBounds().getHeight()
                 : cell.getLayoutBounds().getWidth();
-// System.err.println("[VF] GCL asked for " + cell+", return " + answer);
-return answer;
+        return answer;
     }
 
     /**
@@ -2011,8 +1969,6 @@ return answer;
 
     private void positionCell(T cell, double position) {
         updateCellSize(cell);
-// System.err.println("[VF]POS cell " + cell+ " with index " + cell.getIndex()+ " to " + position);
-// Thread.dumpStack();
         if (isVertical()) {
             cell.setLayoutX(0);
             cell.setLayoutY(snapSpaceY(position));
@@ -2208,7 +2164,6 @@ return answer;
         double offset = getCellPosition(startCell) + getCellLength(startCell);
         int index = getCellIndex(startCell) + 1;
         final int cellCount = getCellCount();
-// System.err.println("[VF] addTrailingCells, cc = " + cellCount);
         boolean filledWithNonEmpty = index <= cellCount;
 
         final double viewportLength = getViewportLength();
@@ -2227,7 +2182,6 @@ return answer;
         //
         final double maxCellCount = viewportLength;
         while (offset < viewportLength) {
-// System.err.println("[VF] ATC, index = " + index+" and cc = " + cellCount+" and offset = " + offset);
             if (index >= cellCount) {
                 if (offset < viewportLength) filledWithNonEmpty = false;
                 if (! fillEmptyCells) return filledWithNonEmpty;
@@ -2241,7 +2195,6 @@ return answer;
                 }
             }
             T cell = getAvailableCell(index);
-// System.err.println("[VF] ATC we get a cell available at " + index+": " + cell);
             setCellIndex(cell, index);
             resizeCell(cell); // resize happens after config!
             cells.addLast(cell);
@@ -2250,7 +2203,6 @@ return answer;
             setMaxPrefBreadth(Math.max(getMaxPrefBreadth(), getCellBreadth(cell)));
 
             offset += getCellLength(cell);
-// System.err.println("[VF] ATC offset is now " + offset);
             cell.setVisible(true);
             ++index;
         }
@@ -2359,7 +2311,6 @@ return answer;
 
     void setCellDirty(int index) {
         dirtyCells.set(index);
-// itemSizeCache.set(index, null);
         requestLayout();
     }
 
@@ -2371,9 +2322,8 @@ return answer;
      * the viewport in the next layout cycle.
      */
     void getCellSizesInExpectedViewport(int index) {
-double oldOffset = computeViewportOffset(getPosition());
-int oldIndex = computeCurrentIndex();
-System.err.println("[GCSIEVP] oldOffset = " + oldOffset+" and oldIndex = " + oldIndex);
+        double oldOffset = computeViewportOffset(getPosition());
+        int oldIndex = computeCurrentIndex();
         double cellLength = getOrCreateCellSize(index);
         if (index > 0) getOrCreateCellSize(index - 1);
         if (index < getCellCount() -1) getOrCreateCellSize(index + 1);
@@ -2389,9 +2339,7 @@ System.err.println("[GCSIEVP] oldOffset = " + oldOffset+" and oldIndex = " + old
                 estlength = estlength + getOrCreateCellSize(j);
             }
         }
-System.err.println("[GCSIEVP]1  oldOffset = " + oldOffset+" and oldIndex = " + oldIndex);
         recalculateAndImproveEstimatedSize(0, oldIndex, oldOffset);
-System.err.println("[GCSIEVP]2 oldOffset = " + oldOffset+" and oldIndex = " + oldIndex);
     }
 
     private void startSBReleasedAnimation() {
@@ -2543,7 +2491,6 @@ System.err.println("[GCSIEVP]2 oldOffset = " + oldOffset+" and oldIndex = " + ol
         int index = getCellIndex(firstCell);
         double end = getCellPosition(lastNonEmptyCell) + getCellLength(lastNonEmptyCell);
         double delta = viewportLength - end;
-// System.err.println("[VF] SHIFT, lastNECell = " + lastNonEmptyCell+", firstCell = " + firstCell+", idx = " + getCellIndex(firstCell)+", end = " + end+", delta = " + delta+", gcpl = " + getCellPosition(lastNonEmptyCell));
         if ((index > 0) && (delta > 0)) {
             for (int i = 0; i < cells.size(); i++) {
                 T cell = cells.get(i);
@@ -2553,7 +2500,6 @@ System.err.println("[GCSIEVP]2 oldOffset = " + oldOffset+" and oldIndex = " + ol
     }
 
     private void updateScrollBarsAndCells(boolean recreate) {
- System.err.println("[VF] USBAC");
         // Assign the hbar and vbar to the breadthBar and lengthBar so as
         // to make some subsequent calculations easier.
         final boolean isVertical = isVertical();
@@ -2575,11 +2521,8 @@ System.err.println("[GCSIEVP]2 oldOffset = " + oldOffset+" and oldIndex = " + ol
         // to re-position the cells.
         if (!cells.isEmpty()) {
             final double currOffset = -computeViewportOffset(getPosition());
- System.err.println("[VF] USBAC, co = " + currOffset);
             final int currIndex = computeCurrentIndex() - cells.getFirst().getIndex();
- System.err.println("[VF] USBAC, ci = " + currIndex);
             final int size = cells.size();
- System.err.println("[VF] USBAC, cellssize = " + size);
 
             // position leading cells
             double offset = currOffset;
@@ -2947,7 +2890,6 @@ System.err.println("[GCSIEVP]2 oldOffset = " + oldOffset+" and oldIndex = " + ol
      * performance.
      */
     private double computeViewportOffset(double position) {
-// System.err.println("[VF] CVPO, pos = " + position+", ao = " + absoluteOffset+", estimatedSize = " + estimatedSize+", cc = " + getCellCount()+", vpl = " + getViewportLength());
         double p = com.sun.javafx.util.Utils.clamp(0, position, 1);
         double bound = 0d;
         double estSize = estimatedSize / getCellCount();
@@ -2960,7 +2902,6 @@ System.err.println("[GCSIEVP]2 oldOffset = " + oldOffset+" and oldIndex = " + ol
             double h = getCellSize(i);
             if (h < 0) h = estSize;
             if (bound + h > absoluteOffset) {
-// System.err.println("[VF] CVPO will return " + (absoluteOffset - bound)+" as bound = " + bound+" and h = " + h+ " and estsize = " + estSize+"for i = " + i);
                 return absoluteOffset - bound;
             }
             bound += h;
@@ -2969,12 +2910,10 @@ System.err.println("[GCSIEVP]2 oldOffset = " + oldOffset+" and oldIndex = " + ol
     }
 
     private void adjustPositionToIndex(int index) {
- System.err.println("[VF] APTI, adjustPosition to index " + index);
         if (index > 0) getOrCreateCellSize(index-1);
         getOrCreateCellSize(index);
         recalculateEstimatedSize();
         int cellCount = getCellCount();
-// System.err.println("[VF] APTI, cc = " + cellCount+", estSize = " + estimatedSize);
         if (cellCount <= 0) {
             setPosition(0.0f);
         } else {
@@ -2983,36 +2922,14 @@ System.err.println("[GCSIEVP]2 oldOffset = " + oldOffset+" and oldIndex = " + ol
             for (int i = 0; i < index; i++) {
                 double cz = getCellSize(i);
                 if (cz < 0) cz = estSize;
-// System.err.println("[VF] APTI, cz["+i+"] = " + cz);
                 targetOffset = targetOffset+ cz;
             }
- System.err.println("to = " + targetOffset);
             this.absoluteOffset = (estimatedSize < viewportLength)  ? 0  : targetOffset;
             adjustPosition();
         }
 
     }
 
-void adjustAbsoluteOffset(int idx, double oldVal, double newVal) {
-  System.err.println("[VF] AAO bsed on idx " + idx+", replace "+oldVal+" with " + newVal+" and old ao =  " + absoluteOffset);
-    // recalculateAndImproveEstimatedSize(0);
-  System.err.println("[VF] new AO = " + absoluteOffset);
-/*
-double tot = 0;
-        int cellCount = getCellCount();
-        double estSize = estimatedSize/cellCount;
-for (int i = 0; i < idx; i++) {
-                double cz = getCellSize(i);
-                if (cz < 0) cz = estSize;
-tot = tot + cz;
-}
-  System.err.println("[VF] AAO bsed on idx " + idx+", replace "+oldVal+" with " + newVal+" and tot = " + tot+" and old ao =  " + absoluteOffset);
-if ((tot + oldVal) < absoluteOffset) {
-absoluteOffset = absoluteOffset - oldVal + newVal;
-  System.err.println("[VF] new AO = " + absoluteOffset);
-}
-*/
-}
     /**
      * Adjust the position based on a delta of pixels. If negative, then the
      * position will be adjusted negatively. If positive, then the position will
@@ -3031,7 +2948,6 @@ absoluteOffset = absoluteOffset - oldVal + newVal;
         double origAbsoluteOffset = this.absoluteOffset;
         this.absoluteOffset = Math.max(0.d, this.absoluteOffset + numPixels);
         double newPosition = Math.min(1.0d, absoluteOffset / (estimatedSize - viewportLength));
-System.err.println("[VF] ABPA " + numPixels+", ao = " + absoluteOffset+", pos = " + getPosition()+" and would become " + newPosition);
         // estimatedSize changes may result in opposite effect on position
         // in that case, modify current position 1% in the requested direction
         if ((numPixels > 0) && (newPosition < getPosition())) {
@@ -3043,8 +2959,6 @@ System.err.println("[VF] ABPA " + numPixels+", ao = " + absoluteOffset+", pos = 
 
         // once at 95% of the total estimated size, we want a correct size, not
         // an estimated size anymore.
-System.err.println("[VF] ABPA1 oo = " + computeViewportOffset(getPosition())+ " and cci = " + computeCurrentIndex());
-System.err.println("[VF] ABPA2 oo = " + computeViewportOffset(newPosition));
         if (newPosition > .95) {
             int cci = computeCurrentIndex();
             while (cci < getCellCount()) {
@@ -3052,8 +2966,6 @@ System.err.println("[VF] ABPA2 oo = " + computeViewportOffset(newPosition));
             }
             recalculateEstimatedSize();
         }
-System.err.println("[VF] ABPA3 oo = " + computeViewportOffset(getPosition()));
-System.err.println("[VF] ABPA4 oo = " + computeViewportOffset(newPosition));
 
         // if we are at or beyond the edge, correct the absoluteOffset
         if (newPosition >= 1.d) {
@@ -3069,10 +2981,8 @@ System.err.println("[VF] ABPA4 oo = " + computeViewportOffset(newPosition));
         double total = 0;
         int currentCellCount = getCellCount();
         double estSize = estimatedSize / currentCellCount;
- // System.err.println("[CCI] asked, current ao = " + absoluteOffset+", estSize = " + estSize+", estimatedSize = " + estimatedSize+", cc = " + currentCellCount);
         for (int i = 0; i < currentCellCount; i++) {
             double nextSize = getCellSize(i);
- // System.err.println("[CCI] size["+i+"] = " + nextSize);
             if (nextSize < 0) nextSize = estSize;
             total = total + nextSize;
             if (total > absoluteOffset) {
@@ -3161,22 +3071,18 @@ System.err.println("[VF] ABPA4 oo = " + computeViewportOffset(newPosition));
      */
     void updateCellSize(T cell) {
         int cellIndex = cell.getIndex();
-int currentIndex = computeCurrentIndex();
-double oldOffset = computeViewportOffset(getPosition());
- // System.err.println("[VF] asked to update cellsize for " + cellIndex+", ci = " + currentIndex+", oo = " + oldOffset);
+        int currentIndex = computeCurrentIndex();
+        double oldOffset = computeViewportOffset(getPosition());
 
-// Thread.dumpStack();
         if (itemSizeCache.size() > cellIndex) {
-Double oldValD = itemSizeCache.get(cellIndex);
-double oldVal = oldValD == null? -1 : oldValD;
+            Double oldValD = itemSizeCache.get(cellIndex);
+            double oldVal = oldValD == null? -1 : oldValD;
             if (isVertical()) {
                 double newh = cell.getLayoutBounds().getHeight();
                 itemSizeCache.set(cellIndex, newh);
-if ((oldVal > -1) && (oldVal != newh)) adjustAbsoluteOffset(cellIndex, oldVal, newh);
             } else {
                 double newh = cell.getLayoutBounds().getWidth();
                 itemSizeCache.set(cellIndex, newh);
-if ((oldVal > -1) && (oldVal != newh)) adjustAbsoluteOffset(cellIndex, oldVal, newh);
             }
         }
         recalculateAndImproveEstimatedSize(0, currentIndex, oldOffset);
@@ -3197,7 +3103,6 @@ if ((oldVal > -1) && (oldVal != newh)) adjustAbsoluteOffset(cellIndex, oldVal, n
     }
 
     private void recalculateAndImproveEstimatedSize(int improve, int oldIndex, double oldOffset) {
-// System.err.println("[VF] RAIE, ao = " + this.absoluteOffset+", improve = " + improve);
         if (recalculating) return;
         recalculating = true;
         try {
@@ -3206,8 +3111,6 @@ if ((oldVal > -1) && (oldVal != newh)) adjustAbsoluteOffset(cellIndex, oldVal, n
             boolean keepRatio = ((cacheCount > 0) && !Double.isInfinite(this.absoluteOffset));
 
             if (oldIndex < 0) oldIndex = computeCurrentIndex();
-            // double oldOffset = computeViewportOffset(getPosition());
-// System.err.println("[VF] RAIE, oldIndex = " + oldIndex+", oo = " + oldOffset +", itemCount = " + itemCount+", cacheCount = " + cacheCount);
             int added = 0;
             while ((itemCount > itemSizeCache.size()) && (added < improve)) {
                 getOrCreateCellSize(itemSizeCache.size());
@@ -3219,7 +3122,6 @@ if ((oldVal > -1) && (oldVal != newh)) adjustAbsoluteOffset(cellIndex, oldVal, n
             for (int i = 0; (i < itemCount && i < cacheCount); i++) {
                 Double il = itemSizeCache.get(i);
                 if (il != null) {
-// System.err.println("[VF] RAIE, cache for " + i+" = " + il);
                     tot = tot + il;
                     cnt++;
                 }
@@ -3238,7 +3140,6 @@ if ((oldVal > -1) && (oldVal != newh)) adjustAbsoluteOffset(cellIndex, oldVal, n
                 }
                 this.absoluteOffset = newOffset + oldOffset;
                 adjustPosition();
-// System.err.println("[VF] RAIE done, ao = " + this.absoluteOffset+", estimatedSize = " + this.estimatedSize+", estSize = " + estSize+", newOffset = " + newOffset);
             }
         } finally {
             recalculating = false;
@@ -3382,7 +3283,6 @@ if ((oldVal > -1) && (oldVal != newh)) adjustAbsoluteOffset(cellIndex, oldVal, n
                 // firstIndex - 1 position and decrement first position
                 array.set(--firstIndex, cell);
             }
-// System.err.println("AddFirstCell, fi = " + firstIndex+", li = " + lastIndex);
         }
 
         public void addLast(T cell) {

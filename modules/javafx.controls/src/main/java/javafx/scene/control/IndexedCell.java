@@ -121,7 +121,6 @@ public class IndexedCell<T> extends Cell<T> {
      */
     public void updateIndex(int newIndex) {
         oldIndex = index.get();
-// System.err.println("[IC] updateIndex from " + oldIndex+ " to " + newIndex);
 
         if (oldIndex == newIndex) {
             // When the index wasn't changed the index property will not be invalidated,
