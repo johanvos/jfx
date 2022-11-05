@@ -237,7 +237,10 @@ public class VirtualFlowTest {
      * the entire width/height of the VirtualFlow.
      */
     @Test public void testGeneralLayout_NoCells() {
+System.err.println("FLOWCELLS0 = " + flow.cells);
         flow.setCellCount(0);
+System.err.println("FLOWCELLS1 = " + flow.cells);
+assertNotNull(VirtualFlowShim.cells_getFirst(flow.cells));
         pulse();
         assertFalse("The hbar should have been invisible", flow.shim_getHbar().isVisible());
         assertFalse("The vbar should have been invisible", flow.shim_getVbar().isVisible());

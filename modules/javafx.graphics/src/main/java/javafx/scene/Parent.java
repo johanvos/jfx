@@ -926,6 +926,8 @@ public abstract class Parent extends Node {
     private double minHeightCache = -1;
 
     void setLayoutFlag(LayoutFlags flag) {
+// System.err.println("[PARENT] setlayoutflag for "+ this+" to " + flag);
+// Thread.dumpStack();
         if (needsLayout != null) {
             needsLayout.set(flag == LayoutFlags.NEEDS_LAYOUT);
         }
@@ -1187,6 +1189,7 @@ public abstract class Parent extends Node {
         // layoutFlag can be accessed or changed during layout processing.
         // Hence we need to cache and reset it before performing layout.
         LayoutFlags flag = layoutFlag;
+// System.err.println("[PARENT] layout " + this+", flag = " + flag);
         setLayoutFlag(LayoutFlags.CLEAN);
         switch(flag) {
             case CLEAN:
