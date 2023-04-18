@@ -854,26 +854,16 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
     private IntegerProperty cellCount = new SimpleIntegerProperty(this, "cellCount", 0) {
         private int oldCount = 0;
 
-        @Override protected void invalidated() {
-            System.err.println("CC COUNT invalidated");
-        //    if (oldCount != 0) {
-                int oldIndex = computeCurrentIndex();
-                double oldOffset = computeViewportOffset(getPosition());
-                System.err.println("CC, oldindex = "+oldIndex+" and oldOffset = "+oldOffset);
-         //   }
-       //     Thread.dumpStack();
+        @Override
+        protected void invalidated() {
+            int oldIndex = computeCurrentIndex();
+            double oldOffset = computeViewportOffset(getPosition());
             int cellCount = get();
-            System.err.println("CC new count = "+cellCount);
             resetSizeEstimates();
-            System.err.println("CC resetSE done");
             recalculateEstimatedSize();
-            System.err.println("CC recalcSEdone");
 
             boolean countChanged = oldCount != cellCount;
-            System.err.println("CC, oc = "+oldCount+", changed? "+countChanged);
-            System.err.println("CC, newidx = "+ computeCurrentIndex()+", newoffset = "+computeViewportOffset(getPosition()));
             double boff = computeBaseOffset(oldIndex);
-            System.err.println("new bo = " + boff+", absoluteoffset = "+absoluteOffset);
             absoluteOffset = boff + oldOffset;
             oldCount = cellCount;
 
@@ -900,7 +890,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
             // was at its maximum position.
             // FIXME this should be only executed on the pulse, so this will likely
             // lead to performance degradation until it is handled properly.
-         //   adjustPosition();
             if (countChanged) {
                 layoutChildren();
 
@@ -1049,7 +1038,6 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
      * match the (new) position.
      */
     void adjustAbsoluteOffset() {
-        System.err.println("AAO, estsize = "+estimatedSize+", vpl = "+viewportLength+", pos = "+getPosition());
         absoluteOffset = (estimatedSize - viewportLength) * getPosition();
     }
 
@@ -1074,7 +1062,7 @@ public class VirtualFlow<T extends IndexedCell> extends Region {
         // changed in a consistent way.
         // For example, the recalculateEstimatedSize method also recalculates
         // the absoluteOffset and position.
-pdbg("[VF] startLayout");
+
         if (needsRecreateCells) {
             lastWidth = -1;
             lastHeight = -1;
@@ -1326,19 +1314,15 @@ pdbg("[VF] startLayout");
 
             // The distance from the top of the viewport to the top of the
             // cell for the current index.
-System.err.println("calculate offset, get pos first: " + getPosition());
             double offset = -computeViewportOffset(getPosition());
 
             // Add all the leading and trailing cells (the call to add leading
             // cells will add the current cell as well -- that is, the one that
             // represents the current position on the mapper).
-pdbg("start addleadingcells");
             addLeadingCells(currentIndex, offset);
-pdbg("done addleadingcells");
 
             // Force filling of space with empty cells if necessary
             addTrailingCells(true);
-pdbg("done addtrailingcells");
         } else if (needTrailingCells) {
             addTrailingCells(true);
         }
@@ -1355,15 +1339,7 @@ pdbg("done addtrailingcells");
         lastPosition = getPosition();
         recalculateEstimatedSize();
         cleanPile();
-        pdbg("[VF] doneLayout");
     }
-
-void pdbg2(String s) {
-System.err.println("PDBH ["+ System.currentTimeMillis()%10000+"] "+s);
-}
-void pdbg(String s) {
-System.err.println("PDBG ["+ System.currentTimeMillis()%10000+"] "+s);
-}
 
     /** {@inheritDoc} */
     @Override protected void setWidth(double value) {
@@ -1632,7 +1608,6 @@ System.err.println("PDBG ["+ System.currentTimeMillis()%10000+"] "+s);
      * @return the number of pixels actually moved
      */
     public double scrollPixels(final double delta) {
-        pdbg("[VF] scrollPixels asked, delta = "+delta);
         int oldIndex = computeCurrentIndex();
         // Short cut this method for cases where nothing should be done
         if (delta == 0) return 0;
@@ -1642,15 +1617,11 @@ System.err.println("PDBG ["+ System.currentTimeMillis()%10000+"] "+s);
                 (! isVertical && (tempVisibility ? !needLengthBar : !hbar.isVisible())))) return 0;
 
         double pos = getPosition();
-        pdbg("[VF SP], pos = "+pos);
         if (pos == 0.0f && delta < 0) return 0;
         if (pos == 1.0f && delta > 0) return 0;
         getCellSizesInExpectedViewport(oldIndex);
         recalculateEstimatedSize();
-        pdbg("[VF SP] abpa will now be invoked with delta = "+delta);
         double answer = adjustByPixelAmount(delta);
-        pdbg("[VF SP] abpa was now be invoked with delta = "+delta);
-
         if (pos == getPosition()) {
             // The pos hasn't changed, there's nothing to do. This is likely
             // to occur when we hit either extremity
@@ -1676,7 +1647,7 @@ System.err.println("PDBG ["+ System.currentTimeMillis()%10000+"] "+s);
                 assert cell != null;
                 positionCell(cell, getCellPosition(cell) - delta);
             }
-pdbg("Positioned cells");
+
             // Fix for RT-32908
             T firstCell = cells.getFirst();
             double layoutY = firstCell == null ? 0 : getCellPosition(firstCell);
@@ -1691,8 +1662,6 @@ pdbg("Positioned cells");
 
                 layoutY += getCellLength(cell);
             }
-            pdbg("Positioned cells round 2 done");
-
             // end of fix for RT-32908
             cull();
             firstCell = cells.getFirst();
@@ -1714,8 +1683,6 @@ pdbg("Positioned cells");
                 // represents the current position on the mapper).
                 addLeadingCells(currentIndex, offset);
             }
-            pdbg("Positioned cells round 3 done");
-
             // Starting at the tail of the list, loop adding cells until
             // all the space on the table is filled up. We want to make
             // sure that we DO NOT add empty trailing cells (since we are
@@ -1747,14 +1714,13 @@ pdbg("Positioned cells");
                 }
             }
         }
-            pdbg("Positioned cells round 4 done");
 
         // Now throw away any cells that don't fit
         cull();
 
         // Finally, update the scroll bars
         updateScrollBarsAndCells(false);
-        pdbg("Done scrolling");
+
         // notify
         return answer;
     }
@@ -2004,7 +1970,6 @@ pdbg("Positioned cells");
     }
 
     private void positionCell(T cell, double position) {
-        System.err.println("PC "+cell+" at "+position);
         updateCellSize(cell);
         if (isVertical()) {
             cell.setLayoutX(0);
@@ -2035,7 +2000,6 @@ pdbg("Positioned cells");
             cell.resize(fixedCellSizeEnabled ? getFixedCellSize() : Utils.boundedSize(cell.prefWidth(height), cell.minWidth(height), cell.maxWidth(height)), height);
         }
         // when a cell is resized, our estimate needs to be updated.
-        recalculateAndImproveEstimatedSize(0);
     }
 
     /**
@@ -2112,7 +2076,6 @@ pdbg("Positioned cells");
      * the leading edge (top) of the currentIndex.
      */
     void addLeadingCells(int currentIndex, double startOffset) {
-pdbg("Need to add leading cells. CurrentIndex = " + currentIndex+" and startOffset = " + startOffset);
         // The offset will keep track of the distance from the top of the
         // viewport to the top of the current index. We will decrement it
         // as we lay out leading cells.
@@ -2136,18 +2099,11 @@ pdbg("Need to add leading cells. CurrentIndex = " + currentIndex+" and startOffs
             index--;
             first = false;
         }
-        pdbg("start loop");
         while (index >= 0 && (offset > 0 || first)) {
-pdbg2("In loop, index = " + index+" and offset = " + offset);
             cell = getAvailableCell(index);
-pdbg2("a1");
             setCellIndex(cell, index);
-            pdbg2("a2");
             resizeCell(cell); // resize must be after config
-pdbg2("a3");
-
             cells.addFirst(cell);
-pdbg2("a4");   
             // A little gross but better than alternatives because it reduces
             // the number of times we have to update a cell or compute its
             // size. The first time into this loop "offset" is actually the
@@ -2159,15 +2115,11 @@ pdbg2("a4");
                 offset -= getCellLength(cell);
             }
             // Position the cell, and update the maxPrefBreadth variable as we go.
-            pdbg2("a5");
-positionCell(cell, offset);
-            pdbg2("a6");
-setMaxPrefBreadth(Math.max(getMaxPrefBreadth(), getCellBreadth(cell)));
+            positionCell(cell, offset);
+            setMaxPrefBreadth(Math.max(getMaxPrefBreadth(), getCellBreadth(cell)));
             cell.setVisible(true);
-            pdbg2("a7");
---index;
+            --index;
         }
-        pdbg("done loop");
 
         // There are times when after laying out the cells we discover that
         // the top of the first cell which represents index 0 is below the top
@@ -2945,9 +2897,7 @@ setMaxPrefBreadth(Math.max(getMaxPrefBreadth(), getCellBreadth(cell)));
         double bound = 0d;
         double estSize = estimatedSize / getCellCount();
         double maxOff = estimatedSize - getViewportLength();
-System.err.println("[CVPO], pos = " + position + ", p = " + p+", estSize = " + estSize+", mexOff = " + maxOff+", absoff = " + absoluteOffset);
         if ((maxOff > 0) && (absoluteOffset > maxOff)) {
-            System.err.println("[CVPO] WOOOW, our absoff is way beyond maxoff! ");
             return maxOff - absoluteOffset;
         }
 
@@ -2955,12 +2905,10 @@ System.err.println("[CVPO], pos = " + position + ", p = " + p+", estSize = " + e
             double h = getCellSize(i);
             if (h < 0) h = estSize;
             if (bound + h > absoluteOffset) {
-                System.err.println("[CVPO] yes, return with idx "+i+", ao = "+absoluteOffset+" and bound = "+bound+" hence answer = " + (absoluteOffset - bound));
                 return absoluteOffset - bound;
             }
             bound += h;
         }
-        System.err.println("[CVPO] WOW, bound = "+bound+" and we're done, so return 0");
         return 0d;
     }
 
@@ -2980,7 +2928,6 @@ System.err.println("[CVPO], pos = " + position + ", p = " + p+", estSize = " + e
                 targetOffset = targetOffset+ cz;
             }
             this.absoluteOffset = (estimatedSize < viewportLength)  ? 0  : targetOffset;
-System.err.println("[APTI] set ao to " + this.absoluteOffset);
             adjustPosition();
         }
 
@@ -3003,7 +2950,6 @@ System.err.println("[APTI] set ao to " + this.absoluteOffset);
         // start with applying the requested modification
         double origAbsoluteOffset = this.absoluteOffset;
         this.absoluteOffset = Math.max(0.d, this.absoluteOffset + numPixels);
-System.err.println("[ABPA] ao = " + this.absoluteOffset);
         double newPosition = Math.min(1.0d, absoluteOffset / (estimatedSize - viewportLength));
         // estimatedSize changes may result in opposite effect on position
         // in that case, modify current position 1% in the requested direction
@@ -3027,7 +2973,6 @@ System.err.println("[ABPA] ao = " + this.absoluteOffset);
         // if we are at or beyond the edge, correct the absoluteOffset
         if (newPosition >= 1.d) {
             absoluteOffset = estimatedSize - viewportLength;
-System.err.println("[ABPA2] ao = " + this.absoluteOffset);
         }
 
         setPosition(newPosition);
@@ -3148,19 +3093,19 @@ System.err.println("[ABPA2] ao = " + this.absoluteOffset);
      */
     void updateCellSize(T cell) {
         int cellIndex = cell.getIndex();
-        int currentIndex = computeCurrentIndex();
-        double oldOffset = computeViewportOffset(getPosition());
-
-
         if (itemSizeCache.size() > cellIndex) {
             Double oldSize = itemSizeCache.get(cellIndex);
             double newSize = isVertical() ? cell.getLayoutBounds().getHeight() : cell.getLayoutBounds().getWidth();
             itemSizeCache.set(cellIndex, newSize);
-            if ((cellIndex == currentIndex) && (oldSize != null) && (oldOffset != 0)) {
-                oldOffset = oldOffset + newSize - oldSize;
+            if ((oldSize != null) && !oldSize.equals(newSize)) {
+                int currentIndex = computeCurrentIndex();
+                double oldOffset = computeViewportOffset(getPosition());
+                if ((cellIndex == currentIndex) && (oldSize != null) && (oldOffset != 0)) {
+                    oldOffset = oldOffset + newSize - oldSize;
+                }
+                recalculateAndImproveEstimatedSize(0, currentIndex, oldOffset);
             }
         }
-        recalculateAndImproveEstimatedSize(0, currentIndex, oldOffset);
     }
 
     /**
@@ -3220,7 +3165,6 @@ System.err.println("[ABPA2] ao = " + this.absoluteOffset);
                     newOffset += h;
                 }
                 this.absoluteOffset = newOffset + oldOffset;
-System.err.println("[ABPA1] recalc, ao = " + this.absoluteOffset + " and no = " + newOffset+" and oo = " + oldOffset);
                 adjustPosition();
             }
         } finally {
