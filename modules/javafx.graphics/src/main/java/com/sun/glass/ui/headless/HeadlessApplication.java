@@ -15,8 +15,12 @@ import com.sun.glass.ui.Window;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class HeadlessApplication extends Application {
+
+    private ExecutorService executor = Executors.newFixedThreadPool(1);
 
     public HeadlessApplication() {
     }
@@ -25,6 +29,7 @@ public final class HeadlessApplication extends Application {
     protected void runLoop(Runnable launchable) {
         Thread eventThread = new Thread() {
             @Override public void run() {
+                launchable.run();
                 runForever();
             }
         };
@@ -39,7 +44,7 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected void _invokeLater(Runnable runnable) {
-        throw new UnsupportedOperationException();
+        executor.submit(runnable);
     }
 
     @Override
@@ -114,17 +119,22 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected double staticScreen_getVideoRefreshPeriod() {
-        throw new UnsupportedOperationException();
+        return 0.;
     }
 
     @Override
     protected Screen[] staticScreen_getScreens() {
-        throw new UnsupportedOperationException();
+        Screen screen = new Screen(0, 32, 0, 0, 1000,1000,
+0, 0, 1000, 1000, 0, 0, 1000, 1000, 100, 100, 1f,1f, 1f,1f);
+        Screen[] answer = new Screen[1];
+        answer[0] = screen;
+        return answer;
+        // throw new UnsupportedOperationException();
     }
 
     @Override
     public Timer createTimer(Runnable runnable) {
-        throw new UnsupportedOperationException();
+        return new HeadlessTimer(runnable);
     }
 
     @Override
