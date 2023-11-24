@@ -15,12 +15,15 @@ import com.sun.glass.ui.Window;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class HeadlessApplication extends Application {
 
     private ExecutorService executor = Executors.newFixedThreadPool(1);
+    private Queue<Runnable> queue = new LinkedList<>();
 
     public HeadlessApplication() {
     }
@@ -44,7 +47,10 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected void _invokeLater(Runnable runnable) {
-        executor.submit(runnable);
+        synchronized (queue) {
+            queue.add(runnable);
+            queue.notifyAll();
+        }
     }
 
     @Override
@@ -59,12 +65,12 @@ public final class HeadlessApplication extends Application {
 
     @Override
     public Window createWindow(Window owner, Screen screen, int styleMask) {
-        throw new UnsupportedOperationException();
+        return new HeadlessWindow(owner, screen, styleMask);
     }   
 
     @Override
     public View createView() {
-        throw new UnsupportedOperationException();
+        return new HeadlessView();
     }
 
     @Override
@@ -109,7 +115,7 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected int staticPixels_getNativeFormat() {
-        throw new UnsupportedOperationException();
+        return 0;
     }
 
     @Override
@@ -149,7 +155,7 @@ public final class HeadlessApplication extends Application {
 
     @Override
     public boolean hasWindowManager() {
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
@@ -185,7 +191,7 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected boolean _supportsTransparentWindows() {
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
@@ -195,17 +201,17 @@ public final class HeadlessApplication extends Application {
 
     @Override
     public boolean hasTwoLevelFocus() {
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public boolean hasVirtualKeyboard() {
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public boolean hasTouch() {
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
@@ -234,13 +240,22 @@ public final class HeadlessApplication extends Application {
 
 
     private void runForever() {
-        int i = 0;
-        while (i < 1000000) {
-            try {
-                Thread.sleep(10000);
-                System.err.println(i);
-            } catch (Throwable t) {
-                t.printStackTrace();
+System.err.println(Thread.currentThread()+" runForever");
+        while (true) {
+System.err.println(Thread.currentThread()+" runForever tries to sync on queue");
+            synchronized (queue) {
+System.err.println(Thread.currentThread()+" runForever polls queue");
+                Runnable r = queue.poll();
+System.err.println(Thread.currentThread()+" runForever got " + r);
+                if (r != null) {
+                    r.run();
+                } else {
+                    try {
+                        queue.wait(1000);
+                    } catch (InterruptedException ie) {
+                        ie.printStackTrace();
+                    }
+                }
             }
         }
     }
