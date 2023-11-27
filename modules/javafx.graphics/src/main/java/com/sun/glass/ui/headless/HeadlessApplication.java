@@ -24,6 +24,7 @@ public final class HeadlessApplication extends Application {
 
     private ExecutorService executor = Executors.newFixedThreadPool(1);
     private Queue<Runnable> queue = new LinkedList<>();
+    private boolean active = false;
 
     public HeadlessApplication() {
     }
@@ -36,6 +37,7 @@ public final class HeadlessApplication extends Application {
                 runForever();
             }
         };
+        this.active = true;
         setEventThread(eventThread);
         eventThread.start();
     }
@@ -47,7 +49,9 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected void _invokeLater(Runnable runnable) {
+System.err.println("[HA] request queuelock for " + Thread.currentThread());
         synchronized (queue) {
+System.err.println("[HA] got queuelock for " + Thread.currentThread());
             queue.add(runnable);
             queue.notifyAll();
         }
@@ -75,7 +79,7 @@ public final class HeadlessApplication extends Application {
 
     @Override
     public Cursor createCursor(int type) {
-        throw new UnsupportedOperationException();
+        return new HeadlessCursor(type);
     }
 
     @Override
@@ -115,7 +119,7 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected int staticPixels_getNativeFormat() {
-        return 0;
+        return Pixels.Format.BYTE_BGRA_PRE;
     }
 
     @Override
@@ -145,12 +149,12 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected int staticTimer_getMinPeriod() {
-        throw new UnsupportedOperationException();
+        return 0;
     }
 
     @Override
     protected int staticTimer_getMaxPeriod() {
-        throw new UnsupportedOperationException();
+        return 1000000;
     }
 
     @Override
@@ -230,7 +234,9 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected void finishTerminating() {
-        throw new UnsupportedOperationException();
+        this.active = false;
+        setEventThread(null);
+        super.finishTerminating();
     }
 
     @Override
@@ -241,22 +247,36 @@ public final class HeadlessApplication extends Application {
 
     private void runForever() {
 System.err.println(Thread.currentThread()+" runForever");
-        while (true) {
+        while (active) {
 System.err.println(Thread.currentThread()+" runForever tries to sync on queue");
+            Runnable r = null;
             synchronized (queue) {
 System.err.println(Thread.currentThread()+" runForever polls queue");
-                Runnable r = queue.poll();
+                r = queue.poll();
 System.err.println(Thread.currentThread()+" runForever got " + r);
-                if (r != null) {
-                    r.run();
-                } else {
+            }
+            if (r != null) {
+                r.run();
+            } else {
+                synchronized (queue) {
                     try {
-                        queue.wait(1000);
+                        queue.wait(10000);
                     } catch (InterruptedException ie) {
                         ie.printStackTrace();
                     }
                 }
             }
+        }
+    }
+
+    static class HeadlessCursor extends Cursor {
+
+        protected HeadlessCursor (int type) {
+            super(type);
+        }
+
+        protected long _createCursor(int x, int y, Pixels pixels) {
+            return -1;
         }
     }
 }
