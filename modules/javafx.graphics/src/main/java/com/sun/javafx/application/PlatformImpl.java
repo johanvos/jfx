@@ -439,9 +439,7 @@ public class PlatformImpl {
         pendingRunnables.incrementAndGet();
         waitForStart();
 
-System.err.println("[PI] request runlaterlock for " + Thread.currentThread());
         synchronized (runLaterLock) {
-System.err.println("[PI] got runlaterlock for " + Thread.currentThread());
             if (!exiting && toolkitExit.get()) {
                 // Don't schedule a runnable after we have exited the toolkit
                 pendingRunnables.decrementAndGet();

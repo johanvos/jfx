@@ -26,17 +26,23 @@ public final class HeadlessApplication extends Application {
     private Queue<Runnable> queue = new LinkedList<>();
     private boolean active = false;
 
+    private final RunnableProcessor runnableProcessor = new RunnableProcessor();
+
     public HeadlessApplication() {
     }
 
     @Override
     protected void runLoop(Runnable launchable) {
+        runnableProcessor.invokeLater(launchable);
+        Thread eventThread = new Thread(runnableProcessor);
+/*
         Thread eventThread = new Thread() {
             @Override public void run() {
                 launchable.run();
                 runForever();
             }
         };
+*/
         this.active = true;
         setEventThread(eventThread);
         eventThread.start();
@@ -44,27 +50,33 @@ public final class HeadlessApplication extends Application {
 
     @Override
     protected void _invokeAndWait(Runnable runnable) {
+        runnableProcessor.invokeAndWait(runnable);
+/*
+        System.err.println("HP invokeAndWait!");
+Thread.dumpStack();
         throw new UnsupportedOperationException();
+*/
     }
 
     @Override
     protected void _invokeLater(Runnable runnable) {
-System.err.println("[HA] request queuelock for " + Thread.currentThread());
+        runnableProcessor.invokeLater(runnable);
+/*
         synchronized (queue) {
-System.err.println("[HA] got queuelock for " + Thread.currentThread());
             queue.add(runnable);
             queue.notifyAll();
         }
+*/
     }
 
     @Override
     protected Object _enterNestedEventLoop() {
-        throw new UnsupportedOperationException();
+        return runnableProcessor.enterNestedEventLoop();
     }   
 
     @Override
     protected void _leaveNestedEventLoop(Object retValue) {
-        throw new UnsupportedOperationException();
+        runnableProcessor.leaveNestedEventLoop(retValue);
     }   
 
     @Override
@@ -234,6 +246,7 @@ System.err.println("[HA] got queuelock for " + Thread.currentThread());
 
     @Override
     protected void finishTerminating() {
+        System.err.println("Terminating HeadlessApplication");
         this.active = false;
         setEventThread(null);
         super.finishTerminating();
@@ -246,14 +259,10 @@ System.err.println("[HA] got queuelock for " + Thread.currentThread());
 
 
     private void runForever() {
-System.err.println(Thread.currentThread()+" runForever");
         while (active) {
-System.err.println(Thread.currentThread()+" runForever tries to sync on queue");
             Runnable r = null;
             synchronized (queue) {
-System.err.println(Thread.currentThread()+" runForever polls queue");
                 r = queue.poll();
-System.err.println(Thread.currentThread()+" runForever got " + r);
             }
             if (r != null) {
                 r.run();
