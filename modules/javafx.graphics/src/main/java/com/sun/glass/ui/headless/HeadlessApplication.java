@@ -111,22 +111,22 @@ Thread.dumpStack();
 
     @Override
     public Pixels createPixels(int width, int height, ByteBuffer data) {
-        throw new UnsupportedOperationException();
+        return new HeadlessPixels(width, height, data);
     }
 
     @Override
     public Pixels createPixels(int width, int height, ByteBuffer data, float scalex, float scaley) {
-        throw new UnsupportedOperationException();
+        return new HeadlessPixels(width, height, data, scalex, scaley);
     }
 
     @Override
     public Pixels createPixels(int width, int height, IntBuffer data) {
-        throw new UnsupportedOperationException();
+        return new HeadlessPixels(width, height, data);
     }
 
     @Override
     public Pixels createPixels(int width, int height, IntBuffer data, float scalex, float scaley) {
-        throw new UnsupportedOperationException();
+        return new HeadlessPixels(width, height, data, scalex, scaley);
     }
 
     @Override

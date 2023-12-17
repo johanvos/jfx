@@ -107,6 +107,17 @@ final class HeadlessWindow extends Window {
     }
 
     private void notifyResizeAndMove(int x, int y, int width, int height) {
+        HeadlessView view = (HeadlessView)getView();
+        if (getWidth() != width || getHeight() != height) {
+            notifyResize(WindowEvent.RESIZE, width, height);
+            if (view != null) {
+                view.notifyResize(width, height);
+            }
+        }
+        if (getX() != x || getY() != y) {
+            notifyMove(x, y);
+        }
+
     }
 
     //creates the native window
