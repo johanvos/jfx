@@ -53,7 +53,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCodeCombination;
 
-class GlassSystemMenu implements TKSystemMenu {
+public class GlassSystemMenu implements TKSystemMenu {
 
     private List<MenuBase>      systemMenus = null;
     private MenuBar             glassSystemMenuBar = null;

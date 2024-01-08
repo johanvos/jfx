@@ -23,7 +23,7 @@
  * questions.
  */
 
-package test.javafx.stage;
+package test.com.sun.javafx.tk.quantum;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -34,11 +34,14 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.sun.javafx.tk.quantum.GlassSystemMenuShim;
 import javafx.application.Platform;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Menu;
 import javafx.scene.layout.VBox;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -65,6 +68,7 @@ public class SystemMenuBarTest {
 
     CountDownLatch menubarLatch = new CountDownLatch(1);
     CountDownLatch memoryLatch = new CountDownLatch(1);
+    CountDownLatch memoryFocusLatch = new CountDownLatch(1);
     AtomicBoolean failed = new AtomicBoolean(false);
 
     @Test
@@ -170,6 +174,69 @@ public class SystemMenuBarTest {
             }
         };
         t.start();
+    }
+
+    @Test
+    public void testFocusMemoryLeak() throws InterruptedException {
+        Util.runAndWait(() -> {
+            Thread.currentThread().setUncaughtExceptionHandler((t,e) -> {
+                e.printStackTrace();
+                failed.set(true);
+                memoryFocusLatch.countDown();
+            });
+            createAndRefocusMenuBarStage();
+        });
+        memoryFocusLatch.await();
+        assertFalse(failed.get());
+    }
+
+    public void createAndRefocusMenuBarStage() {
+        GlassSystemMenuShim gsmh = new GlassSystemMenuShim();
+        Stage stage = new Stage();
+        VBox root = new VBox();
+
+        root.getChildren().add(createSimpleMenuBar());
+
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+        stage.focusedProperty().addListener((obs, o, n) -> System.err.println("Focus = "+n));
+Thread t = new Thread("testRecofus") {
+    @Override public void run () {
+          for (int i = 0; i < 10; i++) {
+            System.err.println("request focus "+i);
+            Platform.runLater(() -> stage.requestFocus());
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SystemMenuBarTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        memoryFocusLatch.countDown();
+    }
+};
+t.start();
+      
+    }
+
+    public MenuBar createSimpleMenuBar() {
+        MenuBar menuBar = new MenuBar();
+
+        menuBar.setUseSystemMenuBar(true);
+
+        Menu systemMenu = new Menu("systemMenu");
+        menuBar.getMenus().add(systemMenu);
+
+        var newItem = new MenuItem();
+        newItem.setVisible(false);
+        systemMenu.getItems().add(newItem);
+
+        Platform.runLater(() -> {
+            javafx.scene.control.Menu systemMenuContributions = new Menu("123");
+            systemMenu.getItems().add(systemMenuContributions);
+        });
+
+        return menuBar;
     }
 
 }
