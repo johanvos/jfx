@@ -247,6 +247,7 @@ public abstract class ExpressionHelper<T> extends ExpressionHelperBase {
                 }
                 invalidationListeners[invalidationSize++] = listener;
             }
+            System.err.println("[EH+] invalidationSize = "+invalidationSize+" for this = "+this.observable);
             return this;
         }
 
@@ -282,6 +283,8 @@ public abstract class ExpressionHelper<T> extends ExpressionHelperBase {
                     }
                 }
             }
+            System.err.println("[EH-] invalidationSize = "+invalidationSize+" for this = "+this.observable);
+
             return this;
         }
 

@@ -160,6 +160,7 @@ public class Menu extends MenuItem {
      */
     public Menu(String text, Node graphic, MenuItem... items) {
         super(text,graphic);
+        Thread.dumpStack();
         getStyleClass().add(DEFAULT_STYLE_CLASS);
 
         if (items != null) {

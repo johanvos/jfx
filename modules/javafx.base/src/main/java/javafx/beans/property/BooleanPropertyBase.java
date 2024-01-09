@@ -73,21 +73,28 @@ public abstract class BooleanPropertyBase extends BooleanProperty {
 
     @Override
     public void addListener(InvalidationListener listener) {
+        System.err.println("[BP] addListener to "+this.getName());
         helper = ExpressionHelper.addListener(helper, this, listener);
     }
 
     @Override
     public void removeListener(InvalidationListener listener) {
+                System.err.println("[BP] removeListener from "+this.getName());
+
         helper = ExpressionHelper.removeListener(helper, listener);
     }
 
     @Override
     public void addListener(ChangeListener<? super Boolean> listener) {
+                System.err.println("[BP] addListener2 to "+this.getName());
+
         helper = ExpressionHelper.addListener(helper, this, listener);
     }
 
     @Override
     public void removeListener(ChangeListener<? super Boolean> listener) {
+                        System.err.println("[BP] removeListener2 from "+this.getName());
+
         helper = ExpressionHelper.removeListener(helper, listener);
     }
 
@@ -160,6 +167,8 @@ public abstract class BooleanPropertyBase extends BooleanProperty {
      */
     @Override
     public void bind(final ObservableValue<? extends Boolean> rawObservable) {
+                        System.err.println("[BP] bind "+this.getName());
+
         if (rawObservable == null) {
             throw new NullPointerException("Cannot bind to null");
         }
@@ -183,6 +192,8 @@ public abstract class BooleanPropertyBase extends BooleanProperty {
      */
     @Override
     public void unbind() {
+                System.err.println("[BP] unbind "+this.getName());
+
         if (observable != null) {
             value = observable.get();
             observable.removeListener(listener);

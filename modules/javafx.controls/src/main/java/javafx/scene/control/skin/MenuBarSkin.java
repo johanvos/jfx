@@ -491,6 +491,8 @@ public class MenuBarSkin extends SkinBase<MenuBar> {
     }
 
     private static void setSystemMenu(Stage stage) {
+System.err.println("[MENUBARSKIN] setSystemMenu for stage " + stage);
+Thread.dumpStack();
         if (stage != null && stage.isFocused()) {
             while (stage != null && stage.getOwner() instanceof Stage) {
                 MenuBarSkin skin = getMenuBarSkin(stage);
@@ -875,6 +877,7 @@ public class MenuBarSkin extends SkinBase<MenuBar> {
                                     wrappedMenus = new ArrayList<>();
                                     systemMenuMap.put(stage, new WeakReference<>(this));
                                     for (Menu menu : getSkinnable().getMenus()) {
+System.err.println("[GLOBALMENUADAPTER] add menu " + menu);
                                         wrappedMenus.add(GlobalMenuAdapter.adapt(menu));
                                     }
                                     currentMenuBarStage = null;

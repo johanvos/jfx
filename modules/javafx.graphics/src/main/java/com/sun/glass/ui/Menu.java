@@ -67,6 +67,7 @@ public final class Menu {
 
     protected Menu(String title, boolean enabled) {
         Application.checkEventThread();
+        Thread.dumpStack();
         this.title = title;
         this.enabled = enabled;
         delegate = PlatformFactory.getPlatformFactory().createMenuDelegate(this);

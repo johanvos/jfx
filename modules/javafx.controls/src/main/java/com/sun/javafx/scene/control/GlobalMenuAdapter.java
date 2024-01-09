@@ -61,7 +61,6 @@ public class GlobalMenuAdapter extends Menu implements MenuBase {
 
     private GlobalMenuAdapter(final Menu menu) {
         super(menu.getText());
-
         this.menu = menu;
 
         bindMenuItemProperties(this, menu);
@@ -138,6 +137,7 @@ public class GlobalMenuAdapter extends Menu implements MenuBase {
 
 
     private static void bindMenuItemProperties(MenuItem adapter, final MenuItem menuItem) {
+        System.err.println("[GMA] bindMenuItemProps, adapter = "+adapter+" of class "+adapter.getClass()+" and menuItem = "+menuItem.getClass());
         adapter.idProperty().bind(menuItem.idProperty());
         adapter.textProperty().bind(menuItem.textProperty());
         adapter.graphicProperty().bind(menuItem.graphicProperty());

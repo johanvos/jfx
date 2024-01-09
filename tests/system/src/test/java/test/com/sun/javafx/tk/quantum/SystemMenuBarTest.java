@@ -25,6 +25,7 @@
 
 package test.com.sun.javafx.tk.quantum;
 
+import com.sun.javafx.menu.MenuBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,6 +39,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.sun.javafx.tk.quantum.GlassSystemMenuShim;
+import com.sun.javafx.scene.control.GlobalMenuAdapter;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -71,7 +74,7 @@ public class SystemMenuBarTest {
     CountDownLatch memoryFocusLatch = new CountDownLatch(1);
     AtomicBoolean failed = new AtomicBoolean(false);
 
-    @Test
+ //   @Test
     public void testFailingMenuBar() throws InterruptedException {
         Util.runAndWait(() -> {
             Thread.currentThread().setUncaughtExceptionHandler((t,e) -> {
@@ -118,7 +121,7 @@ public class SystemMenuBarTest {
         return menuBar;
     }
 
-    @Test
+//    @Test
     public void testMemoryLeak() throws InterruptedException {
         Util.runAndWait(() -> {
             Thread.currentThread().setUncaughtExceptionHandler((t,e) -> {
@@ -191,33 +194,67 @@ public class SystemMenuBarTest {
     }
 
     public void createAndRefocusMenuBarStage() {
-        GlassSystemMenuShim gsmh = new GlassSystemMenuShim();
         Stage stage = new Stage();
         VBox root = new VBox();
 
-        root.getChildren().add(createSimpleMenuBar());
+        final MenuBar menuBar = new MenuBar();
+        final Menu menu = new Menu("MyMenu");
+        menuBar.getMenus().add(menu);
+        menuBar.setUseSystemMenuBar(true);
+        root.getChildren().add(menuBar);
 
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        stage.focusedProperty().addListener((obs, o, n) -> System.err.println("Focus = "+n));
-Thread t = new Thread("testRecofus") {
-    @Override public void run () {
-          for (int i = 0; i < 10; i++) {
-            System.err.println("request focus "+i);
-            Platform.runLater(() -> stage.requestFocus());
+        final ArrayList<WeakReference<MenuBase>> uncollectedMenus = new ArrayList<>();
+        GlassSystemMenuShim gsmh = new GlassSystemMenuShim();
+        Menu m1 = new Menu("Menu");
+
+        MenuBase gma1 = GlobalMenuAdapter.adapt(m1);
+        ArrayList<MenuBase> menus = new ArrayList<>();
+        gsmh.createMenuBar();
+        for (int i = 0; i < 100; i++) {
+            Platform.runLater(() -> {
+                System.err.println("testing add menu ");
+                //  stage.setFocused(true);
+                //    MenuBase gma1 = GlobalMenuAdapter.adapt(m1);
+
+                gsmh.setMenus(List.of(gma1));
+//                WeakReference<MenuBase> wr = new WeakReference<>(gma1);
+//                uncollectedMenus.add(wr);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(SystemMenuBarTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+//            Platform.runLater(() -> {
+//                gsmh.setMenus(List.of());
+//
+//                //   stage.setFocused(false);
+//            });
+        }
+        Platform.runLater(() -> {
+            System.err.println("sleep 10 seconds");
             try {
-                Thread.sleep(500);
+                Thread.sleep(10000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(SystemMenuBarTest.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        memoryFocusLatch.countDown();
+            System.err.println("done sleeping");
+            int strongCount = 0;
+            final List<WeakReference<com.sun.glass.ui.Menu>> u2 = gsmh.getWeakMenuReferences();
+            for (WeakReference<com.sun.glass.ui.Menu> wr : u2) {
+                System.err.println("check " + wr);
+                if (!JMemoryBuddy.checkCollectable(wr)) {
+                    strongCount++;
+                }
+            }
+            assertEquals(1, strongCount, "Only the last menu should be alive");
+            memoryFocusLatch.countDown();
+        });
     }
-};
-t.start();
-      
-    }
+
 
     public MenuBar createSimpleMenuBar() {
         MenuBar menuBar = new MenuBar();

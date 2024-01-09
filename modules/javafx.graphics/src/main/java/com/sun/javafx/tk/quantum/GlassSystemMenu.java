@@ -41,6 +41,7 @@ import com.sun.glass.ui.Pixels;
 import com.sun.javafx.tk.Toolkit;
 
 import java.util.List;
+import java.util.Objects;
 
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -85,6 +86,7 @@ public class GlassSystemMenu implements TKSystemMenu {
     }
 
     @Override public void setMenus(List<MenuBase> menus) {
+        System.err.println("[GSM] setMenus called with "+Objects.hash(menus)+": "+menus+", gsmb = "+glassSystemMenuBar);
         systemMenus = menus;
         if (glassSystemMenuBar != null) {
 
@@ -104,6 +106,7 @@ public class GlassSystemMenu implements TKSystemMenu {
             }
 
             for (MenuBase menu : menus) {
+                System.err.println("[GSM] addMemu");
                 addMenu(null, menu);
             }
         }
@@ -191,9 +194,11 @@ public class GlassSystemMenu implements TKSystemMenu {
         }
     }
 
-    private void setMenuBindings(final Menu glassMenu, final MenuBase mb) {
+    protected void setMenuBindings(final Menu glassMenu, final MenuBase mb) {
+        Thread.dumpStack();
         mb.textProperty().addListener(valueModel -> glassMenu.setTitle(parseText(mb)));
         mb.disableProperty().addListener(valueModel -> glassMenu.setEnabled(!mb.isDisable()));
+        System.err.println("[GSM] addListener to mnemo for mb = "+mb+" of class "+mb.getClass());
         mb.mnemonicParsingProperty().addListener(valueModel -> glassMenu.setTitle(parseText(mb)));
     }
 
@@ -261,6 +266,7 @@ public class GlassSystemMenu implements TKSystemMenu {
 
             setShortcut(glassSubMenuItem, menuitem);
             menuitem.acceleratorProperty().addListener(valueModel -> setShortcut(glassSubMenuItem, menuitem));
+        System.err.println("[GSM] addListener222 to mnemo for mb = "+menuitem+" of class "+menuitem.getClass());
 
             menuitem.mnemonicParsingProperty().addListener(valueModel -> glassSubMenuItem.setTitle(parseText(menuitem)));
 

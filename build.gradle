@@ -3858,6 +3858,9 @@ project(":systemTests") {
         testImplementation project(":base").sourceSets.test.output
         testImplementation project(":controls").sourceSets.test.output
         testImplementation project(":swing").sourceSets.test.output
+        implementation project(":base")
+        implementation project(":graphics")
+        implementation project(":controls")
     }
 
     def dependentProjects = [ 'base', 'graphics', 'controls', 'media', 'web', 'swing', 'fxml' ]
