@@ -59,7 +59,7 @@ public class HeadlessApplication extends Application {
 
     @Override
     public Cursor createCursor(int type) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return new HeadlessCursor(type);
     }
 
     @Override
