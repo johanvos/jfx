@@ -213,5 +213,10 @@ public class HeadlessWindow extends Window {
     protected void _releaseInput(long ptr) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+    @Override
+    public long getNativeWindow() {
+        return 0;
+    }
     
 }
