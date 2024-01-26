@@ -31,6 +31,11 @@ public class HeadlessView extends View {
     }
 
     @Override
+    protected void notifyResize(int width, int height) {
+        super.notifyResize(width, height); 
+    }
+
+    @Override
     protected void _setParent(long ptr, long parentPtr) {
     }
 

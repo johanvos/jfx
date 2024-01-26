@@ -174,5 +174,9 @@ public class HeadlessApplication extends Application {
     protected int _getKeyCodeForChar(char c) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
+    @Override
+    public boolean hasWindowManager() {
+        return false;
+    }
 }
