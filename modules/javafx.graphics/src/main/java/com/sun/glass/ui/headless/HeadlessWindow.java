@@ -93,12 +93,13 @@ public class HeadlessWindow extends Window {
 
         notifyResizeAndMove(x, y, newWidth, newHeight);  
     }
-        private void notifyResizeAndMove(int x, int y, int width, int height) {
-            System.err.println("nram, w = "+width+", h = "+height);
-        HeadlessView view = (HeadlessView)getView();
+
+    private void notifyResizeAndMove(int x, int y, int width, int height) {
+        System.err.println("nram, w = " + width + ", h = " + height);
+        HeadlessView view = (HeadlessView) getView();
         if (getWidth() != width || getHeight() != height) {
             notifyResize(WindowEvent.RESIZE, width, height);
-            System.err.println("notified, view = "+view);
+            System.err.println("notified, view = " + view);
             if (view != null) {
                 view.notifyResize(width, height);
             }
@@ -106,7 +107,7 @@ public class HeadlessWindow extends Window {
         if (getX() != x || getY() != y) {
             notifyMove(x, y);
         }
-        }
+    }
 
     @Override
     protected boolean _setVisible(long ptr, boolean visible) {

@@ -16,15 +16,24 @@ import java.nio.IntBuffer;
 
 public class HeadlessApplication extends Application {
 
-    NestedRunnableProcessor processor = new NestedRunnableProcessor();
+    private NestedRunnableProcessor processor = new NestedRunnableProcessor();
+    private Window window;
+    private HeadlessCursor cursor;
+    
+    private final int MULTICLICK_MAX_X = 20;
+    private final int MULTICLICK_MAX_Y = 20;
+    private final long MULTICLICK_TIME = 500;
+    
     @Override
     protected void runLoop(Runnable launchable) {
         processor.invokeLater(launchable);
         Thread eventThread = new Thread(processor);
-
-//        this.active = true;
         setEventThread(eventThread);
         eventThread.start();
+    }
+
+    NestedRunnableProcessor getProcessor() {
+        return this.processor;
     }
 
     @Override
@@ -49,7 +58,8 @@ public class HeadlessApplication extends Application {
 
     @Override
     public Window createWindow(Window owner, Screen screen, int styleMask) {
-        return new HeadlessWindow(owner, screen, styleMask);
+        this.window = new HeadlessWindow(owner, screen, styleMask);
+        return this.window;
     }
 
     @Override
@@ -59,9 +69,13 @@ public class HeadlessApplication extends Application {
 
     @Override
     public Cursor createCursor(int type) {
-        return new HeadlessCursor(type);
+        this.cursor = new HeadlessCursor(type);
+        return this.cursor;
     }
 
+    public Cursor getCursor() {
+        return this.cursor;
+    }
     @Override
     public Cursor createCursor(int x, int y, Pixels pixels) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -79,22 +93,22 @@ public class HeadlessApplication extends Application {
 
     @Override
     public Pixels createPixels(int width, int height, ByteBuffer data) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return new HeadlessPixels(width, height, data);
     }
 
     @Override
     public Pixels createPixels(int width, int height, ByteBuffer data, float scalex, float scaley) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return new HeadlessPixels(width, height, data, scalex, scaley);
     }
 
     @Override
     public Pixels createPixels(int width, int height, IntBuffer data) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return new HeadlessPixels(width, height, data);
     }
 
     @Override
     public Pixels createPixels(int width, int height, IntBuffer data, float scalex, float scaley) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return new HeadlessPixels(width, height, data, scalex, scaley);
     }
 
     @Override
@@ -104,7 +118,7 @@ public class HeadlessApplication extends Application {
 
     @Override
     public GlassRobot createRobot() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return new HeadlessRobot(this, (HeadlessWindow)this.window);
     }
 
     @Override
@@ -147,17 +161,17 @@ public class HeadlessApplication extends Application {
 
     @Override
     protected long staticView_getMultiClickTime() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return MULTICLICK_TIME;
     }
 
     @Override
     protected int staticView_getMultiClickMaxX() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return MULTICLICK_MAX_X;
     }
 
     @Override
     protected int staticView_getMultiClickMaxY() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return MULTICLICK_MAX_Y;
     }
 
     @Override

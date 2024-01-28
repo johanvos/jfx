@@ -20,6 +20,10 @@ public class NestedRunnableProcessor implements Runnable {
         runnableQueue.add(r);
     }
 
+    void runLater(Runnable r) {
+        invokeLater(r);
+    }
+
     void invokeAndWait(final Runnable r) {
         final CountDownLatch latch = new CountDownLatch(1);
         runnableQueue.add(() -> {

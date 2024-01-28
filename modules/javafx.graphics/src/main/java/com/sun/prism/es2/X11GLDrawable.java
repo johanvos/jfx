@@ -43,6 +43,7 @@ class X11GLDrawable extends GLDrawable {
         super(nativeWindow, pixelFormat);
         long nDInfo = nCreateDrawable(nativeWindow, pixelFormat.getNativePFInfo());
         setNativeDrawableInfo(nDInfo);
+        System.err.println("Created X11GLDrawable "+this+" with ndinfo = "+nDInfo);
     }
 
     @Override

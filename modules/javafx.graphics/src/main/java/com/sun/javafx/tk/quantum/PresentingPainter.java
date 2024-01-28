@@ -42,6 +42,7 @@ final class PresentingPainter extends ViewPainter {
     }
 
     @Override public void run() {
+        System.err.println("[PP] run 1");
         renderLock.lock();
 
         boolean locked = false;
@@ -49,12 +50,15 @@ final class PresentingPainter extends ViewPainter {
         boolean errored = false;
 
         try {
+            System.err.println("[PP] 1a");
             valid = validateStageGraphics();
             if (!valid) {
                 if (QuantumToolkit.verbose) {
                     System.err.println("PresentingPainter: validateStageGraphics failed");
                 }
                 paintImpl(null);
+                System.err.println("[PP] run 2");
+
                 return;
             }
 
@@ -65,12 +69,17 @@ final class PresentingPainter extends ViewPainter {
             sceneState.lock();
             locked = true;
 
+            System.err.println("[PP] 1b, facorty = "+factory);
             if (factory == null) {
                 factory = GraphicsPipeline.getDefaultResourceFactory();
             }
+            
+            System.err.println("[PP] 1c, facorty = "+factory);
             if (factory == null || !factory.isDeviceReady()) {
                 sceneState.getScene().entireSceneNeedsRepaint();
                 factory = null;
+                                System.err.println("[PP] run 3");
+
                 return;
             }
 
@@ -104,13 +113,19 @@ final class PresentingPainter extends ViewPainter {
 
                 /* present for vsync buffer swap */
                 if (vs.getDoPresent()) {
+                    System.err.println("[PP] 1l, presentable = "+presentable);
+
                     if (!presentable.present()) {
+                        System.err.println("[PP] 1m");
+
                         disposePresentable();
                         sceneState.getScene().entireSceneNeedsRepaint();
                     }
                 }
             }
         } catch (Throwable th) {
+            System.err.println("[PP] run 5");
+
             errored = true;
             th.printStackTrace(System.err);
         } finally {
@@ -129,5 +144,7 @@ final class PresentingPainter extends ViewPainter {
 
             renderLock.unlock();
         }
+                                System.err.println("[PP] run 7");
+
     }
 }

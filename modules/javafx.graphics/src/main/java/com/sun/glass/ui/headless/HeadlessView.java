@@ -7,7 +7,6 @@ public class HeadlessView extends View {
 
     @Override
     protected void _enableInputMethodEvents(long ptr, boolean enable) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -64,7 +63,6 @@ public class HeadlessView extends View {
 
     @Override
     protected void _uploadPixels(long ptr, Pixels pixels) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
@@ -77,4 +75,51 @@ public class HeadlessView extends View {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
+    @Override
+    protected void notifyMouse(int type, int button,
+                            int x, int y, int xAbs, int yAbs, int modifiers,
+                            boolean isPopupTrigger, boolean isSynthesized) {
+        System.err.println("[HV] notifymouse, type = "+type+", button = "+button+", x = "+x+", y = "+y
+        +", xa = "+xAbs+", ya = "+yAbs+", mod = "+modifiers+", pop = "+isPopupTrigger+", s = "+isSynthesized);
+        super.notifyMouse(type, button, x, y, xAbs, yAbs, modifiers,
+                          isPopupTrigger,
+                          isSynthesized);
+    }
+    
+    
+    @Override
+    protected void notifyScroll(int x, int y, int xAbs, int yAbs,
+                             double deltaX, double deltaY, int modifiers,
+                             int lines, int chars,
+                             int defaultLines, int defaultChars,
+                             double xMultiplier, double yMultiplier) {
+        super.notifyScroll(x, y, xAbs, yAbs, deltaX, deltaY,
+                           modifiers, lines, chars,
+                           defaultLines, defaultChars, xMultiplier,
+                           yMultiplier);
+    }
+    @Override
+    protected int notifyDragEnter(int x, int y, int absx, int absy, int recommendedDropAction) {
+        return super.notifyDragEnter(x, y, absx, absy, recommendedDropAction);
+    }
+
+    @Override
+    protected void notifyDragLeave() {
+        super.notifyDragLeave();
+    }
+
+    @Override
+    protected int notifyDragDrop(int x, int y, int absx, int absy, int recommendedDropAction) {
+        return super.notifyDragDrop(x, y, absx, absy, recommendedDropAction);
+    }
+
+    @Override
+    protected int notifyDragOver(int x, int y, int absx, int absy, int recommendedDropAction) {
+        return super.notifyDragOver(x, y, absx, absy, recommendedDropAction);
+    }
+
+    @Override
+    protected void notifyDragEnd(int performedAction) {
+        super.notifyDragEnd(performedAction);
+    }
 }
