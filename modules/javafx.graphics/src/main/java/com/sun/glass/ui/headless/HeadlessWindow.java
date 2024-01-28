@@ -52,17 +52,16 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected void _setBounds(long ptr, int x, int y, boolean xSet, boolean ySet, int w, int h, int cw, int ch, float xGravity, float yGravity) {
-        System.err.println("[HW] setBounds called with x = "+x+", y = "+y+", xset = "+xSet+", ySet = "+ySet+", w = "+w+", h = "+h+", cw = " + cw+", ch = " + ch);
-        int newWidth =0;
+        int newWidth = 0;
         int newHeight = 0;
         if (w > 0) {
             //window newWidth surpass window content newWidth (cw)
             newWidth = w;
         } else if (cw > 0) {
-            //content newWidth changed 
+            //content newWidth changed
             newWidth = cw;
         } else {
-            //no explicit request to change newWidth, get default 
+            //no explicit request to change newWidth, get default
             newWidth = getWidth();
         }
 
@@ -70,36 +69,34 @@ public class HeadlessWindow extends Window {
             //window newHeight surpass window content newHeight(ch)
             newHeight = h;
         } else if (ch > 0) {
-            //content newHeight changed 
+            //content newHeight changed
             newHeight = ch;
         } else {
-            //no explicit request to change newHeight, get default 
+            //no explicit request to change newHeight, get default
             newHeight = getHeight();
         }
         if (!xSet) {
-            x = getX(); 
+            x = getX();
         }
         if (!ySet) {
-            y = getY(); 
+            y = getY();
         }
-        if (maxWidth >= 0) { 
+        if (maxWidth >= 0) {
             newWidth = Math.min(newWidth, maxWidth);
         }
-        if (maxHeight >= 0) { 
+        if (maxHeight >= 0) {
             newHeight = Math.min(newHeight, maxHeight);
         }
         newWidth = Math.max(newWidth, minWidth);
         newHeight = Math.max(newHeight, minHeight);
 
-        notifyResizeAndMove(x, y, newWidth, newHeight);  
+        notifyResizeAndMove(x, y, newWidth, newHeight);
     }
 
     private void notifyResizeAndMove(int x, int y, int width, int height) {
-        System.err.println("nram, w = " + width + ", h = " + height);
         HeadlessView view = (HeadlessView) getView();
         if (getWidth() != width || getHeight() != height) {
             notifyResize(WindowEvent.RESIZE, width, height);
-            System.err.println("notified, view = " + view);
             if (view != null) {
                 view.notifyResize(width, height);
             }
@@ -219,5 +216,5 @@ public class HeadlessWindow extends Window {
     public long getNativeWindow() {
         return 0;
     }
-    
+
 }
