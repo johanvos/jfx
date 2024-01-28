@@ -7,7 +7,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class NestedRunnableProcessor implements Runnable {
-    
+
     private final LinkedList<RunLoopEntry> activeRunLoops = new LinkedList<>();
 
     private final BlockingQueue<Runnable> runnableQueue = new LinkedBlockingQueue<>();
@@ -35,9 +35,10 @@ public class NestedRunnableProcessor implements Runnable {
         });
         try {
             latch.await();
-        } catch (InterruptedException e) { }
+        } catch (InterruptedException e) {
+        }
     }
-    
+
     public Object newRunLoop() {
         RunLoopEntry entry = new RunLoopEntry();
 
@@ -56,6 +57,7 @@ public class NestedRunnableProcessor implements Runnable {
     }
 
     private static class RunLoopEntry {
+
         boolean active;
         Object returnValue;
     }

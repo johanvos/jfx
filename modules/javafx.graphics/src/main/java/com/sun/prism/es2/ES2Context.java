@@ -143,23 +143,16 @@ class ES2Context extends BaseShaderContext {
     }
 
     void makeCurrent(GLDrawable drawable) {
-        System.err.println("[E2 mc] drawable = " + drawable);
         if (drawable == null) {
             drawable = dummyGLDrawable;
         }
         if (drawable != currentDrawable) {
-        System.err.println("[E2 mc2] drawable = " + drawable);
-        if (drawable != null) {
-            System.err.println("nwin = "+drawable.getNativeWindow());
-        }
+
             glContext.makeCurrent(drawable);
-            System.err.println("[E2 mc3] drawable = " + drawable);
             // Need to restore FBO to on screen framebuffer
             glContext.bindFBO(0);
-            System.err.println("[E2 mc4] drawable = " + drawable);
             currentDrawable = drawable;
         }
-        System.err.println("[E2 mc5] drawable = " + drawable);
     }
 
     /**

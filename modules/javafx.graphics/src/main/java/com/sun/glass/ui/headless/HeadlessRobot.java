@@ -12,7 +12,7 @@ public class HeadlessRobot extends GlassRobot {
 
     private final HeadlessApplication application;
     private final MouseInput mouseInput;
-    
+
     private HeadlessWindow window;
     private NestedRunnableProcessor processor;
 
@@ -70,33 +70,24 @@ public class HeadlessRobot extends GlassRobot {
         MouseState state = new MouseState();
         mouseInput.getState(state);
         mouseInput.setState(convertToMouseState(true, state, buttons), false);
-//        
-//        
-//        this.modifiers = getModifiers(buttons);
-//        HeadlessView view = (HeadlessView) window.getView();
-//        view.notifyMouse(MOUSE_LEFT_BTN, MOUSE_LEFT_BTN, mouseX, mouseY, mouseX, mouseY,
-//                modifiers, false, false);
     }
 
     @Override
     public void mouseRelease(MouseButton... buttons) {
-                Application.checkEventThread();
+        Application.checkEventThread();
         MouseState state = new MouseState();
         mouseInput.getState(state);
         mouseInput.setState(convertToMouseState(false, state, buttons), false);
-//        System.err.println("MOUSERELEASE " + buttons);
-//        this.modifiers = getModifiers(buttons);
-
     }
 
     @Override
     public void mouseWheel(int wheelAmt) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Color getPixelColor(double x, double y) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     int getModifiers(MouseButton... buttons) {
@@ -122,7 +113,8 @@ public class HeadlessRobot extends GlassRobot {
         }
         return modifiers;
     }
-private static MouseState convertToMouseState(boolean press, MouseState state, MouseButton... buttons) {
+
+    private static MouseState convertToMouseState(boolean press, MouseState state, MouseButton... buttons) {
         for (MouseButton button : buttons) {
             switch (button) {
                 case PRIMARY:
@@ -160,8 +152,9 @@ private static MouseState convertToMouseState(boolean press, MouseState state, M
                         state.releaseButton(MouseEvent.BUTTON_FORWARD);
                     }
                     break;
-                default: throw new IllegalArgumentException("MouseButton: " + button +
-                        " not supported by Monocle Robot");
+                default:
+                    throw new IllegalArgumentException("MouseButton: " + button
+                            + " not supported by Monocle Robot");
             }
         }
         return state;

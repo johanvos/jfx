@@ -6,14 +6,14 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class HeadlessTimer extends Timer {
-    
+
     private static ScheduledThreadPoolExecutor scheduler;
     private ScheduledFuture task;
-    
+
     HeadlessTimer(final Runnable runnable) {
         super(runnable);
     }
-    
+
     @Override
     protected long _start(Runnable runnable) {
         throw new UnsupportedOperationException("Not supported.");
@@ -25,7 +25,7 @@ public class HeadlessTimer extends Timer {
             scheduler = new ScheduledThreadPoolExecutor(1, target -> {
                 Thread thread = new Thread(target, "Headless Timer");
                 thread.setDaemon(true);
-               return thread;
+                return thread;
             });
         }
         task = scheduler.scheduleAtFixedRate(runnable, 0, period, TimeUnit.MILLISECONDS);
@@ -47,5 +47,5 @@ public class HeadlessTimer extends Timer {
     @Override
     protected void _resume(long timer) {
     }
-    
+
 }

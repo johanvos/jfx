@@ -404,12 +404,10 @@ final class PaintCollector implements CompletionListener {
                             needsHint = vs.isSynchronous();
                         }
                     }
-                    System.err.println("[PC] i = "+i+", n = "+n+", egl? "+PlatformUtil.useEGL());
                     if (!PlatformUtil.useEGL() || i == (n - 1)) {
-if (Application.GetApplication().getClass().toString().indexOf("Headless")> -1) {
                         // for platforms without a native window manager, we only want to do the
                         // swap to the screen after the last window has been rendered
-                      //  if ("headless".equalsIgnoreCase(System.getProperty("glass.platform", "no"))) {
+                        if (Application.GetApplication().getClass().toString().indexOf("Headless") > -1) {
                             vs.setDoPresent(false);
                         } else {
                             vs.setDoPresent(true);

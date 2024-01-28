@@ -13,5 +13,5 @@ public class HeadlessCursor extends Cursor {
     protected long _createCursor(int x, int y, Pixels pixels) {
         return 1;
     }
-    
+
 }

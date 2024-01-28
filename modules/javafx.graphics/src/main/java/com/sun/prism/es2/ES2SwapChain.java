@@ -183,7 +183,6 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
 
     @Override
     public boolean present() {
-        System.err.println("Need to present, drawable = "+drawable);
         boolean presented = drawable.swapBuffers(context.getGLContext());
         context.makeCurrent(null);
         return presented;
@@ -195,8 +194,8 @@ class ES2SwapChain implements ES2RenderTarget, Presentable, GraphicsResource {
             drawable = ES2Pipeline.glFactory.createGLDrawable(
                     pState.getNativeWindow(), context.getPixelFormat());
         }
-
         context.makeCurrent(drawable);
+
         nativeDestHandle = pState.getNativeFrameBuffer();
         if (nativeDestHandle == 0) {
             GLContext glContext = context.getGLContext();

@@ -19,11 +19,11 @@ public class HeadlessApplication extends Application {
     private NestedRunnableProcessor processor = new NestedRunnableProcessor();
     private Window window;
     private HeadlessCursor cursor;
-    
+
     private final int MULTICLICK_MAX_X = 20;
     private final int MULTICLICK_MAX_Y = 20;
     private final long MULTICLICK_TIME = 500;
-    
+
     @Override
     protected void runLoop(Runnable launchable) {
         processor.invokeLater(launchable);
@@ -76,6 +76,7 @@ public class HeadlessApplication extends Application {
     public Cursor getCursor() {
         return this.cursor;
     }
+
     @Override
     public Cursor createCursor(int x, int y, Pixels pixels) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -118,7 +119,7 @@ public class HeadlessApplication extends Application {
 
     @Override
     public GlassRobot createRobot() {
-        return new HeadlessRobot(this, (HeadlessWindow)this.window);
+        return new HeadlessRobot(this, (HeadlessWindow) this.window);
     }
 
     @Override

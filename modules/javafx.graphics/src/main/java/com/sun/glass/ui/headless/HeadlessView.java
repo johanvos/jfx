@@ -1,4 +1,5 @@
 package com.sun.glass.ui.headless;
+
 import com.sun.glass.ui.Pixels;
 import com.sun.glass.ui.View;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class HeadlessView extends View {
 
     @Override
     protected void notifyResize(int width, int height) {
-        super.notifyResize(width, height); 
+        super.notifyResize(width, height);
     }
 
     @Override
@@ -74,30 +75,28 @@ public class HeadlessView extends View {
     protected void _exitFullscreen(long ptr, boolean animate) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     protected void notifyMouse(int type, int button,
-                            int x, int y, int xAbs, int yAbs, int modifiers,
-                            boolean isPopupTrigger, boolean isSynthesized) {
-        System.err.println("[HV] notifymouse, type = "+type+", button = "+button+", x = "+x+", y = "+y
-        +", xa = "+xAbs+", ya = "+yAbs+", mod = "+modifiers+", pop = "+isPopupTrigger+", s = "+isSynthesized);
+            int x, int y, int xAbs, int yAbs, int modifiers,
+            boolean isPopupTrigger, boolean isSynthesized) {
         super.notifyMouse(type, button, x, y, xAbs, yAbs, modifiers,
-                          isPopupTrigger,
-                          isSynthesized);
+                isPopupTrigger,
+                isSynthesized);
     }
-    
-    
+
     @Override
     protected void notifyScroll(int x, int y, int xAbs, int yAbs,
-                             double deltaX, double deltaY, int modifiers,
-                             int lines, int chars,
-                             int defaultLines, int defaultChars,
-                             double xMultiplier, double yMultiplier) {
+            double deltaX, double deltaY, int modifiers,
+            int lines, int chars,
+            int defaultLines, int defaultChars,
+            double xMultiplier, double yMultiplier) {
         super.notifyScroll(x, y, xAbs, yAbs, deltaX, deltaY,
-                           modifiers, lines, chars,
-                           defaultLines, defaultChars, xMultiplier,
-                           yMultiplier);
+                modifiers, lines, chars,
+                defaultLines, defaultChars, xMultiplier,
+                yMultiplier);
     }
+
     @Override
     protected int notifyDragEnter(int x, int y, int absx, int absy, int recommendedDropAction) {
         return super.notifyDragEnter(x, y, absx, absy, recommendedDropAction);

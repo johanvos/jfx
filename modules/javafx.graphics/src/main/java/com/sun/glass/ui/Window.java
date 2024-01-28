@@ -533,7 +533,6 @@ public abstract class Window {
     }
 
     public int getWidth() {
-System.err.println("[WIN] getwidth asked, return " + this.width);
         Application.checkEventThread();
         return this.width;
     }
