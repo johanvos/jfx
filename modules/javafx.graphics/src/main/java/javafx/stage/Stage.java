@@ -249,7 +249,7 @@ public class Stage extends Window {
      */
     public Stage(@NamedArg(value="style", defaultValue="DECORATED") StageStyle style) {
         super();
-
+Thread.dumpStack();
         Toolkit.getToolkit().checkFxUserThread();
 
         // Set the style

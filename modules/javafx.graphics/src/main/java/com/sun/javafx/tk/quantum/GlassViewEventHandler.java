@@ -444,10 +444,12 @@ class GlassViewEventHandler extends View.EventHandler {
             QuantumToolkit.runWithoutRenderLock(() -> {
                 if (scene.sceneListener != null) {
                     final Window w = view.getWindow();
+                    System.err.println("[GVEH] deltaY = "+deltaY+", w = "+w+", ymult = "+yMultiplier+" and mods = "+modifiers);
                     double pScaleX, pScaleY, spx, spy, sx, sy;
                     if (w != null) {
                         pScaleX = w.getPlatformScaleX();
                         pScaleY = w.getPlatformScaleY();
+                        System.err.println("pScaleY = "+pScaleY);
                         Screen scr = w.getScreen();
                         if (scr != null) {
                             spx = scr.getPlatformX();

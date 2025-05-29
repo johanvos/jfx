@@ -1982,17 +1982,23 @@ public class Scene implements EventTarget {
         if (e.getEventType() == ZoomEvent.ZOOM_STARTED ||
                 e.getEventType() == RotateEvent.ROTATION_STARTED ||
                 e.getEventType() == ScrollEvent.SCROLL_STARTED) {
+            System.err.println("SCENE, PGE!");
             gesture.target = null;
             gesture.finished = false;
         }
 
         if (gesture.target != null && (!gesture.finished || e.isInertia())) {
             pickedTarget = gesture.target.get();
+            System.err.println("SCENE, PT = "+pickedTarget);
         } else {
+            System.err.println("E = "+e);
+            System.err.println("EPR = "+ e.getPickResult());
             pickedTarget = e.getPickResult().getIntersectedNode();
             if (pickedTarget == null) {
                 pickedTarget = this;
             }
+            
+            System.err.println("SCENE, PT2 = "+pickedTarget);
         }
 
         if (e.getEventType() == ZoomEvent.ZOOM_STARTED ||
@@ -2755,6 +2761,7 @@ public class Scene implements EventTarget {
                                boolean primaryDown, boolean middleDown, boolean secondaryDown,
                                boolean backDown, boolean forwardDown)
         {
+            System.err.println("[SCENE] mouseEvent, button = "+button);
             MouseEvent mouseEvent = new MouseEvent(type, x, y, screenX, screenY, button,
                     0, // click count will be adjusted by clickGenerator later anyway
                     shiftDown, controlDown, altDown, metaDown,
@@ -2799,7 +2806,7 @@ public class Scene implements EventTarget {
                 boolean _shiftDown, boolean _controlDown,
                 boolean _altDown, boolean _metaDown,
                 boolean _direct, boolean _inertia) {
-
+            System.err.println("SCENE, deftextY = " + defaultTextY+" and scrollTextY = "+scrollTextY);
             ScrollEvent.HorizontalTextScrollUnits xUnits = scrollTextX > 0 ?
                     ScrollEvent.HorizontalTextScrollUnits.CHARACTERS :
                     ScrollEvent.HorizontalTextScrollUnits.NONE;
@@ -2837,7 +2844,7 @@ public class Scene implements EventTarget {
                 screenX = cursorScreenPos.getX();
                 screenY = cursorScreenPos.getY();
             }
-
+            System.err.println("SCENE, scrollY = " + scrollY+", ymult = "+yMultiplier);
             inMousePick = true;
             Scene.this.processGestureEvent(new ScrollEvent(
                     eventType,
@@ -3641,6 +3648,7 @@ public class Scene implements EventTarget {
 
         public ClickGenerator() {
             for (MouseButton mb : MouseButton.values()) {
+                System.err.println("CG, mb = "+mb);
                 if (mb != MouseButton.NONE) {
                     counters.put(mb, new ClickCounter());
                 }
@@ -3648,13 +3656,16 @@ public class Scene implements EventTarget {
         }
 
         private MouseEvent preProcess(MouseEvent e) {
+            System.err.println(Thread.currentThread().getId()+" [SCENE] preprocess1, counters = "+counters+" and e = "+e+" with btn = "+e.getButton());
             for (ClickCounter cc : counters.values()) {
                 cc.moved(e.getSceneX(), e.getSceneY());
             }
+            System.err.println(Thread.currentThread().getId()+" [SCENE] preprocess2, counters = "+counters+" and e = "+e+" with btn = "+e.getButton());
 
             ClickCounter cc = counters.get(e.getButton());
+            System.err.println(Thread.currentThread().getId()+" [SCENE] preprocess3, cc = "+ cc);
             boolean still = lastPress != null ? lastPress.isStill() : false;
-
+            System.err.println(Thread.currentThread().getId()+" [SCENE] preprocess4, eventType = " + e.getEventType());
             if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
 
                 if (! e.isPrimaryButtonDown()) { counters.get(MouseButton.PRIMARY).clear(); }
@@ -3920,6 +3931,7 @@ public class Scene implements EventTarget {
         }
 
         private void process(MouseEvent e, boolean onPulse) {
+            System.err.println(Thread.currentThread()+" [SCENE] PROCESS mouseEvent e = "+e+" and onpulse = "+onPulse);
             Toolkit.getToolkit().checkFxUserThread();
             Scene.inMousePick = true;
 

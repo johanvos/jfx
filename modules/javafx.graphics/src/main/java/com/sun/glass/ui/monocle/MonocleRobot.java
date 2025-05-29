@@ -178,6 +178,7 @@ class MonocleRobot extends GlassRobot {
         final int bwidth = screen.getWidth();
         final int bheight = screen.getHeight();
 
+        System.err.println("[MONROBOT] need to get pixel for "+x+", " + y+", bw = "+bwidth+", bh = "+bheight);
         if (x < 0 || x > bwidth || y < 0 || y > bheight) {
             return GlassRobot.convertFromIntArgb(0);
         }
@@ -185,7 +186,7 @@ class MonocleRobot extends GlassRobot {
         synchronized (NativeScreen.framebufferSwapLock) {
 
             ByteBuffer buffer = screen.getScreenCapture();
-
+            System.err.println("[MON] buffer = "+buffer);
             if (byteDepth == 2) {
                 ShortBuffer shortbuf = buffer.asShortBuffer();
 

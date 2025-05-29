@@ -119,6 +119,8 @@ public abstract class RegionUITestBase extends VisualTestBase {
 
     protected void assertColorDoesNotEqual(Color notExpected, int x, int y, double tolerance) {
         Color actual = getColorThreadSafe(x, y);
+System.err.println("we do NOT expect " + notExpected);
+System.err.println("we did get " + actual);
         assertColorDoesNotEqual(notExpected, actual, tolerance);
     }
 
@@ -163,7 +165,16 @@ public abstract class RegionUITestBase extends VisualTestBase {
         }
 
         Paint lastFill = SCENE_FILL;
+System.err.println("CHECK FILLS! " + background.getFills());
         for (BackgroundFill fill : background.getFills()) {
+System.err.println("CHECK " + fill);
+/*
+try {
+Thread.sleep(2000);
+} catch (Exception e) {
+e.printStackTrace();
+}
+*/
             checkRegionCornersAndBoundariesOfBackgroundFill(fill, lastFill);
             lastFill = fill.getFill();
         }
@@ -396,6 +407,7 @@ public abstract class RegionUITestBase extends VisualTestBase {
         for (TestParameters p : params) {
             boolean exactMatch = p.expected instanceof Color;
             if (exactMatch) {
+System.err.println("ASSERT1, p = " +p+", exp = " + p.expected+", x,y = " + p.x+", " +p.y+", tol = " + p.tolerance);
                 assertColorEquals((Color) p.expected, p.x, p.y, p.tolerance);
             } else {
                 if (!(p.notExpected instanceof Color) ||
@@ -406,6 +418,7 @@ public abstract class RegionUITestBase extends VisualTestBase {
                             "way to distinguish pass vs. fail");
                     continue;
                 }
+System.err.println("ASSERT2, p = " +p+", exp = " + p.expected+", x,y = " + p.x+", " +p.y+", tol = " + p.tolerance);
                 assertColorDoesNotEqual((Color) p.notExpected, p.x, p.y, p.tolerance);
             }
         }

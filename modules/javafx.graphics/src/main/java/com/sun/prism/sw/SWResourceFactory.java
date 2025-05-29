@@ -129,6 +129,7 @@ final class SWResourceFactory
                                                WrapMode wrapMode)
     {
         SWTexturePool pool = SWTexturePool.instance;
+        System.err.println("[SWRESOURCEFACT] w = "+width+", h = "+height);
         long size = pool.estimateRTTextureSize(width, height, false);
         if (!pool.prepareForAllocation(size)) {
             return null;

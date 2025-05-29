@@ -113,6 +113,7 @@ class HeadlessScreen implements NativeScreen {
     public void uploadPixels(Buffer b,
                              int x, int y, int width, int height,
                              float alpha) {
+        System.err.println("[MONHS] upload pixels, x= "+x+", y = "+y+", w = " + width+", h = "+height+" and buffer = "+b);
         fb.composePixels(b, x, y, width, height, alpha);
     }
 

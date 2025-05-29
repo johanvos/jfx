@@ -157,7 +157,7 @@ public class RobotTest {
         Util.runAndWait(() -> {
             switch (keyAction) {
                 case PRESSED:
-                    textField.setOnKeyPressed(event -> keyActionLatch.countDown());
+                    textField.setOnKeyPressed(event -> {keyActionLatch.countDown(); System.err.println("[TEST] KEYPRESSED: " + event);});
                     break;
                 case TYPED:
                     textField.setOnKeyTyped(event -> keyActionLatch.countDown());
@@ -250,11 +250,15 @@ public class RobotTest {
         AtomicReference<Point2D> mousePosition = new AtomicReference<>();
         Util.runAndWait(() -> {
             if (primitiveArg) {
+System.err.println("[RTEST] start mouse move to "+x+", " + y);
                 robot.mouseMove(x, y);
             } else {
+System.err.println("[RTEST2] start mouse move to "+x+", " + y);
                 robot.mouseMove(new Point2D(x, y));
             }
+System.err.println("[RTEST] mouse move done");
             mousePosition.set(robot.getMousePosition());
+System.err.println("[RTEST] got mousepos");
         });
         Assertions.assertEquals(x, (int) mousePosition.get().getX());
         Assertions.assertEquals(y, (int) mousePosition.get().getY());
@@ -387,10 +391,14 @@ public class RobotTest {
         int mouseY = (int) (scene.getWindow().getY() + scene.getY() +
                 button.getLayoutY() + button.getLayoutBounds().getHeight() / 2);
         Util.runAndWait(() -> {
+System.err.println("[TEST] mouseMove to " + mouseX+", " + mouseY);
             robot.mouseMove(mouseX, mouseY);
+System.err.println("[TEST] done mouseMove to " + mouseX+", " + mouseY);
             switch (mouseAction) {
                 case PRESSED:
+System.err.println("[TEST] mousePress");
                     robot.mousePress(mouseButton);
+System.err.println("[TEST] done mousePress");
                     pressedButtons.add(mouseButton);
                     break;
                 case CLICKED:
@@ -532,6 +540,7 @@ public class RobotTest {
     }
 
     private static void testMouseWheel(int amount) {
+System.err.println("[TEST] start mouseWheelTest at " + Thread.currentThread());
         Assumptions.assumeTrue(!PlatformUtil.isMac()); // See JDK-8214580
         CountDownLatch onScrollLatch = new CountDownLatch(1);
         CountDownLatch setSceneLatch = new CountDownLatch(1);
@@ -545,31 +554,46 @@ public class RobotTest {
         int scrollMultiplier = PlatformUtil.isMac() ? -1 : 40;
         Util.runAndWait(() -> {
             button.setOnScroll(event -> {
+System.err.println("[TEST] GOTSCROLL!!! " + event);
+Thread.dumpStack();
+System.err.println("[TEST] osy = " + Screen.getPrimary().getOutputScaleY()+" and ts0 = " + totalScroll[0]+" and scrollm = " + scrollMultiplier+" and amount = " + amount);
                 totalScroll[0] += event.getDeltaY() * Screen.getPrimary().getOutputScaleY();
                 if (firstScrollMillis[0] == 0) {
                     firstScrollMillis[0] = System.currentTimeMillis();
                 } else {
                     if (System.currentTimeMillis() - firstScrollMillis[0] > 1000) {
                         button.setText("Scrolled " + totalScroll[0]);
+System.err.println("[TEST] COUNTDOWN1");
                         onScrollLatch.countDown();
                     }
                 }
                 if (Math.abs(totalScroll[0] / scrollMultiplier) >= Math.abs(amount)) {
                     button.setText("Scrolled " + -(totalScroll[0] / scrollMultiplier));
+System.err.println("[TEST] COUNTDOWN2");
                     onScrollLatch.countDown();
                 }
             });
             scene = new Scene(new HBox(button), SIZE, SIZE);
+System.err.println("[TEST] scene created, w = " + scene.getWindow());
+System.err.println("[TEST] stage exists, stage = " + stage+", w = " + stage.getX());
+if (scene.getWindow() != null) {
+System.err.println("[TEST] swww = " + scene.getWindow().getX());
+}
             stage.sceneProperty().addListener(observable -> {
                 setSceneLatch.countDown();
                 stage.sceneProperty().removeListener(invalidationListener);
             });
             stage.setScene(scene);
+System.err.println("[TEST] scene2 created, w = " + scene.getWindow());
+if (scene.getWindow() != null) {
+System.err.println("[TEST] swww2 = " + scene.getWindow().getX());
+}
         });
         Util.waitForLatch(setSceneLatch, 5, "Timeout while waiting for scene to be set on stage.");
         Util.runAndWait(() -> {
             int mouseX = (int) (scene.getWindow().getX() + scene.getX() +
                     button.getLayoutX() + button.getLayoutBounds().getWidth() / 2);
+System.err.println("[TEST] window = " + scene.getWindow()+", swx = " + scene.getWindow().getX()+", sx = " + scene.getX() + ", blx = " + button.getLayoutX() + ", blbw = " + button.getLayoutBounds().getWidth() / 2);
             int mouseY = (int) (scene.getWindow().getY() + scene.getY() +
                     button.getLayoutY() + button.getLayoutBounds().getHeight() / 2);
             robot.mouseMove(mouseX, mouseY);
@@ -755,13 +779,16 @@ public class RobotTest {
     public static class TestApp extends Application {
         @Override
         public void start(Stage primaryStage) {
+System.err.println("[TEST] create stage, ps = " + primaryStage+" and x = " + primaryStage.getX());
             stage = primaryStage;
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setAlwaysOnTop(true);
             stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e ->
                     Platform.runLater(startupLatch::countDown));
             robot = new Robot();
+System.err.println("[TEST] create stage2, ps = " + stage+" and x = " + stage.getX());
             stage.show();
+System.err.println("[TEST] create stage3, ps = " + stage+" and x = " + stage.getX());
         }
     }
 

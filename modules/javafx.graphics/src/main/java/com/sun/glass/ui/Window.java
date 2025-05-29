@@ -1179,6 +1179,8 @@ public abstract class Window {
     }
 
     protected void notifyMove(final int x, final int y) {
+        System.err.println("[WINDOW] move to "+x+", "+y);
+        Thread.dumpStack();
         this.x = x;
         this.y = y;
         handleWindowEvent(System.nanoTime(), WindowEvent.MOVE);
@@ -1204,6 +1206,8 @@ public abstract class Window {
      *   - WindowEvent.RESTORE
      */
     protected void notifyResize(final int type, final int width, final int height) {
+        System.err.println("[GLASSWINDOW], notifyresize to "+width+" and current = "+this.width+" on window "+this);
+        Thread.dumpStack();
         if (type == WindowEvent.MINIMIZE) {
             this.state = State.MINIMIZED;
         } else {

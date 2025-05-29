@@ -204,6 +204,7 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_gtk_GtkRobot__1mouseWheel
 
     checkXTest(env);
     for (i = 0; i < repeat; i++) {
+fprintf(stderr, "[Nativegtk] fake %d from %d\n", i, repeat);
         XTestFakeButtonEvent(xdisplay, button, True, CurrentTime);
         XTestFakeButtonEvent(xdisplay, button, False, CurrentTime);
     }

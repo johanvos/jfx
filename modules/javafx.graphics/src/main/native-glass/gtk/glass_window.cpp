@@ -985,6 +985,7 @@ void WindowContextTop::process_configure(GdkEventConfigure* event) {
     // taking into account window decorations (such as title bars and borders) applied by the window manager.
     geometry.view_x = origin_x - root_x;
     geometry.view_y = origin_y - root_y;
+fprintf(stderr, "[NATIVE] notwinmove, processconfigure\n");
     notify_window_move();
 
     glong to_screen = getScreenPtrForLocation(geometry.x, geometry.y);
@@ -1116,7 +1117,9 @@ void WindowContextTop::set_bounds(int x, int y, bool xSet, bool ySet, int w, int
             geometry.y = y;
         }
 
+fprintf(stderr, "[NATIVE] notwinmove, setbounds\n");
         gtk_window_move(GTK_WINDOW(gtk_widget), geometry.x, geometry.y);
+fprintf(stderr, "[NATIVE] notwinmove, setbounds2\n");
         notify_window_move();
     }
 }
@@ -1333,6 +1336,7 @@ void WindowContextTop::notify_window_resize() {
 }
 
 void WindowContextTop::notify_window_move() {
+fprintf(stderr, "[NATIVE] notwinmove, WCT, x = %d, y = %d\n",  geometry.x, geometry.y);
     if (jwindow) {
         mainEnv->CallVoidMethod(jwindow, jWindowNotifyMove,
                                  geometry.x, geometry.y);
