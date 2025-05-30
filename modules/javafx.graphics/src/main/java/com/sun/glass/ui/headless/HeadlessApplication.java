@@ -1,5 +1,6 @@
 package com.sun.glass.ui.headless;
 
+import com.sun.glass.events.KeyEvent;
 import com.sun.glass.ui.Application;
 import com.sun.glass.ui.CommonDialogs;
 import com.sun.glass.ui.Cursor;
@@ -52,6 +53,11 @@ public class HeadlessApplication extends Application {
     @Override
     protected void _leaveNestedEventLoop(Object retValue) {
         processor.leaveCurrentLoop(retValue);
+    }
+
+    @Override
+    protected int _isKeyLocked(int keyCode) {
+        return KeyEvent.KEY_LOCK_OFF;
     }
 
     @Override

@@ -71,7 +71,7 @@ public abstract class PresentableState {
      * Must be called on the event thread.
      */
     public PresentableState() {
-        Thread.dumpStack();
+//        Thread.dumpStack();
     }
 
     /**
@@ -352,19 +352,19 @@ public abstract class PresentableState {
      * May only be called from the event thread.
      */
     public void update() {
-        System.err.println("PRESENTABLESTATE update for "+this+" with view = "+view);
-        Thread.dumpStack();
+//        System.err.println("PRESENTABLESTATE update for "+this+" with view = "+view);
+//        Thread.dumpStack();
         // should only be called on the event thread
         if (view != null) {
             viewWidth = view.getWidth();
             viewHeight = view.getHeight();
             window = view.getWindow(); 
-            System.err.println("PS viewwidth1 = "+viewWidth);
+//            System.err.println("PS viewwidth1 = "+viewWidth);
 
         } else {
             viewWidth = viewHeight = -1;
             window = null;
-            System.err.println("PS viewwidth2 = "+viewWidth);
+//            System.err.println("PS viewwidth2 = "+viewWidth);
         }
         if (window != null) {
             windowX = window.getX();

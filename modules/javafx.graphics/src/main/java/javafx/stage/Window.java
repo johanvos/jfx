@@ -227,10 +227,10 @@ public class Window implements EventTarget {
         // necessary for WindowCloseRequestHandler
         initializeInternalEventDispatcher();
         WindowHelper.initHelper(this);
-        this.x.addListener((obs, o1, o2) -> {
-            System.err.println("X changed from "+o1+" to "+o2+" for "+this);
-            Thread.dumpStack();
-        });
+//        this.x.addListener((obs, o1, o2) -> {
+//            System.err.println("X changed from "+o1+" to "+o2+" for "+this);
+//            Thread.dumpStack();
+//        });
 
     }
 

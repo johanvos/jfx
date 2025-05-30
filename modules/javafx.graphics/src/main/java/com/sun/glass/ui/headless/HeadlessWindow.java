@@ -38,9 +38,9 @@ public class HeadlessWindow extends Window {
     public HeadlessWindow(Window owner, Screen screen, ByteBuffer frameBuffer, int styleMask) {
         super(owner, screen, styleMask);
         this.frameBuffer = frameBuffer;
-        Thread.dumpStack();
+//        Thread.dumpStack();
 //        notifyResizeAndMove(1,1,100,100);
-        System.err.println("[HW] x = "+getX()+", screen = " + screen+" with screenw = "+screen.getWidth()+", this = "+this);
+//        System.err.println("[HW] x = "+getX()+", screen = " + screen+" with screenw = "+screen.getWidth()+", this = "+this);
         screenBuffer = IntBuffer.allocate(screen.getWidth() * screen.getHeight());
     }
 
@@ -111,9 +111,9 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected void _setBounds(long ptr, int x, int y, boolean xSet, boolean ySet, int w, int h, int cw, int ch, float xGravity, float yGravity) {
-        Thread.dumpStack();
+//        Thread.dumpStack();
 
-        System.err.println("[HW] setBounds, x = "+x);
+//        System.err.println("[HW] setBounds, x = "+x);
         int newWidth = w > 0 ? w : cw > 0 ? cw : getWidth();
         int newHeight = h > 0 ? h : ch > 0 ? ch : getHeight();
         if (!xSet) {
