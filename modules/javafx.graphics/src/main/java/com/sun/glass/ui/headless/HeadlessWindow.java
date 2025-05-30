@@ -1,5 +1,6 @@
 package com.sun.glass.ui.headless;
 
+import com.sun.glass.events.MouseEvent;
 import com.sun.glass.events.WindowEvent;
 import com.sun.glass.ui.Cursor;
 import com.sun.glass.ui.Pixels;
@@ -34,6 +35,7 @@ public class HeadlessWindow extends Window {
     private Cursor cursor;
     private IntBuffer screenBuffer;
     private final ByteBuffer frameBuffer;
+    private HeadlessView currentView;
 
     public HeadlessWindow(Window owner, Screen screen, ByteBuffer frameBuffer, int styleMask) {
         super(owner, screen, styleMask);
@@ -61,6 +63,14 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _setView(long ptr, View view) {
+        System.err.println("[HW] SETVIEW called for "+this+" with view = "+view);
+        if (currentView != null) {
+            currentView.notifyMouse(MouseEvent.EXIT, MouseEvent.BUTTON_NONE, 0,0,0,0,0, false, false);
+        }
+        this.currentView = (HeadlessView)view;
+        if (currentView != null) {
+            currentView.notifyMouse(MouseEvent.ENTER, MouseEvent.BUTTON_NONE, 0,0,0,0,0, false, false);
+        }
         return true;
     }
 

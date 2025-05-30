@@ -561,6 +561,7 @@ public abstract class View {
             eventHandler.handleMouseEvent(this, time, type, button, x, y, xAbs,
                                           yAbs, modifiers,
                                           isPopupTrigger, isSynthesized);
+            System.err.println("VIEW, DONE handleMouseEvent, button = "+button+", type = "+type);
         }
     }
 
