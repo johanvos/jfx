@@ -557,7 +557,7 @@ public abstract class View {
                                   int modifiers, boolean isPopupTrigger,
                                   boolean isSynthesized) {
         if (shouldHandleEvent()) {
-            System.err.println("VIEW, handleMouseEvent, button = "+button);
+            System.err.println("VIEW, handleMouseEvent, button = "+button+", type = "+type);
             eventHandler.handleMouseEvent(this, time, type, button, x, y, xAbs,
                                           yAbs, modifiers,
                                           isPopupTrigger, isSynthesized);

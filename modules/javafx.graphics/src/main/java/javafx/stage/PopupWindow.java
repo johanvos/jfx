@@ -161,6 +161,8 @@ public abstract class PopupWindow extends Window {
      * Constructor for subclasses to call.
      */
     public PopupWindow() {
+        System.err.println("[POPUP] create");
+        Thread.dumpStack();
         final Pane popupRoot = new Pane();
         popupRoot.setBackground(Background.EMPTY);
         popupRoot.getStyleClass().add("popup");
@@ -450,6 +452,7 @@ public abstract class PopupWindow extends Window {
      *      other than the JavaFX Application Thread.
      */
     public void show(Window ownerWindow, double anchorX, double anchorY) {
+        System.err.println("[POPUP] show");
         Toolkit.getToolkit().checkFxUserThread();
         validateOwnerWindow(ownerWindow);
 

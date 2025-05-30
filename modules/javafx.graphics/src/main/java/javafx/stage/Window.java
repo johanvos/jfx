@@ -556,7 +556,7 @@ public class Window implements EventTarget {
     public final ReadOnlyDoubleProperty xProperty() { return x.getReadOnlyProperty(); }
 
     void setXInternal(double value) {
-        Thread.dumpStack();
+     //   Thread.dumpStack();
         x.set(value);
         peerBoundsConfigurator.setX(value, 0);
         xExplicit = true;

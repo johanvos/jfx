@@ -20,6 +20,7 @@ public class HeadlessApplication extends Application {
     private Screen[] screens = null;
     private ByteBuffer[] frameBuffer = null;
     private HeadlessCursor cursor;
+    private HeadlessRobot activeRobot = null;
 
     private final int MULTICLICK_MAX_X = 20;
     private final int MULTICLICK_MAX_Y = 20;
@@ -55,7 +56,9 @@ public class HeadlessApplication extends Application {
 
     @Override
     public Window createWindow(Window owner, Screen screen, int styleMask) {
-        return new HeadlessWindow(owner, screen, frameBuffer[0], styleMask);
+        HeadlessWindow answer = new HeadlessWindow(owner, screen, frameBuffer[0], styleMask);
+        if (this.activeRobot != null) activeRobot.windowAdded(answer);
+        return answer;
     }
 
     @Override
@@ -111,7 +114,8 @@ public class HeadlessApplication extends Application {
 
     @Override
     public GlassRobot createRobot() {
-        return new HeadlessRobot(this);
+        this.activeRobot = new HeadlessRobot(this);
+        return this.activeRobot;
     }
 
     @Override

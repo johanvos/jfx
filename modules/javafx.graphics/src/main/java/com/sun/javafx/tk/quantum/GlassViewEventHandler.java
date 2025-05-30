@@ -263,6 +263,7 @@ class GlassViewEventHandler extends View.EventHandler {
 
         @Override
         public Void get() {
+            System.err.println("[GLASSVIEWEVENTHANDLER] consumer");
             if (PULSE_LOGGING_ENABLED) {
                 PulseLogger.newInput(mouseEventType(type).toString());
             }
@@ -348,7 +349,7 @@ class GlassViewEventHandler extends View.EventHandler {
                         pScaleX = pScaleY = 1.0;
                         spx = spy = sx = sy = 0.0;
                     }
-
+                    System.err.println("[GLASSVIEWEVENTHANDLER], send mouseEvent to sceneListener");
                     scene.sceneListener.mouseEvent(mouseEventType(type),
                             x / pScaleX, y / pScaleY,
                             sx + (xAbs - spx) / pScaleX, sy + (yAbs - spy) / pScaleY,
@@ -371,6 +372,7 @@ class GlassViewEventHandler extends View.EventHandler {
                                  int x, int y, int xAbs, int yAbs,
                                  int modifiers, boolean isPopupTrigger, boolean isSynthesized)
     {
+        System.err.println("[GLASSVIEWEVENTHANDLER] got handleMouseEvent with type = "+type+" and button = "+button);
         mouseNotification.view = view;
         mouseNotification.time = time;
         mouseNotification.type = type;

@@ -221,8 +221,11 @@ class TooltipTest {
         Util.runAndWait(() -> {
             // Click somewhere in the Stage to ensure that it is active
             Window window = scene.getWindow();
+System.err.println("[TEST] MOVE MOUSE!!");
             robot.mouseMove(window.getX() + scene.getX(), window.getY() + scene.getY());
+System.err.println("[TEST] MOVED MOUSE!!");
             robot.mouseClick(MouseButton.PRIMARY);
+System.err.println("[TEST] CLICKED MOUSE!!");
         });
 
         // Make sure that a previous tooltip is hidden by now.
@@ -264,6 +267,8 @@ class TooltipTest {
 
             tooltip = new Tooltip("tooltip");
             tooltip.showingProperty().addListener((obs, oldV, isShowing) -> {
+System.err.println("[TEST] showTooltip!!");
+Thread.dumpStack();
                 if (isShowing) {
                     tooltipShownTime = System.currentTimeMillis();
                     tooltipShownLatch.countDown();

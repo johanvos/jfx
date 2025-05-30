@@ -40,7 +40,7 @@ public class HeadlessWindow extends Window {
         this.frameBuffer = frameBuffer;
         Thread.dumpStack();
 //        notifyResizeAndMove(1,1,100,100);
-        System.err.println("[HW] x = "+getX()+", screen = " + screen+" with screenw = "+screen.getWidth());
+        System.err.println("[HW] x = "+getX()+", screen = " + screen+" with screenw = "+screen.getWidth()+", this = "+this);
         screenBuffer = IntBuffer.allocate(screen.getWidth() * screen.getHeight());
     }
 
@@ -52,6 +52,8 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _close(long ptr) {
+        System.err.println("[HW] CLOSE "+this);
+        Thread.dumpStack();
         this.closed = true;
         this.notifyDestroy();
         return true;

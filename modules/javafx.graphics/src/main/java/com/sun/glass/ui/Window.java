@@ -33,6 +33,7 @@ import java.lang.annotation.Native;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Window {
 
@@ -88,6 +89,7 @@ public abstract class Window {
      // this list will be sorted in proper z-order
     static public synchronized List<Window> getWindows() {
         Application.checkEventThread();
+        System.err.println("[GW] WINDOWS asked, return list of "+Window.visibleWindows.size()+" elements");
         return Collections.unmodifiableList(Window.visibleWindows);
     }
 
@@ -107,7 +109,9 @@ public abstract class Window {
 
     // used by Lens Native
     static protected void remove(Window window) {
+        System.err.println("[CLOSE] before remove, list = "+visibleWindows);
         visibleWindows.remove(window);
+        System.err.println("[CLOSE] after remove, list = "+visibleWindows);
     }
 
     // window style mask
@@ -292,12 +296,16 @@ public abstract class Window {
 
     private void checkNotClosed() {
         if (this.ptr == 0L) {
+            System.err.println("[CLOSE] fail on "+Objects.hashCode(this));
+            Thread.dumpStack();
             throw new IllegalStateException("The window has already been closed");
         }
     }
 
     protected abstract boolean _close(long ptr);
     public void close() {
+        System.err.println("[WINDOW] CLOSE, view = "+this.view+" and ptr = "+this.ptr);
+        Thread.dumpStack();
         Application.checkEventThread();
         if (this.view != null) {
             if (this.ptr != 0L) {
@@ -625,18 +633,25 @@ public abstract class Window {
     protected abstract boolean _setVisible(long ptr, boolean visible);
     public void setVisible(final boolean visible) {
         Application.checkEventThread();
+        Thread.dumpStack();
+        System.err.println("[CLOSE] setVisible to "+visible + " for "+Objects.hashCode(this)+" and thisv = "+this.isVisible);
         if (this.isVisible != visible) {
+            System.err.println("[CLOSE] change visiblity to "+visible);
             if (!visible) {
+                System.err.println("[CLOSE] ready to remove");
                 if (getView() != null) {
                     getView().setVisible(visible);
                 }
+                System.err.println("[CLOSE] ready to remove2, ptr = "+this.ptr);
                 // Avoid native call if the window has been closed already
                 if (this.ptr != 0L) {
                     this.isVisible = _setVisible(this.ptr, visible);
                 } else {
                     this.isVisible = visible;
                 }
+                System.err.println("[CLOSE] ready to remove3, ptr = "+this.ptr);
                 remove(this);
+                System.err.println("[CLOSE] removed4, ptr = "+this.ptr);
             } else {
                 checkNotClosed();
                 this.isVisible = _setVisible(this.ptr, visible);
@@ -1161,10 +1176,14 @@ public abstract class Window {
     // notification callbacks
     // *****************************************************
     protected void notifyClose() {
+        System.err.println("[CLOSE] notifyClose for "+this);
+        Thread.dumpStack();
+        
         handleWindowEvent(System.nanoTime(), WindowEvent.CLOSE);
     }
 
     protected void notifyDestroy() {
+        System.err.println("[CLOSE] notifyDestroy for obj "+Objects.hashCode(this)+" and ptr = "+this.ptr);
         // Mac is known to send multiple WillClose notifications for some reason
         if (this.ptr == 0) {
             return;
@@ -1372,7 +1391,9 @@ public abstract class Window {
     @Override
     public String toString() {
         Application.checkEventThread();
+        System.err.println("Prepare to write toString for win with hash = "+Objects.hashCode(this)+" and ptr = "+this.ptr);
         return  "Window:"+"\n"
+                + "    HASH = "+Objects.hashCode(this)+"\n"
                 + "    ptr: " + getNativeWindow() + "\n"
                 + "    screen ptr: " + (screen != null ? screen.getNativeScreen() : "null") + "\n"
                 + "    isDecorated: " + isDecorated() + "\n"

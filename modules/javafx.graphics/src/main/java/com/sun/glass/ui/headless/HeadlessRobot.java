@@ -12,6 +12,7 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -31,8 +32,13 @@ public class HeadlessRobot extends GlassRobot {
 
     public HeadlessRobot(HeadlessApplication application) {
         this.application = application;
+        System.err.println("Created HR, windows = "+ Window.getWindows()+", current = "+activeWindow);
     }
-    
+
+    void windowAdded(HeadlessWindow window) {
+        if (this.activeWindow == null) activeWindow = window;
+    }
+
     @Override
     public void create() {
     }
@@ -124,7 +130,11 @@ public class HeadlessRobot extends GlassRobot {
     public void mouseRelease(MouseButton... buttons) {
         Thread.dumpStack();
         Application.checkEventThread();
-        
+        checkWindowEnterExit();
+        if (this.activeWindow == null) {
+            System.err.println("NO active window, don't process");
+            return;
+        }
         HeadlessView view = (HeadlessView) activeWindow.getView();
         int wx = activeWindow.getX();
         int wy = activeWindow.getY();
@@ -208,15 +218,31 @@ view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, 
 //buffer2.get(data);
     }
 
+    private void checkActiveWindowExists() {
+        if ((this.activeWindow != null) && (!this.activeWindow.isVisible())) {
+            System.err.println("[HR] activeWindow "+Objects.hashCode(this.activeWindow)+" invisible, set null.");
+            this.activeWindow = null;
+        }
+    }
     private void checkWindowFocused() {
+        checkActiveWindowExists();
         this.activeWindow = getFocusedWindow();
     }
 
     private void checkWindowEnterExit() {
+        checkActiveWindowExists();
         Window oldWindow = activeWindow;
         this.activeWindow = getTargetWindow(this.mouseX, this.mouseY);
 
-        if (this.activeWindow == null) return; 
+        if (this.activeWindow == null) {
+            if (oldWindow != null) {
+                HeadlessView oldView = (HeadlessView)oldWindow.getView();
+                if (oldView != null) {
+                    oldView.notifyMouse(MouseEvent.EXIT, MouseEvent.BUTTON_NONE, 0, 0,0,0, 0, true, true);
+                }
+            }
+            return;
+        } 
         int wx = activeWindow.getX();
         int wy = activeWindow.getY();
 

@@ -167,6 +167,7 @@ public class Tooltip extends PopupControl {
      */
     public Tooltip(String text) {
         super();
+        System.err.println("[TOOLTIP] created");
         if (text != null) setText(text);
         bridge = new CSSBridge();
         PopupWindowHelper.getContent(this).setAll(bridge);
@@ -960,7 +961,8 @@ public class Tooltip extends PopupControl {
         private EventHandler<MouseEvent> MOVE_HANDLER = (MouseEvent event) -> {
             //Screen coordinates need to be actual for dynamic tooltip.
             //See Tooltip.setText
-
+System.err.println("[TOOLTIP] mouseEvent: "+event);
+Thread.dumpStack();
             lastMouseX = event.getScreenX();
             lastMouseY = event.getScreenY();
 
@@ -1029,6 +1031,9 @@ public class Tooltip extends PopupControl {
          * stop the HIDE_TIMER, hide the tooltip, and start the LEFT_TIMER.
          */
         private EventHandler<MouseEvent> LEAVING_HANDLER = (MouseEvent event) -> {
+            
+System.err.println("[TOOLTIP] mouseEventL: "+event);
+Thread.dumpStack();
             // detect bogus mouse exit events, if it didn't really move then ignore it
             if (activationTimer.getStatus() == Timeline.Status.RUNNING) {
                 activationTimer.stop();
@@ -1057,6 +1062,8 @@ public class Tooltip extends PopupControl {
          * and any and all timers are stopped.
          */
         private EventHandler<MouseEvent> KILL_HANDLER = (MouseEvent event) -> {
+            System.err.println("[TOOLTIP] mouseEventK: "+event);
+Thread.dumpStack();
             activationTimer.stop();
             hideTimer.stop();
             leftTimer.stop();
@@ -1067,6 +1074,7 @@ public class Tooltip extends PopupControl {
         };
 
         private void install(Node node, Tooltip t) {
+            System.err.println("[TOOLTIP] install handlers, node = "+node+", tooltip = "+t);
             // Install the MOVE_HANDLER, LEAVING_HANDLER, and KILL_HANDLER on
             // the given node. Stash the tooltip in the node's client properties
             // map so that it is not gc'd. The handlers must all be installed
