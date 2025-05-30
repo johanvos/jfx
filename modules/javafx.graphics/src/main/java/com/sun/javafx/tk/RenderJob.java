@@ -55,9 +55,9 @@ public class RenderJob extends FutureTask {
     }
 
     @Override public void run() {
-        System.err.println("[RENDERJOB] superrun");
+//        System.err.println("[RENDERJOB] superrun");
         if (super.runAndReset() == false) {
-        System.err.println("[RENDERJOB] superrun false");
+//        System.err.println("[RENDERJOB] superrun false");
             // if (PrismSettings.verbose) {
                 try {
                     Object value = super.get();
@@ -75,7 +75,7 @@ public class RenderJob extends FutureTask {
             } */
         } else {
             
-        System.err.println("[RENDERJOB] superrun true");
+//        System.err.println("[RENDERJOB] superrun true");
             if (listener != null) {
                 try {
                     listener.done(this);

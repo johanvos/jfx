@@ -162,7 +162,7 @@ public abstract class PopupWindow extends Window {
      */
     public PopupWindow() {
         System.err.println("[POPUP] create");
-        Thread.dumpStack();
+//        Thread.dumpStack();
         final Pane popupRoot = new Pane();
         popupRoot.setBackground(Background.EMPTY);
         popupRoot.getStyleClass().add("popup");
