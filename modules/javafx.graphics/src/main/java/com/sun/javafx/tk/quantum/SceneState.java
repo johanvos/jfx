@@ -119,10 +119,7 @@ class SceneState extends PresentableState {
      */
     @Override
     public void uploadPixels(PixelSource source) {
-        System.err.println("[SCENESTATE] uploadpixels scheduled");
-        Thread.dumpStack();
         Application.invokeLater(() -> {
-            System.err.println("[SCENESTATE] uploadPixels, isvalid? "+isValid());
             if (isValid()) {
                 SceneState.super.uploadPixels(source);
             } else {

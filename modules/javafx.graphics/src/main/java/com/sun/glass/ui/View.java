@@ -557,11 +557,9 @@ public abstract class View {
                                   int modifiers, boolean isPopupTrigger,
                                   boolean isSynthesized) {
         if (shouldHandleEvent()) {
-            System.err.println("VIEW, handleMouseEvent, button = "+button+", type = "+type);
             eventHandler.handleMouseEvent(this, time, type, button, x, y, xAbs,
                                           yAbs, modifiers,
                                           isPopupTrigger, isSynthesized);
-            System.err.println("VIEW, DONE handleMouseEvent, button = "+button+", type = "+type);
         }
     }
 
@@ -913,8 +911,6 @@ public abstract class View {
     protected void notifyMouse(int type, int button, int x, int y, int xAbs,
                                int yAbs, int modifiers, boolean isPopupTrigger,
                                boolean isSynthesized) {
-        Thread.dumpStack();
-        System.err.println("[VIEW] button = "+button+", type = "+type+", x = "+x+", y = " + y + ", mods = "+modifiers+", synth = "+isSynthesized);
         // gznote: optimize - only call for undecorated Windows!
         if (this.window != null) {
             // handled by window (programmatical move/resize)
@@ -968,7 +964,6 @@ public abstract class View {
             int defaultLines, int defaultChars,
             double xMultiplier, double yMultiplier)
     {
-        System.err.println("[VIEW] notifyScroll. x = "+x+", y = " +y+", xabs = " + xAbs+", yabs = "+yAbs+", dx = "+deltaX+", dy = " +deltaY+", ymult = "+yMultiplier);
         if (shouldHandleEvent()) {
             this.eventHandler.handleScrollEvent(this, System.nanoTime(),
                     x, y, xAbs, yAbs, deltaX, deltaY, modifiers, lines, chars,
@@ -977,8 +972,6 @@ public abstract class View {
     }
 
     protected void notifyKey(int type, int keyCode, char[] keyChars, int modifiers) {
-        System.err.println("[VIEW] notifyKey, type = " + type+", keycode = "+keyCode+", mods = "+modifiers+", chars = "+
-                (keyChars == null ? "NULL" : keyChars.length+" chars "+ (keyChars.length == 0 ? "NULL" : keyChars[0])));
         handleKeyEvent(System.nanoTime(), type, keyCode, keyChars, modifiers);
     }
 

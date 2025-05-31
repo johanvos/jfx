@@ -40,9 +40,6 @@ public class HeadlessWindow extends Window {
     public HeadlessWindow(Window owner, Screen screen, ByteBuffer frameBuffer, int styleMask) {
         super(owner, screen, styleMask);
         this.frameBuffer = frameBuffer;
-//        Thread.dumpStack();
-//        notifyResizeAndMove(1,1,100,100);
-//        System.err.println("[HW] x = "+getX()+", screen = " + screen+" with screenw = "+screen.getWidth()+", this = "+this);
         screenBuffer = IntBuffer.allocate(screen.getWidth() * screen.getHeight());
     }
 
@@ -54,8 +51,6 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _close(long ptr) {
-        System.err.println("[HW] CLOSE "+this);
-        Thread.dumpStack();
         this.closed = true;
         this.notifyDestroy();
         return true;
@@ -63,7 +58,6 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _setView(long ptr, View view) {
-        System.err.println("[HW] SETVIEW called for "+this+" with view = "+view);
         if (currentView != null) {
             currentView.notifyMouse(MouseEvent.EXIT, MouseEvent.BUTTON_NONE, 0,0,0,0,0, false, false);
         }
@@ -121,9 +115,6 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected void _setBounds(long ptr, int x, int y, boolean xSet, boolean ySet, int w, int h, int cw, int ch, float xGravity, float yGravity) {
-//        Thread.dumpStack();
-
-//        System.err.println("[HW] setBounds, x = "+x);
         int newWidth = w > 0 ? w : cw > 0 ? cw : getWidth();
         int newHeight = h > 0 ? h : ch > 0 ? ch : getHeight();
         if (!xSet) {
@@ -284,17 +275,11 @@ public class HeadlessWindow extends Window {
     }
     
     private void notifyResizeAndMove(int x, int y, int width, int height) {
-        System.err.println("[HW] resizeandmove, x = "+x+", width = "+width);
-        Thread.dumpStack();
         HeadlessView view = (HeadlessView) getView();
-        System.err.println("[HW] resizeandmovem getWidth = "+getWidth()+", width = "+width+", view = "+view);
      //   if (getWidth() != width || getHeight() != height) {
-            System.err.println("[HW] getWidth = "+getWidth()+", not1");
             notifyResize(WindowEvent.RESIZE, width, height);
-            System.err.println("[HW] getWidth = "+getWidth()+", not1 done, view = "+view);
             if (view != null) {
                 view.notifyResize(width, height); 
-                System.err.println("[HW] getWidth = "+getWidth()+", not2 done, view = "+view);
             }
      //  }
         if (getX() != x || getY() != y) {
@@ -324,7 +309,6 @@ public class HeadlessWindow extends Window {
     }
 
     public void getScreenCapture(int x, int y, int width, int height, int[] data, boolean scaleToFit) {
-        System.err.println("[HW] gcc");
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 int idx = i * width +j;
@@ -333,19 +317,6 @@ public class HeadlessWindow extends Window {
                 data[idx] = val;
             }
         }
-//        Pixels pixels = view.getPixels();
-//        System.err.println("[ROBOT] GCC, x = "+x+", y = " +y+", w = "+width+", h = "+height+", dsize = "+data.length+", winx = "+activeWindow.getX());
-//        System.err.println("[ROBOT] pixels with size "+pixels.getWidth()+" h = "+pixels.getHeight()); // +" and buff = "+pixels.asByteBuffer().remaining());
-//        int num = width * height/4;
-//        Buffer buffer = pixels.getBuffer();
-//        System.err.println("GOT buffer: "+buffer);
-//        IntBuffer buffer2 = (IntBuffer) buffer.duplicate(); // preserve original
-//buffer2.position(0);
-//buffer2.get(data);
-//        ByteBuffer buffer = pixels.asByteBuffer();
-//        for (int i = 0; i < num; i++) {
-//    data[i] = buffer.getInt();
-//}
     }
     void blit(Pixels pixels) {
         System.err.println("BLIT");
@@ -356,9 +327,7 @@ public class HeadlessWindow extends Window {
         int stride = 1000;
         
         IntBuffer intBuffer = (IntBuffer) pixels.getBuffer();
-        System.err.println("offsetX = "+offsetX+", offSetY = "+offsetY+", pw = "+pW+", pH = "+pH);
         
-       // IntBuffer intBuffer = pixels.asByteBuffer().asIntBuffer();
         
         for (int i = 0; i < pixels.getHeight(); i ++) {
             int rowIdx = offsetY + i;
@@ -366,11 +335,9 @@ public class HeadlessWindow extends Window {
                 int idx = rowIdx * stride + offsetX + j;
                 int val = intBuffer.get(i * pixels.getWidth() + j);
                 if (val != 0) {
-             //       System.err.println("add "+val+" to "+idx+" which is ("+i+", "+j+")");
                 }
                 frameBuffer.asIntBuffer().put(idx, val);
             }
         }
-     //   System.err.println("After BLIT, 383348 -> "+frameBuffer.asIntBuffer().get(383348));
     }
 }

@@ -105,7 +105,7 @@ final class GtkRobot extends GlassRobot {
         _mouseWheel(wheelAmt);
     }
 
-    protected native void _mouseWheel(int  wheelAmt);
+    protected native void _mouseWheel(int wheelAmt);
 
     @Override
     public double getMouseX() {

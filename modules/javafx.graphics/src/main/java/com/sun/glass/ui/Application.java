@@ -746,7 +746,6 @@ public abstract class Application {
     public final Optional<Boolean> isKeyLocked(int keyCode) {
         checkEventThread();
         int lockState = _isKeyLocked(keyCode);
-        System.err.println("lockstate for "+keyCode+" is "+lockState);
         switch (lockState) {
             case KeyEvent.KEY_LOCK_OFF:
                 return Optional.of(false);

@@ -73,12 +73,9 @@ public class HeadlessView extends View {
 
     @Override
     protected void _uploadPixels(long ptr, Pixels pixels) {
-        Thread.dumpStack();
         HeadlessWindow window = (HeadlessWindow)this.getWindow();
-        System.err.println("[HV] upload "+pixels.getWidth()+", " + pixels.getHeight()+" and pixelclass = "+pixels.getClass());
         this.pixels = pixels;
         window.blit(pixels);
-        System.err.println("[HV] blit done");
     }
 
     Pixels getPixels() {

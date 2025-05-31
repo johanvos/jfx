@@ -32,7 +32,6 @@ public class HeadlessRobot extends GlassRobot {
 
     public HeadlessRobot(HeadlessApplication application) {
         this.application = application;
-        System.err.println("Created HR, windows = "+ Window.getWindows()+", current = "+activeWindow);
     }
 
     void windowAdded(HeadlessWindow window) {
@@ -101,22 +100,19 @@ public class HeadlessRobot extends GlassRobot {
         if (view == null) return; 
         int wx = activeWindow.getX();
         int wy = activeWindow.getY();
-        System.err.println("MOUSEMOVE to "+x+", "+y+" and wx = "+wx+" and wy = "+wy);
         int modifiers = 0;
         view.notifyMouse(MouseEvent.MOVE, MouseEvent.BUTTON_NONE, (int)mouseX-wx, (int)mouseY-wy, (int)mouseX, (int)mouseY, modifiers, false, false);
     }
 
     @Override
     public void mousePress(MouseButton... buttons) {
-        Thread.dumpStack();
-        System.err.println("PRESS "+Arrays.asList(buttons));
         Application.checkEventThread();
         checkWindowEnterExit();
         HeadlessView view = (HeadlessView)activeWindow.getView();
         if (view == null) { 
             view = (HeadlessView)activeWindow.getView();
             if (view == null) { 
-                System.err.println("no view for this window, return");
+                return;
             }
         }
         int wx = activeWindow.getX();
@@ -128,24 +124,20 @@ public class HeadlessRobot extends GlassRobot {
 
     @Override
     public void mouseRelease(MouseButton... buttons) {
-        Thread.dumpStack();
         Application.checkEventThread();
         checkWindowEnterExit();
         if (this.activeWindow == null) {
-            System.err.println("NO active window, don't process");
             return;
         }
         HeadlessView view = (HeadlessView) activeWindow.getView();
         int wx = activeWindow.getX();
         int wy = activeWindow.getY();
         int modifiers = getModifiers(buttons);
-        System.err.println("MODS2 = "+modifiers);
         view.notifyMouse(MouseEvent.UP, getGlassEventButton(buttons), (int) mouseX - wx, (int) mouseY - wy, (int) mouseX, (int) mouseY, modifiers, true, true);
     }
 
     @Override
     public void mouseWheel(int wheelAmt) {
-        Thread.dumpStack();
         checkWindowFocused();
 //        checkWindowEnterExit();
 
@@ -156,14 +148,11 @@ public class HeadlessRobot extends GlassRobot {
         int wy = activeWindow.getY();
         int repeat = Math.abs(wheelAmt);
         for (int i = 0; i < repeat; i++) {
-            System.err.println("PART "+i+" FROM "+repeat);
 //            this.mouseX = this.mouseX + dff;
 //            this.mouseY = this.mouseY + dff;     
 //            view.notifyMouse(MouseEvent.MOVE, MouseEvent.BUTTON_NONE, (int) mouseX - wx, (int) mouseY - wy, (int) mouseX, (int) mouseY, 0, true, true);
-System.err.println("STARTNOT at "+Thread.currentThread());    
 int mods = 0;
 view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, multiplierX, multiplierY);
-            System.err.println("DONENOT");
         }
     }
 
@@ -220,7 +209,6 @@ view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, 
 
     private void checkActiveWindowExists() {
         if ((this.activeWindow != null) && (!this.activeWindow.isVisible())) {
-            System.err.println("[HR] activeWindow "+Objects.hashCode(this.activeWindow)+" invisible, set null.");
             this.activeWindow = null;
         }
     }
