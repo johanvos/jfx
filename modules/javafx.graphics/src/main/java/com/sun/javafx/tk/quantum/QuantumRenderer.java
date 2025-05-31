@@ -119,9 +119,7 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
         @Override public void run() {
             try {
                 init();
-                System.err.println("[QUANTUMRENDERER] run");
                 work.run();
-                System.err.println("[QUANTUMRENDERER] done run");
             } finally {
                 cleanup();
             }

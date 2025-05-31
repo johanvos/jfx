@@ -165,7 +165,6 @@ public class Window implements EventTarget {
                     @Override
                     public void notifyLocationChanged(
                             Window window, double x, double y) {
-                        System.err.println("[JS WINDOW] loc changed to "+x+", "+y+" for win "+window);
                         window.notifyLocationChanged(x, y);
                     }
 
@@ -227,10 +226,6 @@ public class Window implements EventTarget {
         // necessary for WindowCloseRequestHandler
         initializeInternalEventDispatcher();
         WindowHelper.initHelper(this);
-//        this.x.addListener((obs, o1, o2) -> {
-//            System.err.println("X changed from "+o1+" to "+o2+" for "+this);
-//            Thread.dumpStack();
-//        });
 
     }
 
@@ -556,7 +551,6 @@ public class Window implements EventTarget {
     public final ReadOnlyDoubleProperty xProperty() { return x.getReadOnlyProperty(); }
 
     void setXInternal(double value) {
-     //   Thread.dumpStack();
         x.set(value);
         peerBoundsConfigurator.setX(value, 0);
         xExplicit = true;

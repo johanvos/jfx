@@ -74,7 +74,6 @@ final class UploadingPainter extends ViewPainter {
     }
 
     @Override public void run() {
-        System.err.println("[UPLOADINGPAINTER] run. ssrw = "+sceneState.getRenderWidth());
         renderLock.lock();
 
         boolean errored = false;

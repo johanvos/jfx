@@ -58,12 +58,10 @@ public class HeadlessView extends View {
 
     @Override
     protected void _begin(long ptr) {
-        System.err.println("[HV] begin");
     }
 
     @Override
     protected void _end(long ptr) {
-        System.err.println("[HV] end");
     }
 
     @Override

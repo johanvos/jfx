@@ -291,9 +291,7 @@ public class HeadlessWindow extends Window {
         int mx = lx;// + getX();
         int my = ly;// + getY();
         int idx = 1000*my+mx;
-        System.err.println("GET val for "+idx+"(local: "+lx+", " + ly+"), (global "+mx+", "+my+")");
         int rgba = frameBuffer.asIntBuffer().get(idx);
-        System.err.println("GOT "+rgba);
         int a = (rgba >> 24) & 0xFF;
         int r = (rgba >> 16) & 0xFF;
         int g = (rgba >> 8) & 0xFF;
@@ -319,7 +317,6 @@ public class HeadlessWindow extends Window {
         }
     }
     void blit(Pixels pixels) {
-        System.err.println("BLIT");
         int pW = pixels.getWidth();
         int pH = pixels.getHeight();
         int offsetX = this.getX();
