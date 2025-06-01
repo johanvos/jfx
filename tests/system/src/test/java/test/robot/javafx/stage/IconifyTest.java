@@ -70,7 +70,7 @@ public class IconifyTest extends VisualTestBase {
             Scene bottomScene = new Scene(new Pane(), WIDTH, HEIGHT);
             bottomScene.setFill(BOTTOM_COLOR);
             bottomStage.setScene(bottomScene);
-            bottomStage.setX(0);
+            bottomStage.setX(5);
             bottomStage.setY(0);
             bottomStage.setOnShown(e -> Platform.runLater(bottomShownLatch::countDown));
             bottomStage.show();
@@ -87,7 +87,7 @@ public class IconifyTest extends VisualTestBase {
             topScene.setFill(TOP_COLOR);
             topStage.setScene(topScene);
             topStage.setX(0);
-            topStage.setY(0);
+            topStage.setY(3);
             topStage.setOnShown(e -> Platform.runLater(topShownLatch::countDown));
             topStage.show();
         });
@@ -98,7 +98,9 @@ public class IconifyTest extends VisualTestBase {
         runAndWait(() -> {
             assertFalse(topStage.isIconified());
             Color color = getColor(100, 100);
+System.err.println("TEST TOP 1a");
             assertColorEquals(TOP_COLOR, color, TOLERANCE);
+System.err.println("TEST TOP 1b");
         });
 
         runAndWait(() -> {
@@ -109,7 +111,9 @@ public class IconifyTest extends VisualTestBase {
         runAndWait(() -> {
             assertTrue(topStage.isIconified());
             Color color = getColor(100, 100);
+System.err.println("TEST TOP 2a");
             assertColorEquals(BOTTOM_COLOR, color, TOLERANCE);
+System.err.println("TEST TOP 2b");
         });
 
         runAndWait(() -> {
@@ -120,7 +124,9 @@ public class IconifyTest extends VisualTestBase {
         runAndWait(() -> {
             assertFalse(topStage.isIconified());
             Color color = getColor(100, 100);
+System.err.println("TEST TOP 3a");
             assertColorEquals(TOP_COLOR, color, TOLERANCE);
+System.err.println("TEST TOP 3b");
         });
     }
 

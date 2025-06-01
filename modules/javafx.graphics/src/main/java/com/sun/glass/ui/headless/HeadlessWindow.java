@@ -90,6 +90,10 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _minimize(long ptr, boolean minimize) {
+         notifyResize(minimize ? WindowEvent.MINIMIZE : WindowEvent.RESTORE, width, height);
+//        if (this.robot != null) {
+//            this.robot.windowRemoved(this);
+//        }
         return true;
     }
 
@@ -311,9 +315,8 @@ public class HeadlessWindow extends Window {
         int mx = lx;// + getX();
         int my = ly;// + getY();
         int idx = 1000*my+mx;
-        System.err.println("GET val for "+idx+"(local: "+lx+", " + ly+"), (global "+mx+", "+my+")");
+        System.err.println("GET val on " + this.ptr+" for "+idx+"(local: "+lx+", " + ly+"), (global "+mx+", "+my+")");
         int rgba = frameBuffer.asIntBuffer().get(idx);
-        System.err.println("GOT "+rgba);
         int a = (rgba >> 24) & 0xFF;
         int r = (rgba >> 16) & 0xFF;
         int g = (rgba >> 8) & 0xFF;
@@ -325,6 +328,8 @@ public class HeadlessWindow extends Window {
                 b / 255.0,
                 a / 255.0
         );
+                System.err.println("GOT "+rgba+" = "+color);
+
         return color;
     }
 
@@ -376,7 +381,9 @@ public class HeadlessWindow extends Window {
                 frameBuffer.asIntBuffer().put(idx, val);
             }
         }
-     //   System.err.println("After BLIT, 383348 -> "+frameBuffer.asIntBuffer().get(383348));
+        Color color = this.getColor(100, 100);
+        System.err.println("After BLIT, 100100 -> "+frameBuffer.asIntBuffer().get(100100) + " or clr = "+color);
+
     }
 
     void setRobot(HeadlessRobot activeRobot) {

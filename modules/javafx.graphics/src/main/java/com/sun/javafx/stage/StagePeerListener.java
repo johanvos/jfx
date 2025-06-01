@@ -49,6 +49,8 @@ public class StagePeerListener extends WindowPeerListener {
 
     @Override
     public void changedIconified(boolean iconified) {
+        Thread.dumpStack();
+        System.err.println("STAGEACC = "+stageAccessor);
         stageAccessor.setIconified(stage, iconified);
     }
 

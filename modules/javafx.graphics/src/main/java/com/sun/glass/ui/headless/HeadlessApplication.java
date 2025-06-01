@@ -19,7 +19,7 @@ public class HeadlessApplication extends Application {
 
     private final NestedRunnableProcessor processor = new NestedRunnableProcessor();
     private Screen[] screens = null;
-    private ByteBuffer[] frameBuffer = null;
+//    private ByteBuffer[] frameBuffer = null;
     private HeadlessCursor cursor;
     private HeadlessRobot activeRobot = null;
 
@@ -62,7 +62,8 @@ public class HeadlessApplication extends Application {
 
     @Override
     public Window createWindow(Window owner, Screen screen, int styleMask) {
-        HeadlessWindow window = new HeadlessWindow(owner, screen, frameBuffer[0], styleMask);
+        ByteBuffer frameBuffer = ByteBuffer.allocate(screen.getWidth() * screen.getHeight() * 4);
+        HeadlessWindow window = new HeadlessWindow(owner, screen, frameBuffer, styleMask);
         System.err.println("[HA] created window " + window+", ar = "+this.activeRobot);
         if (this.activeRobot != null) {
             activeRobot.windowAdded(window);
@@ -162,8 +163,8 @@ public class HeadlessApplication extends Application {
             Screen screen = new Screen(0, 32, 0, 0, screenWidth, screenHeight, 0, 0, screenWidth, screenHeight, 0, 0, screenWidth, screenHeight, 100, 100, 1f, 1f, scaleX, scaleY);
             this.screens = new Screen[1];
             this.screens[0] = screen;
-            this.frameBuffer = new ByteBuffer[1];
-            this.frameBuffer[0] = ByteBuffer.allocate(screenWidth * screenHeight * 4);
+//            this.frameBuffer = new ByteBuffer[1];
+//            this.frameBuffer[0] = ByteBuffer.allocate(screenWidth * screenHeight * 4);
         }
         return this.screens;
     }

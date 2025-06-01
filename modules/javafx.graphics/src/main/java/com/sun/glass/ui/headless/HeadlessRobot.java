@@ -174,8 +174,10 @@ view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, 
 
     @Override
     public Color getPixelColor(double x, double y) {
-        checkWindowFocused();
-        return ((HeadlessWindow)activeWindow).getColor((int)x, (int)y);
+        HeadlessWindow topWindow = getTopWindow();
+        return topWindow.getColor((int)x, (int) y);
+//        checkWindowFocused();
+//        return ((HeadlessWindow)activeWindow).getColor((int)x, (int)y);
 //        
 //        HeadlessView view = (HeadlessView) activeWindow.getView();
 //        Pixels pixels = view.getPixels();
@@ -266,6 +268,17 @@ view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, 
         }
     }
 
+    private HeadlessWindow getTopWindow() {
+        List<Window> windows = Window.getWindows().stream()
+                .filter(win -> win.getView() != null)
+                .filter(win -> !win.isClosed())
+                .filter(win -> !win.isMinimized()).toList();
+        System.err.println("GETTOPWIN, candidates are "+windows);
+        if (windows.isEmpty()) return null;
+        if (windows.size() == 1) return (HeadlessWindow)windows.get(0);
+        return (HeadlessWindow)windows.get(windows.size() -1);
+    }
+    
     private HeadlessWindow getFocusedWindow() {
         List<Window> windows = Window.getWindows().stream()
                 .filter(win -> win.getView()!= null)

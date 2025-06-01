@@ -140,6 +140,7 @@ public class Window implements EventTarget {
                     @Override
                     public void setPeer(Window window, TKStage peer) {
                         window.setPeer(peer);
+                        System.err.println("WINDOW: setPeer for "+window + " to "+peer);
                     }
 
                     @Override
@@ -269,6 +270,7 @@ public class Window implements EventTarget {
     }
 
     void setPeer(TKStage peer) {
+        System.err.println("WINDOW setPEER for "+this+" to "+peer);
         this.peer = peer;
     }
 

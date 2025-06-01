@@ -495,6 +495,7 @@ public class WindowStage extends GlassStage {
             // platformWindow can be null here, if this window is owned,
             // and its owner is being closed.
             if (platformWindow != null) {
+                System.err.println("[WINDOWSTAGE] setvisible for this = "+this+" and pw = "+platformWindow+" to " + visible);
                 platformWindow.setVisible(visible);
             }
             super.setVisible(visible);
@@ -532,10 +533,14 @@ public class WindowStage extends GlassStage {
     }
 
     @Override public void setIconified(boolean iconified) {
+        System.err.println("WINDOWSTAGE, setIconified to "+iconified+" for "+this+" and pw = "+platformWindow);
         if (platformWindow.isMinimized() == iconified) {
+            System.err.println("that was already the case");
             return;
         }
         platformWindow.minimize(iconified);
+                System.err.println("WINDOWSTAGE, setIconified DONE to "+iconified+" for "+this+" and pw = "+platformWindow);
+
     }
 
     @Override public void setMaximized(boolean maximized) {
