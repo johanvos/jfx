@@ -82,6 +82,7 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _minimize(long ptr, boolean minimize) {
+        notifyResize(minimize ? WindowEvent.MINIMIZE : WindowEvent.RESTORE, width, height);
         return true;
     }
 

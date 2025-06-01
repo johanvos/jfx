@@ -162,30 +162,8 @@ view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, 
 
     @Override
     public Color getPixelColor(double x, double y) {
-        checkWindowFocused();
-        return ((HeadlessWindow)activeWindow).getColor((int)x, (int)y);
-//        
-//        HeadlessView view = (HeadlessView) activeWindow.getView();
-//        Pixels pixels = view.getPixels();
-//        System.err.println("[HR] getPixelColor for x = "+x+", y = "+y+" and pixels w = "+pixels.getWidth()+" and h = "+pixels.getHeight());
-//        IntBuffer buffer = (IntBuffer) pixels.getBuffer();
-//
-//        int x0 = (int) x;
-//        int y0 = (int) y;
-//        int idx = y0 * pixels.getWidth() + x0;
-//        int rgba = buffer.get(idx);
-//        int a = (rgba >> 24) & 0xFF;
-//        int r = (rgba >> 16) & 0xFF;
-//        int g = (rgba >> 8) & 0xFF;
-//        int b = rgba & 0xFF;
-//
-//        Color color = Color.color(
-//                r / 255.0,
-//                g / 255.0,
-//                b / 255.0,
-//                a / 255.0
-//        );
-//        return color;
+        HeadlessWindow topWindow = getTopWindow();
+        return topWindow.getColor((int)x, (int) y);
     }
 
     @Override
@@ -197,18 +175,6 @@ view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, 
     public void getScreenCapture(int x, int y, int width, int height, int[] data, boolean scaleToFit) {
         checkWindowFocused();
         ((HeadlessWindow)activeWindow).getScreenCapture(x, y, width, height, data, scaleToFit);
-//        activeWindow.getS
-//        checkWindowFocused();
-//        HeadlessView view = (HeadlessView) activeWindow.getView();
-//        Pixels pixels = view.getPixels();
-//        System.err.println("[ROBOT] GCC, x = "+x+", y = " +y+", w = "+width+", h = "+height+", dsize = "+data.length+", winx = "+activeWindow.getX());
-//        System.err.println("[ROBOT] pixels with size "+pixels.getWidth()+" h = "+pixels.getHeight()); // +" and buff = "+pixels.asByteBuffer().remaining());
-//        int num = width * height/4;
-//        Buffer buffer = pixels.getBuffer();
-//        System.err.println("GOT buffer: "+buffer);
-//        IntBuffer buffer2 = (IntBuffer) buffer.duplicate(); // preserve original
-//buffer2.position(0);
-//buffer2.get(data);
     }
 
     private void checkActiveWindowExists() {
@@ -253,6 +219,16 @@ view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, 
         }
     }
 
+    private HeadlessWindow getTopWindow() {
+        List<Window> windows = Window.getWindows().stream()
+                .filter(win -> win.getView() != null)
+                .filter(win -> !win.isClosed())
+                .filter(win -> !win.isMinimized()).toList();
+        if (windows.isEmpty()) return null;
+        if (windows.size() == 1) return (HeadlessWindow)windows.get(0);
+        return (HeadlessWindow)windows.get(windows.size() -1);
+    }
+
     private HeadlessWindow getFocusedWindow() {
         List<Window> windows = Window.getWindows().stream()
                 .filter(win -> win.getView()!= null)
@@ -264,7 +240,6 @@ view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, 
     }
 
     private HeadlessWindow getTargetWindow(double x, double y) {
-        System.err.println("GTW for x = "+x+", y = "+y+" and windows = "+ Window.getWindows()+", current = "+activeWindow);
         List<Window> windows = Window.getWindows().stream()
                 .filter(win -> win.getView()!= null)
                 .filter(win -> !win.isClosed())
