@@ -36,7 +36,7 @@ public class HeadlessWindow extends Window {
     private IntBuffer screenBuffer;
     private final ByteBuffer frameBuffer;
     private HeadlessView currentView;
-
+    private HeadlessRobot robot;
     public HeadlessWindow(Window owner, Screen screen, ByteBuffer frameBuffer, int styleMask) {
         super(owner, screen, styleMask);
         this.frameBuffer = frameBuffer;
@@ -53,6 +53,9 @@ public class HeadlessWindow extends Window {
     protected boolean _close(long ptr) {
         this.closed = true;
         this.notifyDestroy();
+        if (this.robot != null) {
+             this.robot.windowRemoved(this);
+        }
         return true;
     }
 
@@ -336,5 +339,9 @@ public class HeadlessWindow extends Window {
                 frameBuffer.asIntBuffer().put(idx, val);
             }
         }
+    }
+
+    void setRobot(HeadlessRobot activeRobot) {
+        this.robot = activeRobot;
     }
 }

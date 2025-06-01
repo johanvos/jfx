@@ -38,6 +38,10 @@ public class HeadlessRobot extends GlassRobot {
         if (this.activeWindow == null) activeWindow = window;
     }
 
+    void windowRemoved(HeadlessWindow window) {
+        if (this.activeWindow == window) activeWindow = null;
+    }
+
     @Override
     public void create() {
     }
