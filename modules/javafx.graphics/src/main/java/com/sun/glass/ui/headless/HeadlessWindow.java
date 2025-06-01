@@ -36,11 +36,12 @@ public class HeadlessWindow extends Window {
     private IntBuffer screenBuffer;
     private final ByteBuffer frameBuffer;
     private HeadlessView currentView;
+    private HeadlessRobot robot;
 
     public HeadlessWindow(Window owner, Screen screen, ByteBuffer frameBuffer, int styleMask) {
         super(owner, screen, styleMask);
         this.frameBuffer = frameBuffer;
-//        Thread.dumpStack();
+        Thread.dumpStack();
 //        notifyResizeAndMove(1,1,100,100);
 //        System.err.println("[HW] x = "+getX()+", screen = " + screen+" with screenw = "+screen.getWidth()+", this = "+this);
         screenBuffer = IntBuffer.allocate(screen.getWidth() * screen.getHeight());
@@ -54,10 +55,14 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _close(long ptr) {
-        System.err.println("[HW] CLOSE "+this);
+        System.err.println("[HW] HWCLOSE "+this+", robot = "+this.robot);
         Thread.dumpStack();
         this.closed = true;
         this.notifyDestroy();
+        if (this.robot != null) {
+            this.robot.windowRemoved(this);
+        }
+        System.err.println("[HW] HWCLOSEDONE ");
         return true;
     }
 
@@ -372,5 +377,9 @@ public class HeadlessWindow extends Window {
             }
         }
      //   System.err.println("After BLIT, 383348 -> "+frameBuffer.asIntBuffer().get(383348));
+    }
+
+    void setRobot(HeadlessRobot activeRobot) {
+        this.robot = activeRobot;
     }
 }

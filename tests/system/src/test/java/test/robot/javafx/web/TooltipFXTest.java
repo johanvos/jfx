@@ -158,11 +158,23 @@ public class TooltipFXTest {
         Util.sleep(TOOLTIP_SLEEP_TIME);
 
         Util.runAndWait(() -> {
+System.err.println("STAGETOHIDE!");
             stageToHide.hide();
+System.err.println("STAGETOHIDE DONE!");
             stageToHide = null;
             scene = null;
         });
 
+System.err.println("ALMOST COLLECT");
+try {
+Thread.sleep(500);
+} catch (Throwable t) {
+t.printStackTrace();
+}
+System.err.println("COLLECTing");
         JMemoryBuddy.assertCollectable(webViewRef);
+System.err.println("COLLECTED");
+System.err.println("SLEPT");
+
     }
 }

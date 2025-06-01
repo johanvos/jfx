@@ -62,9 +62,26 @@ public class HeadlessApplication extends Application {
 
     @Override
     public Window createWindow(Window owner, Screen screen, int styleMask) {
-        HeadlessWindow answer = new HeadlessWindow(owner, screen, frameBuffer[0], styleMask);
-        if (this.activeRobot != null) activeRobot.windowAdded(answer);
-        return answer;
+        HeadlessWindow window = new HeadlessWindow(owner, screen, frameBuffer[0], styleMask);
+        System.err.println("[HA] created window " + window+", ar = "+this.activeRobot);
+        if (this.activeRobot != null) {
+            activeRobot.windowAdded(window);
+            window.setRobot(this.activeRobot);
+        }
+        return window;
+    }
+
+    @Override
+    public boolean shouldUpdateWindow() {
+                Thread.dumpStack();
+
+        return super.shouldUpdateWindow(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+
+    @Override
+    protected void notifyWillHide() {        Thread.dumpStack();
+
+        super.notifyWillHide(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
     }
 
     @Override

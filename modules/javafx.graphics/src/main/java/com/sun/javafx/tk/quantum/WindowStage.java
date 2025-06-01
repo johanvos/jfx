@@ -714,6 +714,7 @@ public class WindowStage extends GlassStage {
         super.close();
         QuantumToolkit.runWithRenderLock(() -> {
             // prevents closing a closed platform window
+            System.err.println("PLATWIN = "+platformWindow);
             if (platformWindow != null) {
                 platformWindows.remove(platformWindow);
                 if (isClosePostponed) {
@@ -736,6 +737,7 @@ public class WindowStage extends GlassStage {
     // closed notification. This state is necessary to prevent the platform
     // window from being closed more than once.
     void setPlatformWindowClosed() {
+        Thread.dumpStack();
         if (platformWindow != null) {
             platformWindows.remove(platformWindow);
             platformWindow = null;

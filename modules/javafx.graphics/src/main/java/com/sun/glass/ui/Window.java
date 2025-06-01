@@ -1159,6 +1159,7 @@ public abstract class Window {
     }
 
     public void setEventHandler(EventHandler eventHandler) {
+        Thread.dumpStack();
         Application.checkEventThread();
         this.eventHandler = eventHandler;
     }
@@ -1279,7 +1280,7 @@ public abstract class Window {
         if (Application.GetApplication() == null) {
             return false;
         }
-
+        System.err.println("shouldhandle? eh = "+eventHandler);
         return this.eventHandler != null;
     }
 

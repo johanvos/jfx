@@ -48,9 +48,15 @@ class GlassWindowEventHandler extends Window.EventHandler implements Supplier<Vo
 
     @Override
     public Void get() {
+        Thread.dumpStack();
+        System.err.println("STAGE = "+stage);
+        if (stage != null) {
+            System.err.println("SL = "+ stage.stageListener);
+        }
         if (stage == null || stage.stageListener == null) {
             return null;
         }
+        System.err.println("TYPE = "+type+", stage = "+stage+", sl = "+stage.stageListener);
         switch (type) {
             case WindowEvent.MINIMIZE:
                 stage.stageListener.changedIconified(true);

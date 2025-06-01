@@ -39,6 +39,11 @@ public class HeadlessRobot extends GlassRobot {
         if (this.activeWindow == null) activeWindow = window;
     }
 
+    void windowRemoved(HeadlessWindow window) {
+        System.err.println("[HR] windowRemoved, activewindow = "+(this.activeWindow == null ? "NULL": this.activeWindow.getNativeHandle())+" and removed one = "+window.getNativeHandle());
+        if (this.activeWindow == window) activeWindow = null;
+    }
+
     @Override
     public void create() {
     }

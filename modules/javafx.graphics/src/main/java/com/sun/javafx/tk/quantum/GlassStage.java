@@ -71,6 +71,8 @@ abstract class GlassStage implements TKStage {
      * @param listener The listener provided by the stage
      */
     @Override public void setTKStageListener(final TKStageListener listener) {
+        System.err.println("SETTKSTAGELISTENER to "+listener);
+        Thread.dumpStack();
         this.stageListener = listener;
     }
 
