@@ -1255,6 +1255,7 @@ public abstract class Window {
     }
 
     protected void notifyFocus(int event) {
+        Thread.dumpStack();
         final boolean focused = event != WindowEvent.FOCUS_LOST;
 
         if (this.isFocused != focused) {
@@ -1264,10 +1265,12 @@ public abstract class Window {
     }
 
     protected void notifyFocusDisabled() {
+        Thread.dumpStack();
         handleWindowEvent(System.nanoTime(), WindowEvent.FOCUS_DISABLED);
     }
 
     protected void notifyFocusUngrab() {
+        Thread.dumpStack();
         handleWindowEvent(System.nanoTime(), WindowEvent.FOCUS_UNGRAB);
     }
 

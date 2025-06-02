@@ -138,6 +138,7 @@ class ViewScene extends GlassScene {
 
         if (!setPainting(true)) {
             Toolkit tk = Toolkit.getToolkit();
+            Thread.dumpStack();
             tk.addRenderJob(paintRenderJob);
         }
     }

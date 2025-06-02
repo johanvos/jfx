@@ -18,10 +18,12 @@ import java.nio.IntBuffer;
 public class HeadlessApplication extends Application {
 
     private final NestedRunnableProcessor processor = new NestedRunnableProcessor();
+    private final HeadlessWindowManager windowManager = new HeadlessWindowManager();
     private Screen[] screens = null;
 //    private ByteBuffer[] frameBuffer = null;
     private HeadlessCursor cursor;
     private HeadlessRobot activeRobot = null;
+        ByteBuffer frameBuffer;// = ByteBuffer.allocate(screen.getWidth() * screen.getHeight() * 4);
 
     private final int MULTICLICK_MAX_X = 20;
     private final int MULTICLICK_MAX_Y = 20;
@@ -62,8 +64,7 @@ public class HeadlessApplication extends Application {
 
     @Override
     public Window createWindow(Window owner, Screen screen, int styleMask) {
-        ByteBuffer frameBuffer = ByteBuffer.allocate(screen.getWidth() * screen.getHeight() * 4);
-        HeadlessWindow window = new HeadlessWindow(owner, screen, frameBuffer, styleMask);
+        HeadlessWindow window = new HeadlessWindow(windowManager, owner, screen, frameBuffer, styleMask);
         System.err.println("[HA] created window " + window+", ar = "+this.activeRobot);
         if (this.activeRobot != null) {
             activeRobot.windowAdded(window);
@@ -163,6 +164,8 @@ public class HeadlessApplication extends Application {
             Screen screen = new Screen(0, 32, 0, 0, screenWidth, screenHeight, 0, 0, screenWidth, screenHeight, 0, 0, screenWidth, screenHeight, 100, 100, 1f, 1f, scaleX, scaleY);
             this.screens = new Screen[1];
             this.screens[0] = screen;
+            this.frameBuffer = ByteBuffer.allocate(screen.getWidth() * screen.getHeight() * 4);
+
 //            this.frameBuffer = new ByteBuffer[1];
 //            this.frameBuffer[0] = ByteBuffer.allocate(screenWidth * screenHeight * 4);
         }

@@ -39,6 +39,7 @@ final class PresentingPainter extends ViewPainter {
 
     PresentingPainter(ViewScene view) {
         super(view);
+        System.err.println("PresentingPainter created for "+this);
     }
 
     @Override public void run() {

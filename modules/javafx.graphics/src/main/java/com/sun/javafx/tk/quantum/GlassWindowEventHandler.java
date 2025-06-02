@@ -171,8 +171,9 @@ class GlassWindowEventHandler extends Window.EventHandler implements Supplier<Vo
     public void handleWindowEvent(final Window window, final long time, final int type) {
         this.window = window;
         this.type = type;
-
+        System.err.println("[GWEH] start handling "+type);
         QuantumToolkit.runWithoutRenderLock(this);
+        System.err.println("[GWEH] done handling "+type);
     }
 
     @Override

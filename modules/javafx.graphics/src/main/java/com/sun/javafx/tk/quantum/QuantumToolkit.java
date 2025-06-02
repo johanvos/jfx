@@ -133,9 +133,9 @@ import java.util.Optional;
 
 public final class QuantumToolkit extends Toolkit {
 
-    public static final boolean verbose = Boolean.getBoolean("quantum.verbose");
+    public static final boolean verbose = true; //Boolean.getBoolean("quantum.verbose");
 
-    public static final boolean pulseDebug = Boolean.getBoolean("quantum.pulse");
+    public static final boolean pulseDebug = true; //Boolean.getBoolean("quantum.pulse");
 
     private static final boolean multithreaded = ((Supplier<Boolean>) () -> {
         // If it is not specified, or it is true, then it should

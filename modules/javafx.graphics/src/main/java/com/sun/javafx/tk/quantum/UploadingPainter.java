@@ -50,6 +50,7 @@ final class UploadingPainter extends ViewPainter {
 
     UploadingPainter(GlassScene view) {
         super(view);
+        System.err.println("UPLOADINGPAINTER created for "+view);
     }
 
     void disposeRTTexture() {

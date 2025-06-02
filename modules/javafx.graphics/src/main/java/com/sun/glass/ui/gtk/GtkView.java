@@ -78,6 +78,7 @@ final class GtkView extends View {
 
     @Override
     protected void _uploadPixels(long ptr, Pixels pixels) {
+        System.err.println("[GTKVIEW] upload pixels, ptr = "+ptr+", pixels = "+pixels);
         Buffer data = pixels.getPixels();
         if (data.isDirect() == true) {
             _uploadPixelsDirect(ptr, data, pixels.getWidth(), pixels.getHeight());

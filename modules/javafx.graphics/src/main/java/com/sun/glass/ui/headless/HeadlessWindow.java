@@ -17,6 +17,7 @@ public class HeadlessWindow extends Window {
 
     private static final AtomicInteger ptrCount = new AtomicInteger(0);
     private long ptr;
+    private final HeadlessWindowManager windowManager;
     
     private int minWidth;
     private int minHeight;
@@ -38,9 +39,10 @@ public class HeadlessWindow extends Window {
     private HeadlessView currentView;
     private HeadlessRobot robot;
 
-    public HeadlessWindow(Window owner, Screen screen, ByteBuffer frameBuffer, int styleMask) {
+    public HeadlessWindow(HeadlessWindowManager wm, Window owner, Screen screen, ByteBuffer frameBuffer, int styleMask) {
         super(owner, screen, styleMask);
         this.frameBuffer = frameBuffer;
+        this.windowManager = wm;
         Thread.dumpStack();
 //        notifyResizeAndMove(1,1,100,100);
 //        System.err.println("[HW] x = "+getX()+", screen = " + screen+" with screenw = "+screen.getWidth()+", this = "+this);
@@ -90,7 +92,14 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _minimize(long ptr, boolean minimize) {
-         notifyResize(minimize ? WindowEvent.MINIMIZE : WindowEvent.RESTORE, width, height);
+        int cx = this.x;
+        int cy = this.y;
+        int cw = this.width;
+        int ch = this.height;
+
+        notifyResize(minimize ? WindowEvent.MINIMIZE : WindowEvent.RESTORE, width, height);
+        windowManager.repaintAll();
+     //   ((HeadlessView) this.getView()).notifyRepaint(cx, cy, cw, ch);
 //        if (this.robot != null) {
 //            this.robot.windowRemoved(this);
 //        }

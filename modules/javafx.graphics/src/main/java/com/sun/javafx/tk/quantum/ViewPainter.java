@@ -124,6 +124,7 @@ abstract class ViewPainter implements Runnable {
     private RTTexture sceneBuffer;
 
     protected ViewPainter(GlassScene gs) {
+        System.err.println("ViewPainter created for "+gs);
         sceneState = gs.getSceneState();
         if (sceneState == null) {
             throw new NullPointerException("Scene state is null");

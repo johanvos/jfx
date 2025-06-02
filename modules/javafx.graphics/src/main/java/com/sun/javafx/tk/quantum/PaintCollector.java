@@ -205,6 +205,7 @@ final class PaintCollector implements CompletionListener {
 
         if (QuantumToolkit.verbose) {
             System.err.println("PC.addDirtyScene: " + System.nanoTime() + scene);
+            Thread.dumpStack();
         }
 
         // Because dirtyScenes is ever only accessed from the FX Thread,
@@ -342,6 +343,7 @@ final class PaintCollector implements CompletionListener {
      * we have. This method is only called on the FX thread.
      */
     final void renderAll() {
+        System.err.println("[PC] renderAll");
         // Ensure we're called only from the FX thread
         assert Thread.currentThread() == QuantumToolkit.getFxUserThread();
 
