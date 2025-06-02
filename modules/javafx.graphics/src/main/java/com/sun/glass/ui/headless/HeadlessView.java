@@ -53,7 +53,7 @@ public class HeadlessView extends View {
 
     @Override
     protected void _scheduleRepaint(long ptr) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -115,6 +115,11 @@ public class HeadlessView extends View {
     @Override
     protected void notifyKey(int type, int keyCode, char[] keyChars, int modifiers) {
         super.notifyKey(type, keyCode, keyChars, modifiers);
+    }
+
+    @Override
+    protected void notifyRepaint(int x, int y, int width, int height) {
+        super.notifyRepaint(x, y, width, height);
     }
 
 }
