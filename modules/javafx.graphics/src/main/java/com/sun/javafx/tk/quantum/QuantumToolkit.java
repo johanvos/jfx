@@ -589,8 +589,11 @@ public final class QuantumToolkit extends Toolkit {
             } else {
                 animationRunning.set(false);
             }
+            System.err.println("[PULSE] fire");
             firePulse();
+            System.err.println("[PULSE] fired, now collect");
             if (collect) collector.renderAll();
+            System.err.println("[PULSE] collected");
         } finally {
             inPulse--;
             if (PULSE_LOGGING_ENABLED) {
@@ -1579,7 +1582,8 @@ public final class QuantumToolkit extends Toolkit {
 
             @Override
             public void run() {
-
+Thread.dumpStack();
+                System.err.println("JAAAA");
                 ResourceFactory rf = GraphicsPipeline.getDefaultResourceFactory();
 
                 if (!rf.isDeviceReady()) {

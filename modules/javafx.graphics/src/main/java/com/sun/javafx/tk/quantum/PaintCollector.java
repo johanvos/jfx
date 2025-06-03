@@ -430,7 +430,7 @@ final class PaintCollector implements CompletionListener {
             // don't want to do this until all the dirty scenes have been
             // processed.
             allWorkCompletedLatch = new CountDownLatch(dirtyScenes.size());
-
+            System.err.println("[PC] repaint, dirtyScenes = "+dirtyScenes);
             for (final GlassScene gs : dirtyScenes) {
                 // Only post the vsync hint if there are synchronous scenes
                 if (!needsHint) {
@@ -446,6 +446,8 @@ final class PaintCollector implements CompletionListener {
                     t.printStackTrace();
                 }
             }
+            System.err.println("[PC] repaint done, dirtyScenes = "+dirtyScenes);
+
         }
 
         dirtyScenes.clear();

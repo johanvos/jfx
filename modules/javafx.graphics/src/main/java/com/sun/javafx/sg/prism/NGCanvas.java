@@ -554,6 +554,7 @@ public class NGCanvas extends NGNode {
     }
 
     private static void runOnRenderThread(final Runnable r) {
+        Thread.dumpStack();
         // We really need a standard mechanism to detect the render thread !
         if (Thread.currentThread().getName().startsWith("QuantumRenderer")) {
             r.run();

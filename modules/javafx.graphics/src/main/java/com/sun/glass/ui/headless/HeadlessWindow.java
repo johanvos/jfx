@@ -34,7 +34,7 @@ public class HeadlessWindow extends Window {
     private float alpha;
     private Pixels icon;
     private Cursor cursor;
-    private IntBuffer screenBuffer;
+
     private final ByteBuffer frameBuffer;
     private HeadlessView currentView;
     private HeadlessRobot robot;
@@ -46,7 +46,6 @@ public class HeadlessWindow extends Window {
         Thread.dumpStack();
 //        notifyResizeAndMove(1,1,100,100);
 //        System.err.println("[HW] x = "+getX()+", screen = " + screen+" with screenw = "+screen.getWidth()+", this = "+this);
-        screenBuffer = IntBuffer.allocate(screen.getWidth() * screen.getHeight());
     }
 
     @Override
@@ -143,7 +142,7 @@ public class HeadlessWindow extends Window {
     protected void _setBounds(long ptr, int x, int y, boolean xSet, boolean ySet, int w, int h, int cw, int ch, float xGravity, float yGravity) {
 //        Thread.dumpStack();
 
-//        System.err.println("[HW] setBounds, x = "+x);
+        System.err.println("[HW] setBounds, w = "+w+" and cw = " + cw+" and getwidth = "+getWidth());
         int newWidth = w > 0 ? w : cw > 0 ? cw : getWidth();
         int newHeight = h > 0 ? h : ch > 0 ? ch : getHeight();
         if (!xSet) {
@@ -160,8 +159,15 @@ public class HeadlessWindow extends Window {
         }
         newWidth = Math.max(newWidth, minWidth);
         newHeight = Math.max(newHeight, minHeight);
+        if (newWidth < getWidth()) {
+            System.err.println("SHRINKED width ! from "+getWidth()+" to "+ newWidth);
+            clearRect(getX() + newWidth,getWidth() - newWidth, getY(), getHeight());
+        } 
+        if (newHeight < getHeight()) {
+            System.err.println("SHRINKED height! from "+getHeight()+" to "+ newHeight);
+            clearRect(getX() ,getWidth(), getY() + newHeight, getHeight() - newHeight);
+        }
         notifyResizeAndMove(x, y, newWidth, newHeight);
-        screenBuffer = IntBuffer.allocate(getWidth() * getHeight());
     }
 
     @Override
@@ -368,6 +374,19 @@ public class HeadlessWindow extends Window {
 //    data[i] = buffer.getInt();
 //}
     }
+
+    void clearRect(int x0, int w0, int y0, int h0) {
+        System.err.println("CLEAR: "+x0+", "+y0+"wh = "+w0+", "+h0);
+        int stride = 1000;
+        for (int i = 0; i < h0; i++) {
+            int rowIdx = y0 + i;
+            for (int j = 0; j < w0; j++) {
+                int idx = rowIdx * stride + x0 + j;
+                frameBuffer.asIntBuffer().put(idx, 0);
+            }
+        }
+    }
+
     void blit(Pixels pixels) {
         System.err.println("BLIT");
         int pW = pixels.getWidth();
@@ -392,8 +411,8 @@ public class HeadlessWindow extends Window {
                 frameBuffer.asIntBuffer().put(idx, val);
             }
         }
-        Color color = this.getColor(100, 100);
-        System.err.println("After BLIT, 100100 -> "+frameBuffer.asIntBuffer().get(100100) + " or clr = "+color);
+        Color color = this.getColor(150, 290);
+        System.err.println("After BLIT, 150290 -> "+frameBuffer.asIntBuffer().get(150290) + " or clr = "+color);
 
     }
 
