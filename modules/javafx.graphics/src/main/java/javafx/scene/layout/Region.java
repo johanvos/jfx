@@ -3214,7 +3214,7 @@ public class Region extends Parent {
      */
     private void doPickNodeLocal(PickRay pickRay, PickResultChooser result) {
          double boundsDistance = NodeHelper.intersectsBounds(this, pickRay);
-
+        System.err.println("[REGION], boundsdist = "+boundsDistance);
         if (!Double.isNaN(boundsDistance) && ParentHelper.pickChildrenNode(this, pickRay, result)) {
             NodeHelper.intersects(this, pickRay, result);
         }

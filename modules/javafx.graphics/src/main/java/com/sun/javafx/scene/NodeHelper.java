@@ -111,6 +111,7 @@ public abstract class NodeHelper {
 
     public static void pickNodeLocal(Node node, PickRay localPickRay,
             PickResultChooser result) {
+        System.err.println("[NHL] node = "+node+" and helper = "+getHelper(node));
         getHelper(node).pickNodeLocalImpl(node, localPickRay, result);
     }
 
@@ -158,6 +159,8 @@ public abstract class NodeHelper {
 
     protected void pickNodeLocalImpl(Node node, PickRay localPickRay,
             PickResultChooser result) {
+        System.err.println("[NH] node = "+node+" and accessor = "+nodeAccessor);
+        Thread.dumpStack();
         nodeAccessor.doPickNodeLocal(node, localPickRay, result);
     }
 
@@ -245,6 +248,7 @@ public abstract class NodeHelper {
     }
 
     public static double intersectsBounds(Node node, PickRay pickRay) {
+        System.err.println("[NHIB] accessor = "+nodeAccessor+" and node = "+node+" and pr = "+pickRay);
         return nodeAccessor.intersectsBounds(node, pickRay);
     }
 

@@ -5237,7 +5237,7 @@ public abstract sealed class Node
      * The result argument is used for storing the picking result.
      */
     final void pickNode(PickRay pickRay, PickResultChooser result) {
-
+        System.err.println("[NODE] picknode1, pickray = "+pickRay);
         // In some conditions we can omit picking this node or subgraph
         if (!isVisible() || isDisable() || isMouseTransparent()) {
             return;
@@ -5251,7 +5251,7 @@ public abstract sealed class Node
         final double dx = d.x;
         final double dy = d.y;
         final double dz = d.z;
-
+        System.err.println("[NODE] picknode2");
         updateLocalToParentTransform();
         try {
             localToParentTx.inverseTransform(o, o);
@@ -5261,6 +5261,7 @@ public abstract sealed class Node
             // actually does the pick. The implementation is markedly different
             // for leaf nodes vs. parent nodes vs. region nodes.
             NodeHelper.pickNodeLocal(this, pickRay, result);
+                    System.err.println("[NODE] picknode3, res = "+result);
         } catch (NoninvertibleTransformException e) {
             // in this case we just don't pick anything
         }

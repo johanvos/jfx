@@ -83,6 +83,8 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected void _updateViewSize(long ptr) {
+        System.err.println("[HW] UPDATEVIEWSIZE for "+ptr+" and w = "+width+" and h = "+height+" and gw = "+getWidth());
+        currentView.notifyResize(width, height);
     }
 
     @Override

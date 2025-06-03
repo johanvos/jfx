@@ -101,6 +101,7 @@ public class RegionHelper extends ParentHelper {
     @Override
     protected void pickNodeLocalImpl(Node node, PickRay localPickRay,
             PickResultChooser result) {
+        System.err.println("[RG] ra = "+regionAccessor);
         regionAccessor.doPickNodeLocal(node, localPickRay, result);
     }
 

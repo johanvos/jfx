@@ -881,9 +881,11 @@ public abstract non-sealed class Parent extends Node {
      */
     private void doPickNodeLocal(PickRay pickRay, PickResultChooser result) {
          double boundsDistance = intersectsBounds(pickRay);
-
+        System.err.println("[PARENT] bd = "+boundsDistance);
         if (!Double.isNaN(boundsDistance) && pickChildrenNode(pickRay, result)) {
+        System.err.println("[PARENT] bd2 = "+boundsDistance);
             if (isPickOnBounds()) {
+        System.err.println("[PARENT] bd3 = "+boundsDistance);
                 result.offer(this, boundsDistance, PickResultChooser.computePoint(pickRay, boundsDistance));
             }
         }

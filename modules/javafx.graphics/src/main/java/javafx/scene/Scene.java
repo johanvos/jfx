@@ -985,6 +985,7 @@ public class Scene implements EventTarget {
     private ReadOnlyDoubleWrapper width;
 
     private final void setWidth(double value) {
+        Thread.dumpStack();
         widthPropertyImpl().set(value);
     }
 
@@ -1150,18 +1151,22 @@ public class Scene implements EventTarget {
 
     Camera getEffectiveCamera() {
         final Camera cam = getCamera();
+//        System.err.println("[CAM]0 "+cam);
         if (cam == null
                 || (cam instanceof PerspectiveCamera
                 && !Platform.isSupported(ConditionalFeature.SCENE3D))) {
+            System.err.println("[CAM] defaultCamera = "+defaultCamera);
             if (defaultCamera == null) {
                 defaultCamera = new ParallelCamera();
+                System.err.println("[CAM] create new cam: "+ defaultCamera+" and w = "+getWidth());
                 defaultCamera.setOwnerScene(this);
                 defaultCamera.setViewWidth(getWidth());
                 defaultCamera.setViewHeight(getHeight());
             }
+        System.err.println("[CAM] return "+defaultCamera+", w = "+defaultCamera.getViewWidth()+", h = "+defaultCamera.getViewHeight());
             return defaultCamera;
         }
-
+//        System.err.println("[CAM] return w = "+cam.getViewWidth()+", h = "+cam.getViewHeight());
         return cam;
     }
 
@@ -2112,12 +2117,14 @@ public class Scene implements EventTarget {
     }
 
     private void pick(TargetWrapper target, final double x, final double y) {
+        System.err.println("[SCENE] pick, x = "+x+", y = " + y);
         final PickRay pickRay = getEffectiveCamera().computePickRay(
                 x, y, null);
-
+        System.err.println("[SCENE] created pickray: "+ pickRay);
         final double mag = pickRay.getDirectionNoClone().length();
         pickRay.getDirectionNoClone().normalize();
         final PickResult res = mouseHandler.pickNode(pickRay);
+        System.err.println("[SCENE] PICK result for x = "+x+", y = " + y+" = "+res);
         if (res != null) {
             target.setNodeResult(res);
         } else {
@@ -3937,7 +3944,7 @@ public class Scene implements EventTarget {
 
             cursorScreenPos = new Point2D(e.getScreenX(), e.getScreenY());
             cursorScenePos = new Point2D(e.getSceneX(), e.getSceneY());
-
+            System.err.println("[SCENE] PROCESS me, screenpos = "+cursorScreenPos+", scenepos = "+cursorScenePos);
             boolean gestureStarted = false;
             if (!onPulse) {
                 if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
@@ -3966,9 +3973,11 @@ public class Scene implements EventTarget {
                 backButtonDown = e.isBackButtonDown();
                 forwardButtonDown = e.isForwardButtonDown();
             }
-
+            System.err.println("[SCENE] process, pick now");
             pick(tmpTargetWrapper, e.getSceneX(), e.getSceneY());
+            System.err.println("[SCENE] process, picked");
             PickResult res = tmpTargetWrapper.getResult();
+            System.err.println("PICKRESULT = "+res);
             if (res != null) {
                 e = new MouseEvent(e.getEventType(), e.getSceneX(), e.getSceneY(),
                     e.getScreenX(), e.getScreenY(), e.getButton(), e.getClickCount(),
@@ -3988,7 +3997,8 @@ public class Scene implements EventTarget {
             } else {
                 target = tmpTargetWrapper;
             }
-
+            System.err.println("[SCENE] process, target = "+target+" and gestureStarted = "+gestureStarted  + " and pdrInP = "+pdrInProgress);
+            
             if (gestureStarted) {
                 pdrEventTarget.copy(target);
                 pdrEventTarget.fillHierarchy(pdrEventTargets);
@@ -4009,7 +4019,7 @@ public class Scene implements EventTarget {
             if (fullPDREntered && e.getEventType() == MouseEvent.MOUSE_RELEASED) {
                 processFullPDR(e, onPulse);
             }
-
+            System.err.println("[SCENE] now target.getEventTarget = "+target.getEventTarget());
             if (target.getEventTarget() != null) {
                 if (e.getEventType() != MouseEvent.MOUSE_ENTERED
                         && e.getEventType() != MouseEvent.MOUSE_EXITED

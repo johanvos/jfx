@@ -60,17 +60,26 @@ public class SetSceneScalingTest {
         private final int HEIGHT = 400;
 
         protected void testButtonClick() {
+ int mx = (int)(stage.getX() + stage.getScene().getX()) + (WIDTH / 2);
+System.err.println("[TEST] tbc 1, x = " + mx);
             robot.mouseMove((int)(stage.getX() + stage.getScene().getX()) + (WIDTH / 2),
                             (int)(stage.getY() + stage.getScene().getY()) + (HEIGHT / 2));
+System.err.println("[TEST] tbc 2");
             robot.mousePress(MouseButton.PRIMARY);
+System.err.println("[TEST] tbc 3");
             robot.mouseRelease(MouseButton.PRIMARY);
+System.err.println("[TEST] tbc 4");
         }
 
         protected Scene createTestScene() {
             buttonLatch = new CountDownLatch(1);
 
             button = new Button("I should be centered");
-            button.setOnAction((ActionEvent e) -> buttonLatch.countDown());
+            button.setOnAction((ActionEvent e) -> {
+System.err.println("[TEST] got click on action: " + e);
+Thread.dumpStack();
+                buttonLatch.countDown();
+            });
 
             VBox box = new VBox(button);
             box.setAlignment(Pos.CENTER);
@@ -142,13 +151,16 @@ public class SetSceneScalingTest {
             // Test that everything is okay for start
             Platform.runLater(() -> testButtonClick());
             Assertions.assertTrue(buttonLatch.await(3, TimeUnit.SECONDS));
+System.err.println("[TEST] second, part 1 done");
 
             // Recreate scene and set it
             Util.runAndWait(() -> stage.setScene(createTestScene()));
+System.err.println("[TEST] second, part 2 done");
 
             // retest - if DPI scaling is mishandled the button should
             // NOT be where it was (and thus, the test fails)
             Platform.runLater(() -> testButtonClick());
+System.err.println("[TEST] second, part 3 done");
             Assertions.assertTrue(buttonLatch.await(3, TimeUnit.SECONDS));
         }
 
