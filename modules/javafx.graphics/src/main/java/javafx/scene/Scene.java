@@ -1035,6 +1035,8 @@ public class Scene implements EventTarget {
     private ReadOnlyDoubleWrapper height;
 
     private final void setHeight(double value) {
+        System.err.println("SCENEHEIGHT = "+value);
+        Thread.dumpStack();
         heightPropertyImpl().set(value);
     }
 

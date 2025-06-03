@@ -240,6 +240,7 @@ public abstract class Window {
 
     protected abstract long _createWindow(long ownerPtr, long screenPtr, int mask);
     protected Window(Window owner, Screen screen, int styleMask) {
+        System.err.println("[WINDOWCONSTRUCTOR] owner = "+owner);
         Application.checkEventThread();
         switch (styleMask & (TITLED | TRANSPARENT)) {
             case UNTITLED:
@@ -287,6 +288,7 @@ public abstract class Window {
         if (this.ptr == 0L) {
             throw new RuntimeException("could not create platform window");
         }
+        System.err.println("[WINDOW] created, ptr = "+ptr+" and h = "+this.getHeight());
     }
 
     public boolean isClosed() {
@@ -375,6 +377,7 @@ public abstract class Window {
                 host.setView(null);
             }
         }
+            System.err.println("UPDATED?IEWSIZE?");
 
         if (view != null && _setView(this.ptr, view)) {
             this.view = view;
@@ -383,6 +386,7 @@ public abstract class Window {
             // after we call view.setWindow(this); otherwise with UI scaling different than
             // 100% some platforms might display scenes wrong after Window was shown.
             _updateViewSize(this.ptr);
+            System.err.println("UPDATEDVIEWSIZE!!");
             if (this.isDecorated == false) {
                 this.helper = new UndecoratedMoveResizeHelper();
             }
@@ -594,6 +598,7 @@ public abstract class Window {
         int ph = (int) (h > 0 ? Math.ceil(h * pScaleY) : h);
         int pcw = (int) (cw > 0 ? Math.ceil(cw * pScaleX) : cw);
         int pch = (int) (ch > 0 ? Math.ceil(ch * pScaleY) : ch);
+        System.err.println("WINDOWS setBounds for "+ptr+" to  py = "+py+", ph = "+ph+", pch = "+pch);
         _setBounds(ptr, px, py, xSet, ySet, pw, ph, pcw, pch, xGravity, yGravity);
     }
 

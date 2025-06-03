@@ -122,6 +122,7 @@ public class WindowStage extends GlassStage {
     }
 
     private void initPlatformWindow() {
+        System.err.println("[WS] INITPLATFORMWINDOW, pw = "+platformWindow);
         if (platformWindow == null) {
             Application app = Application.GetApplication();
 
@@ -167,6 +168,7 @@ public class WindowStage extends GlassStage {
             if (modality != Modality.NONE) {
                 windowMask |= Window.MODAL;
             }
+            System.err.println("[WS] CREATE PLATFORMWINDOW");
             platformWindow =
                     app.createWindow(ownerWindow, Screen.getMainScreen(), windowMask);
             platformWindow.setResizable(resizable);
@@ -282,6 +284,7 @@ public class WindowStage extends GlassStage {
                                     float xGravity, float yGravity,
                                     float renderScaleX, float renderScaleY)
     {
+        System.err.println("[WINDOWSTAGE] setBounds with ch = "+ch);
         if (renderScaleX > 0.0 || renderScaleY > 0.0) {
             // We set the render scale first since the call to setBounds()
             // below can induce a recursive update on the scales if it moves

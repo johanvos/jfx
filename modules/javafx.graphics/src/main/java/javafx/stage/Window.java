@@ -321,6 +321,7 @@ public class Window implements EventTarget {
                 widthExplicit = false;
             }
             double sceneHeight = getScene().getHeight();
+            System.err.println("[WINAS] sh = "+sceneHeight+" with scene = "+getScene());
             double ch = (sceneHeight > 0) ? sceneHeight : -1;
             double h = -1;
             if (selfSizePriority && heightExplicit) {
@@ -1515,6 +1516,8 @@ public class Window implements EventTarget {
 
         public void setWindowHeight(final double windowHeight) {
             this.windowHeight = windowHeight;
+                        System.err.println("SETCHEUHWIN to "+this.windowHeight);
+            Thread.dumpStack();
             setDirty();
         }
 
@@ -1525,6 +1528,8 @@ public class Window implements EventTarget {
 
         public void setClientHeight(final double clientHeight) {
             this.clientHeight = clientHeight;
+                        System.err.println("SETCH to "+this.clientHeight);
+            Thread.dumpStack();
             setDirty();
         }
 
@@ -1547,10 +1552,13 @@ public class Window implements EventTarget {
             this.windowHeight = windowHeight;
             this.clientWidth = clientWidth;
             this.clientHeight = clientHeight;
+            System.err.println("SETCH to "+this.clientHeight);
+            Thread.dumpStack();
             setDirty();
         }
 
         public void apply() {
+            System.err.println("[WINDOW] apply, clientHeight = "+clientHeight);
             if (dirty) {
                 if (peer == null) {
                     reset();
