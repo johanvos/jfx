@@ -18,13 +18,13 @@ public class HeadlessWindow extends Window {
     private static final AtomicInteger ptrCount = new AtomicInteger(0);
     private long ptr;
     private final HeadlessWindowManager windowManager;
-    
+
     private int minWidth;
     private int minHeight;
     private int maxWidth = -1;
     private int maxHeight = -1;
     private int originalX, originalY, originalWidth, originalHeight;
-    
+
     private boolean resizable;
     private boolean visible;
     private boolean isFocusable;
@@ -34,7 +34,6 @@ public class HeadlessWindow extends Window {
     private float alpha;
     private Pixels icon;
     private Cursor cursor;
-    private IntBuffer screenBuffer;
     private final ByteBuffer frameBuffer;
     private HeadlessView currentView;
     private HeadlessRobot robot;
@@ -43,7 +42,6 @@ public class HeadlessWindow extends Window {
         super(owner, screen, styleMask);
         this.frameBuffer = frameBuffer;
         this.windowManager = wm;
-        screenBuffer = IntBuffer.allocate(screen.getWidth() * screen.getHeight());
     }
 
     @Override
@@ -57,7 +55,7 @@ public class HeadlessWindow extends Window {
         this.closed = true;
         this.notifyDestroy();
         if (this.robot != null) {
-             this.robot.windowRemoved(this);
+            this.robot.windowRemoved(this);
         }
         return true;
     }
@@ -65,11 +63,11 @@ public class HeadlessWindow extends Window {
     @Override
     protected boolean _setView(long ptr, View view) {
         if (currentView != null) {
-            currentView.notifyMouse(MouseEvent.EXIT, MouseEvent.BUTTON_NONE, 0,0,0,0,0, false, false);
+            currentView.notifyMouse(MouseEvent.EXIT, MouseEvent.BUTTON_NONE, 0, 0, 0, 0, 0, false, false);
         }
-        this.currentView = (HeadlessView)view;
+        this.currentView = (HeadlessView) view;
         if (currentView != null) {
-            currentView.notifyMouse(MouseEvent.ENTER, MouseEvent.BUTTON_NONE, 0,0,0,0,0, false, false);
+            currentView.notifyMouse(MouseEvent.ENTER, MouseEvent.BUTTON_NONE, 0, 0, 0, 0, 0, false, false);
         }
         return true;
     }
@@ -100,8 +98,8 @@ public class HeadlessWindow extends Window {
         if (maximize && !wasMaximized) {
             this.originalHeight = this.height;
             this.originalWidth = this.width;
-            this.originalX = this.x; 
-            this.originalY = this.y; 
+            this.originalX = this.x;
+            this.originalY = this.y;
             newX = 0;
             newY = 0;
             newWidth = screen.getWidth();
@@ -140,8 +138,13 @@ public class HeadlessWindow extends Window {
         }
         newWidth = Math.max(newWidth, minWidth);
         newHeight = Math.max(newHeight, minHeight);
+        if (newWidth < getWidth()) {
+            clearRect(getX() + newWidth, getWidth() - newWidth, getY(), getHeight());
+        }
+        if (newHeight < getHeight()) {
+            clearRect(getX(), getWidth(), getY() + newHeight, getHeight() - newHeight);
+        }
         notifyResizeAndMove(x, y, newWidth, newHeight);
-        screenBuffer = IntBuffer.allocate(getWidth() * getHeight());
     }
 
     @Override
@@ -259,7 +262,8 @@ public class HeadlessWindow extends Window {
     protected void _releaseInput(long ptr) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    boolean setFullscreen(boolean full) { 
+
+    boolean setFullscreen(boolean full) {
         int newX = 0;
         int newY = 0;
         int newWidth = 0;
@@ -267,13 +271,13 @@ public class HeadlessWindow extends Window {
         if (full) {
             this.originalHeight = this.height;
             this.originalWidth = this.width;
-            this.originalX = this.x; 
-            this.originalY = this.y; 
+            this.originalX = this.x;
+            this.originalY = this.y;
             newX = 0;
             newY = 0;
             newWidth = screen.getWidth();
             newHeight = screen.getHeight();
-        } else  { 
+        } else {
             newHeight = this.originalHeight;
             newWidth = this.originalWidth;
             newX = this.originalX;
@@ -282,15 +286,15 @@ public class HeadlessWindow extends Window {
         notifyResizeAndMove(newX, newY, newWidth, newHeight);
         return full;
     }
-    
+
     private void notifyResizeAndMove(int x, int y, int width, int height) {
         HeadlessView view = (HeadlessView) getView();
-     //   if (getWidth() != width || getHeight() != height) {
-            notifyResize(WindowEvent.RESIZE, width, height);
-            if (view != null) {
-                view.notifyResize(width, height); 
-            }
-     //  }
+        //   if (getWidth() != width || getHeight() != height) {
+        notifyResize(WindowEvent.RESIZE, width, height);
+        if (view != null) {
+            view.notifyResize(width, height);
+        }
+        //  }
         if (getX() != x || getY() != y) {
             notifyMove(x, y);
         }
@@ -299,7 +303,7 @@ public class HeadlessWindow extends Window {
     public Color getColor(int lx, int ly) {
         int mx = lx;// + getX();
         int my = ly;// + getY();
-        int idx = 1000*my+mx;
+        int idx = 1000 * my + mx;
         int rgba = frameBuffer.asIntBuffer().get(idx);
         int a = (rgba >> 24) & 0xFF;
         int r = (rgba >> 16) & 0xFF;
@@ -318,24 +322,24 @@ public class HeadlessWindow extends Window {
     public void getScreenCapture(int x, int y, int width, int height, int[] data, boolean scaleToFit) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                int idx = i * width +j;
-                int fidx = (y+i)*1000 + x+j;
+                int idx = i * width + j;
+                int fidx = (y + i) * 1000 + x + j;
                 int val = frameBuffer.asIntBuffer().get(fidx);
                 data[idx] = val;
             }
         }
     }
+
     void blit(Pixels pixels) {
         int pW = pixels.getWidth();
         int pH = pixels.getHeight();
         int offsetX = this.getX();
         int offsetY = this.getY();
         int stride = 1000;
-        
+
         IntBuffer intBuffer = (IntBuffer) pixels.getBuffer();
-        
-        
-        for (int i = 0; i < pixels.getHeight(); i ++) {
+
+        for (int i = 0; i < pixels.getHeight(); i++) {
             int rowIdx = offsetY + i;
             for (int j = 0; j < pixels.getWidth(); j++) {
                 int idx = rowIdx * stride + offsetX + j;
@@ -343,6 +347,17 @@ public class HeadlessWindow extends Window {
                 if (val != 0) {
                 }
                 frameBuffer.asIntBuffer().put(idx, val);
+            }
+        }
+    }
+
+    void clearRect(int x0, int w0, int y0, int h0) {
+        int stride = 1000;
+        for (int i = 0; i < h0; i++) {
+            int rowIdx = y0 + i;
+            for (int j = 0; j < w0; j++) {
+                int idx = rowIdx * stride + x0 + j;
+                frameBuffer.asIntBuffer().put(idx, 0);
             }
         }
     }
