@@ -78,8 +78,11 @@ public class TextAreaRTLTest extends TextInputBehaviorRobotTest<TextArea> {
                 mousePress();
             }),
             exe(() -> {
+System.err.println("[TEST] mouseMove");
                 mouseMove(100, 100);
+System.err.println("[TEST] mouseMove done, now release");
                 mouseRelease();
+System.err.println("[TEST] mouseRelease done");
             }),
             checkSelection(0, 13),
             exe(() -> {

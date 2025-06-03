@@ -160,7 +160,6 @@ public abstract class NodeHelper {
     protected void pickNodeLocalImpl(Node node, PickRay localPickRay,
             PickResultChooser result) {
         System.err.println("[NH] node = "+node+" and accessor = "+nodeAccessor);
-        Thread.dumpStack();
         nodeAccessor.doPickNodeLocal(node, localPickRay, result);
     }
 
