@@ -74,7 +74,9 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected void _updateViewSize(long ptr) {
-        currentView.notifyResize(width, height);
+        if (this.isVisible()) {
+            currentView.notifyResize(width, height);
+        }
     }
 
     @Override
