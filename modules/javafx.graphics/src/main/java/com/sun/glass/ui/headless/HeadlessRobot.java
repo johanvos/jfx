@@ -4,15 +4,10 @@ import com.sun.glass.events.KeyEvent;
 import com.sun.glass.events.MouseEvent;
 import com.sun.glass.ui.Application;
 import com.sun.glass.ui.GlassRobot;
-import com.sun.glass.ui.Pixels;
 import com.sun.glass.ui.Window;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -28,6 +23,7 @@ public class HeadlessRobot extends GlassRobot {
     private double mouseX, mouseY;
 
     private final SpecialKeys specialKeys = new SpecialKeys();
+    private final MouseState mouseState = new MouseState();
     private final char[] NO_CHAR = { };
 
     public HeadlessRobot(HeadlessApplication application) {
@@ -104,13 +100,21 @@ public class HeadlessRobot extends GlassRobot {
         if (view == null) return; 
         int wx = activeWindow.getX();
         int wy = activeWindow.getY();
+        int buttonEvent = MouseEvent.BUTTON_NONE;
+        int mouseEvent = MouseEvent.MOVE;
+        if (mouseState.pressedButtons.size() > 0) {
+            MouseButton button = mouseState.pressedButtons.stream().findFirst().get();
+            buttonEvent = getGlassEventButton(button);
+            mouseEvent = MouseEvent.DRAG;
+        }
         int modifiers = 0;
-        view.notifyMouse(MouseEvent.MOVE, MouseEvent.BUTTON_NONE, (int)mouseX-wx, (int)mouseY-wy, (int)mouseX, (int)mouseY, modifiers, false, false);
+        view.notifyMouse(mouseEvent, buttonEvent, (int)mouseX-wx, (int)mouseY-wy, (int)mouseX, (int)mouseY, modifiers, false, false);
     }
 
     @Override
     public void mousePress(MouseButton... buttons) {
         Application.checkEventThread();
+        mouseState.pressedButtons.addAll(Arrays.asList(buttons));
         checkWindowEnterExit();
         HeadlessView view = (HeadlessView)activeWindow.getView();
         if (view == null) { 
@@ -128,6 +132,7 @@ public class HeadlessRobot extends GlassRobot {
     @Override
     public void mouseRelease(MouseButton... buttons) {
         Application.checkEventThread();
+        mouseState.pressedButtons.removeAll(Arrays.asList(buttons));
         checkWindowEnterExit();
         if (this.activeWindow == null) {
             return;
@@ -394,5 +399,9 @@ view.notifyScroll((int) mouseX, (int) mouseY, wx, wy, 0, dff, mods, 0, 0, 0, 0, 
         boolean keyAlt;
         boolean capsLock;
         boolean numLock;
+    }
+
+    class MouseState {
+        final HashSet<MouseButton> pressedButtons = new HashSet<>();
     }
 }

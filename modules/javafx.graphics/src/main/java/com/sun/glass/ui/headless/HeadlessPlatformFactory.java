@@ -40,13 +40,16 @@ public class HeadlessPlatformFactory extends PlatformFactory {
         return (String clipboardName) -> {
             if (Clipboard.SYSTEM.equals(clipboardName)) {
                 return new HeadlessSystemClipboard();
+            } else if (Clipboard.DND.equals(clipboardName)) {
+                return new HeadlessDnDClipboard();
             } else {
                 throw new IllegalArgumentException("No support for " + clipboardName + " clipboard in headless");
             }
         };
 
     }
-     class HeadlessSystemClipboard extends SystemClipboard {
+
+    class HeadlessSystemClipboard extends SystemClipboard {
 
         HashMap<String, Object> cacheData;
         int supportedActions;
@@ -85,5 +88,42 @@ public class HeadlessPlatformFactory extends PlatformFactory {
             return new String[0];
         }
     }
-   
+
+    class HeadlessDnDClipboard extends SystemClipboard {
+
+        HeadlessDnDClipboard() {
+            super(Clipboard.DND);
+        }
+
+        @Override
+        protected boolean isOwner() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        protected void pushToSystem(HashMap<String, Object> cacheData, int supportedActions) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        protected void pushTargetActionToSystem(int actionDone) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        protected Object popFromSystem(String mimeType) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        protected int supportedSourceActionsFromSystem() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        protected String[] mimesFromSystem() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+        
+    }
 }
