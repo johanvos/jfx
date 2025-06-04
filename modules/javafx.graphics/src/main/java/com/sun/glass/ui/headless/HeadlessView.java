@@ -66,7 +66,7 @@ public class HeadlessView extends View {
 
     @Override
     protected int _getNativeFrameBuffer(long ptr) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return 0;
     }
 
     @Override
