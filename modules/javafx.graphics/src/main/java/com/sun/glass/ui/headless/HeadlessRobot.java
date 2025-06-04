@@ -139,7 +139,9 @@ public class HeadlessRobot extends GlassRobot {
         int wy = activeWindow.getY();
         int modifiers = getModifiers(buttons);
         System.err.println("MODS = "+modifiers);
-        view.notifyMouse(MouseEvent.DOWN, getGlassEventButton(buttons), (int)mouseX-wx, (int)mouseY-wy, (int)mouseX, (int)mouseY, modifiers, true, true);
+        int buttonCode = getGlassEventButton(buttons);
+        view.notifyMouse(MouseEvent.DOWN, buttonCode, (int)mouseX-wx, (int)mouseY-wy, (int)mouseX, (int)mouseY, modifiers, true, true);
+        view.notifyMenu((int)mouseX-wx, (int)mouseY-wy, (int)mouseX, (int)mouseY, false);
     }
 
     @Override

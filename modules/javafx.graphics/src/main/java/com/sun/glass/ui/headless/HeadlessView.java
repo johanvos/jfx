@@ -113,6 +113,11 @@ public class HeadlessView extends View {
     }
 
     @Override
+    protected void notifyMenu(int x, int y, int xAbs, int yAbs, boolean isKeyboardTrigger) {
+        super.notifyMenu(x, y, xAbs, yAbs, isKeyboardTrigger);
+    }
+
+    @Override
     protected void notifyScroll(int x, int y, int xAbs, int yAbs, double deltaX, double deltaY, int modifiers, int lines, int chars, int defaultLines, int defaultChars, double xMultiplier, double yMultiplier) {
         super.notifyScroll(x, y, xAbs, yAbs, deltaX, deltaY, modifiers, lines, chars, defaultLines, defaultChars, xMultiplier, yMultiplier);
     }

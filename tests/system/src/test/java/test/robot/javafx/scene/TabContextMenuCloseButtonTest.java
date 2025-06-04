@@ -87,10 +87,14 @@ public class TabContextMenuCloseButtonTest {
         Util.sleep(1000); // Wait for tabPane to layout
         contextMenu = new ContextMenu(new MenuItem("MI 1"));
         contextMenu.setOnShown(event -> {
+System.err.println("[TEST] GOTSHOWN");
+Thread.dumpStack();
             cmlatch.countDown();
         });
         for (Tab tab : tabPane.getTabs()) {
             tab.setContextMenu(contextMenu);
+System.err.println("[TEST] DOSHOWN");
+Thread.dumpStack();
         }
         Util.runAndWait(() -> {
             robot.mouseMove((int)(scene.getWindow().getX() + scene.getX() + DX),

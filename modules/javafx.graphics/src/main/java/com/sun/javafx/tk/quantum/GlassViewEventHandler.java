@@ -392,6 +392,7 @@ class GlassViewEventHandler extends View.EventHandler {
                                           final int x, final int y, final int xAbs, final int yAbs,
                                           final boolean isKeyboardTrigger)
     {
+        System.err.println("[GLASSVIEWEVENTHANDLER] menuEvent, x=  "+x+", y = " +y+" xa = "+xAbs+", ya = "+yAbs);
         if (PULSE_LOGGING_ENABLED) {
             PulseLogger.newInput("MENU_EVENT");
         }

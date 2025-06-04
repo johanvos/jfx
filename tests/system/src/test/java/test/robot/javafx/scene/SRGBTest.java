@@ -152,6 +152,7 @@ public class SRGBTest extends VisualTestBase {
         float b = testColor.blue;
         Color expected = new Color(r, g, b, 1.0);
         runAndWait(() -> {
+System.err.println("[TEST] set fill to " + expected);
             swatch.setFill(expected);
         });
         waitNextFrame();
